@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="icon" type="image/x-icon" href="/static/img/logos/favicon.ico" />
+	<title>Astro🚀 - Dashboard</title>
+
+	<!-- Custom fonts for this template-->
+	<link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+	 rel="stylesheet">
+
+	<!-- Custom styles for this template-->
+	<link href="/static/css/sb-admin-d.css" rel="stylesheet">
+
+</head>
+<style>
+	.button {
+		background-color: #20c9a6;
+		/* Green */
+
+		font-family: 'Montserrat', sans-serif;
+		border: none;
+		outline: none;
+		font-family: inherit;
+		border-radius: 5px;
+		color: white;
+		padding: 10px 10px;
+		padding-bottom: 2px;
+		padding-top: 2px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+		margin: 4px 2px;
+		cursor: pointer;
+		-webkit-transition-duration: 0.4s;
+		/* Safari */
+		transition-duration: 0.4s;
+	}
+
+	.buttonLogOut {
+		background-color: tomato;
+		/* Green */
+
+		font-family: 'Montserrat', sans-serif;
+		border: none;
+		outline: none;
+		font-family: inherit;
+		border-radius: 5px;
+		color: white;
+		padding: 10px 10px;
+		padding-bottom: 2px;
+		padding-top: 2px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+		margin: 4px 2px;
+		cursor: pointer;
+		-webkit-transition-duration: 0.4s;
+		/* Safari */
+		transition-duration: 0.4s;
+	}
+
+	.button1 {
+		box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+		border: none;
+		outline: none;
+	}
+
+	.itemTransformation {
+		transition-duration: 0.4s;
+	}
+
+	.pad {
+		padding: 4px;
+	}
+
+	.itemTransform:hover {
+		transform: scale(1.1);
+		box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+	}
+
+
+	.button2:hover {
+		transform: scale(1.075);
+		box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+		border: none;
+		outline: none;
+	}
+
+	.botImg2 {
+		box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+		transition: transform .2s;
+	}
+
+	.botImg2:hover {
+		transform: scale(1.1);
+	}
+
+	.botImg {
+		/* background-color: #FBC35E; Green */
+		font-family: 'Montserrat', sans-serif;
+		border: none;
+		font-family: inherit;
+		border-radius: 40px;
+		color: white;
+		/* padding: 15px 32px; */
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+		margin: 4px 2px;
+		cursor: pointer;
+		-webkit-transition-duration: 0.4s;
+		/* Safari */
+		transition-duration: 0.4s;
+	}
+
+	.botImg a:hover {
+		box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+	}
+
+	.bg-black {
+		background-color: #212529;
+	}
+
+	.bg-gray {
+		background-color: #36393f;
+	}
+</style>
+
+<body class="bg-gray" id="page-top">
+
+	<!-- Page Wrapper -->
+	<div class="bg-gray" id="wrapper">
+
+
+		<!-- Sidebar -->
+		<!-- <ul class="hidden-sm navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+		<!-- <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Astro🚀 <sup>Dash</sup></div>
+            </a> -->
+
+		<!-- Divider -->
+		<!-- <hr class="sidebar-divider my-0"> -->
+
+		<!-- Nav Item - Dashboard -->
+		<!-- <li class="nav-item active">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span></a>
+            </li>
+
+           
+            <hr class="sidebar-divider">
+
+        </ul> -->
+		<!-- End of Sidebar -->
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="bg-gray d-flex flex-column">
+
+			<!-- Main Content -->
+			<div id="content">
+
+
+				<!-- Topbar -->
+				<nav class="navbar navbar-expand navbar-light bg-black topbar static-top ">
+
+					<a href="/">
+						<img class=" rounded-circle itemTransform itemTransformation"height = 50 src="/static/img/logos/astro.png" alt="" /></a>
+                    <div class=" text-white mx-3">Astro🚀 <sup>Dash</sup></div>
+                    
+
+                  <button  onclick="location.href='/dashboard';" class="button button2">Servers</button>
+                  <!-- <button  onclick="location.href='/';" class="button button2">Back Home</button> -->
+            <button  onclick="location.href='/logout';" class="buttonLogOut button2">Log Out</button>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                      
+            
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="/dashboard" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-primary  medium"><b>{{userInfo['username']}}<b></span>
+                                <img class="img-profile rounded-circle"
+                                    src="https://cdn.discordapp.com/avatars/{{userInfo['id']}}/{{userInfo['avatar']}}.png"
+                                    onerror="this.onerror=null;this.src='https://cdn.discordapp.com/embed/avatars/{{discriminator}}.png';">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+<style>
+
+
+
+html {
+  height: 100%;
+}
+
+
+.login-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  padding: 40px;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,.5);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(0,0,0,.6);
+  border-radius: 10px;
+}
+
+.login-box h2 {
+  margin: 0 0 30px;
+  padding: 0;
+  color: #fff;
+  text-align: center;
+}
+.guild_image {
+  margin: 0 0 30px;
+  padding: 0;
+  color: #fff;
+  text-align: center;
+}
+
+.login-box .user-box {
+  position: relative;
+}
+
+.login-box .user-box input {
+  width: 100%;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 30px;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+.login-box .user-box label {
+  position: absolute;
+  top:0;
+  left: 0;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  pointer-events: none;
+  transition: .5s;
+}
+
+.login-box .user-box input:focus ~ label,
+.login-box .user-box input:valid ~ label {
+  top: -20px;
+  left: 0;
+  color: #ff914d;
+  font-size: 12px;
+}
+
+.login-box form a {
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px;
+  color: #ff914d;
+  font-size: 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: .5s;
+  margin-top: 40px;
+  letter-spacing: 4px
+}
+
+.login-box a:hover {
+  background: #ff914d;
+  color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #ff914d,
+              0 0 25px #ff914d,
+              0 0 50px #ff914d,
+              0 0 100px #ff914d;
+}
+
+.login-box a span {
+  position: absolute;
+  display: block;
+}
+
+.login-box a span:nth-child(1) {
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ff914d);
+  animation: btn-anim1 1s linear infinite;
+}
+
+@keyframes btn-anim1 {
+  0% {
+    left: -100%;
+  }
+  50%,100% {
+    left: 100%;
+  }
+}
+
+.login-box a span:nth-child(2) {
+  top: -100%;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent, #ff914d);
+  animation: btn-anim2 1s linear infinite;
+  animation-delay: .25s
+}
+
+@keyframes btn-anim2 {
+  0% {
+    top: -100%;
+  }
+  50%,100% {
+    top: 100%;
+  }
+}
+
+.login-box a span:nth-child(3) {
+  bottom: 0;
+  right: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(270deg, transparent, #ff914d);
+  animation: btn-anim3 1s linear infinite;
+  animation-delay: .5s
+}
+
+@keyframes btn-anim3 {
+  0% {
+    right: -100%;
+  }
+  50%,100% {
+    right: 100%;
+  }
+}
+
+.login-box a span:nth-child(4) {
+  bottom: -100%;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  /* background: linear-gradient(360deg, transparent, #03e9f4); */
+  animation: btn-anim4 1s linear infinite;
+  animation-delay: .75s
+}
+
+@keyframes btn-anim4 {
+  0% {
+    bottom: -100%;
+  }
+  50%,100% {
+    bottom: 100%;
+  }
+}
+.guild_image {
+  margin: 0 0 30px;
+  padding: 0;
+  color: #fff;
+  justify-content: center;
+}
+</style>
+                <!-- Begin Page Content -->
+                <div class="container-fluid bg-gray">
+                  <br>
+                  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+@import url('https://fonts.googleapis.com/css?family=Arimo:400,700&display=swap');
+
+h2{
+  /* color:#000; */
+  text-align:center;
+  font-size:10vw;
+}
+.warpper{
+  display:flex;
+
+
+  flex-direction: column;
+  align-items: center;
+}
+.tab{
+  cursor: pointer;
+  padding:10px 20px;
+  margin:0px 2px;
+  background:#000;
+  display:inline-block;
+  color:#fff;
+  /* font-size: 1vw; */
+  font-size: clamp(6px, 2vw, 20px);
+  /* font-size:calc(5px + 1.5vw); */
+  border-radius:10px 10px 0px 0px;
+  box-shadow: 0 0.5rem 0.8rem #00000080;
+}
+.panels{
+  background: #212529;
+  box-shadow: 0 2rem 2rem #00000080;
+  min-height:200px;
+  width:100%;
+  min-width:100px;
+  max-width:600px;
+  border-radius:10px;
+  /* overflow:hidden; */
+  padding:20px;  
+}
+.panel{
+  display:none;
+  animation: fadein .8s;
+}
+@keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+.panel-title{
+  font-size:1.5em;
+  font-weight:bold
+}
+.radio{
+  display:none;
+}
+#one:checked ~ .panels #one-panel,
+#two:checked ~ .panels #two-panel,
+#three:checked ~ .panels #three-panel{
+  display:block
+}
+#one:checked ~ .tabs #one-tab,
+#two:checked ~ .tabs #two-tab,
+#three:checked ~ .tabs #three-tab{
+  background:#ff914d;
+  color:#fff;
+  border-top: 3px solid #ff914d;
+}
+@use postcss-preset-env {
+  stage: 0;
+}
+
+/* ---------- GENERAL ---------- */
+* {
+  /* box-sizing: inherit; */
+}
+
+/* html {
+  box-sizing: border-box;
+} */
+
+/* body {
+  background-color: #c0c0c0;
+  font-family: 'Varela Round', sans-serif;
+  line-height: 1.5;
+  margin: 0;
+  min-block-size: 100vh;
+  padding: 5vmin;
+} */
+
+h2 {
+  font-size: 1.75rem;
+}
+
+input {
+  background-image: none;
+  border: none;
+  font: inherit;
+  margin: 0;
+  padding: 0;
+  transition: all 0.3s;
+}
+
+svg {
+  height: auto;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+/* ---------- ALIGN ---------- */
+.align {
+  display: grid;
+  place-items: center;
+}
+
+/* ---------- BUTTON ---------- */
+
+/* .button {
+  background-color: #33cc77;
+  color: #fff;
+  padding: 0.25em 1.5em;
+} */
+
+/* .button:focus,
+.button:hover {
+  background-color: #28ad63;
+} */
+
+/* ---------- ICONS ---------- */
+.icons {
+  display: none;
+}
+
+.icon {
+  fill: currentcolor;
+  display: inline-block;
+  height: 1em;
+  width: 1em;
+}
+
+/* ---------- LOGIN ---------- */
+.login {
+  /* width: 400px; */
+}
+
+/* .login__header {
+  background-color: #212529;
+  border-top-left-radius: 1.25em;
+  border-top-right-radius: 1.25em;
+  color: #ff914d;
+  padding: 1.25em 1.625em;
+} */
+
+.login__header :first-child {
+  margin-top: 0;
+}
+
+.login__header :last-child {
+  margin-bottom: 0;
+}
+
+.login h2 .icon {
+  margin-right: 14px;
+  
+}
+
+.login__form {
+  background-color: #212529;
+  border-bottom-left-radius: 1.25em;
+  border-bottom-right-radius: 1.25em;
+  color: white;
+  display: grid;
+  gap: 0.875em;
+  padding: 1.25em 1.625em;
+}
+.login input:focus, textarea:focus, select:focus{
+  outline: none;
+}
+.login input {
+  
+  border-radius: 0.1875em;
+}
+
+.login input[type="prefix"],
+.login input[type="mod_words"] {
+  background-color: #fff;
+  color: black;
+  padding: 0.25em 0.625em;
+  width: 100%;
+}
+
+.login input[type="submit"] {
+  display: block;
+  margin: 0 auto;
+}
+.labels{
+  color: ff914d;
+}
+.text-blue{
+/*   
+  text-decoration: none; */
+  color: #339CFF;
+}
+
+</style>
+
+<script>
+
+
+</script>
+
+<!-- <div class="itemTransform itemTransformation"> -->
+
+<h2 class="text-primary"><img class=" guild_image itemTransformation itemTransform rounded-circle" width=100 src = "https://cdn.discordapp.com/icons/{{guild['id']}}/{{guild['icon']}}.png" onerror="this.onerror=null;this.src='/static/img/logos/discord.png'"><br><b>{{guild['name']}} Settings<b></h2><br>
+
+<!-- <div class="itemTransform itemTransformation"> -->
+<div class="warpper">
+  <input class="radio" id="one" name="group" type="radio" checked>
+  <input class="radio" id="two" name="group" type="radio">
+  <input class="radio" id="three" name="group" type="radio">
+  <div class="tabs">
+  {% if admin==True %}
+  <label class="tab" id="one-tab" for="one">⚙ Settings</label>
+  <label class="tab" id="two-tab" for="two">🎸 Music</label>
+  <label class="tab" id="three-tab" for="three">🔊 Announcements
+  </label>
+  {% else %}
+  <!-- <label class="tab" id="one-tab" for="one">⚙ Settings</label> -->
+  <label class="tab" id="null" for="null">🔒 Settings</label>
+  <label class="tab" id="one-tab" for="one">🎸 Music</label>
+  <label class="tab" id="null" for="null">🔒 Announcements
+  </label>
+  <!-- <style>
+    /* #one:checked ~ .tabs #one-tab, */
+    #two:checked ~ .tabs #two-tab,
+    /* #three:checked ~ .tabs #three-tab */
+    {
+      background:#ff914d;
+      color:#fff;
+      border-top: 3px solid #ff914d;
+    }
+  </style> -->
+  <!-- <label class="tab" id="three-tab" for="three">🔊 Announcements
+  </label> -->
+  {% endif %}
+
+  
+    </div>
+  <div class="panels border-left-primary">
+    {% if admin==True %}
+  <div class=" panel" id="one-panel">
+    {% else %}
+  <div class=" panel" id="two-panel">
+    {% endif %}
+    <div class="  login">
+
+    <header class="login__header">
+      <h2><b>⚙ Settings<b></h2>
+    </header>
+
+    <form autocomplete="off" id="settings" action="/guild/{{guild['id']}}" class="login__form" method="post" >
+
+      <div>
+        <label class="labels" for="email">Prefix</label>
+        <input required type="prefix" id="prefix" name="prefix" value="{{prefix}}">
+      </div>
+
+      <div id="labelMod">
+        <label class="labels"  id="textMod"for="password">Moderated Words</label>
+        <div id="modField">
+        <!-- <a href="#" id="filldetails" onclick="addFields()">Fill Details</a> -->
+        {% for element in mod_words %}
+        <br>
+        <input class="inputa" type="mod_words" id="mod_words" name="mod_words" value="{{element}}">
+        <br>
+        {% endfor %}
+        </div>
+      </div>
+      <br>
+      <!-- <button type="button" class="button button2" onclick="addFields()">➕More</button> -->
+      <input class="button button2" onclick="addFields()" type="button" value="➕ More">
+      <input class="buttonLogOut button2" onclick="removeFields()" type="button" value="❌ Less">
+
+      <div>
+ 
+        <br><br>
+        <input class="button button2" onclick="myFunction()" type="submit" value="✅ Save Changes">
+      </div>
+
+    </form>
+
+  </div>
+
+
+  </div>
+   <script type='text/javascript'>
+      var mod_word=0;
+        function addFields(){
+            mod_word=mod_word+1;
+            // Number of inputs to create
+            // var number = document.getElementById("member").value;
+            var number=1;
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("modField");
+            // Clear previous contents of the container
+            // while (container.hasChildNodes()) {
+            //     container.removeChild(container.lastChild);
+            // }
+            for (i=0;i<number;i++){
+                // Append a node with a random text
+                container.appendChild(document.createElement("br"));
+                // container.appendChild(document.createElement("br"));
+                // container.appendChild(document.createTextNode("Mod " + (i+1)));
+                // Create an <input> element, set its type and name attributes
+                document.createElement("br");
+                var input = document.createElement("input");
+                input.type = "mod_words";
+                input.name = "mod_words"+mod_word;
+                input.id = "mod_words"+mod_word;
+                container.appendChild(input);
+                // Append a line break 
+                container.appendChild(document.createElement("br"));
+                console.log(mod_word)
+            }
+        }
+        function removeFields(){
+          mod_word=mod_word-1;
+            // Number of inputs to create
+            // var number = document.getElementById("member").value;
+            var number=1;
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("modField");
+            // container.document.getElementById("my-element").remove();
+            container.removeChild(container.lastChild);
+            container.removeChild(container.lastChild);
+            container.removeChild(container.lastChild);
+            // Clear previous contents of the container
+            // while (container.hasChildNodes()) {
+            //     container.removeChild(container.lastChild);
+            // }
+            // for (i=0;i<number;i++){
+            //     // Append a node with a random text
+            //     container.appendChild(document.createElement("br"));
+            //     container.appendChild(document.createElement("br"));
+            //     // container.appendChild(document.createTextNode("Mod " + (i+1)));
+            //     // Create an <input> element, set its type and name attributes
+            //     document.createElement("br");
+            //     var input = document.createElement("input");
+            //     input.type = "mod_words";
+            //     input.name = "mod_words" + i;
+            //     input.id = "next_mod_word"
+            //     container.appendChild(input);
+            //     // Append a line break 
+            //     container.appendChild(document.createElement("br"));
+            // }
+        }
+    </script>
+  {% if admin==True %}
+  <div class="panel" id="two-panel">
+  {% else %}
+  <div class="panel" id="one-panel">
+  {% endif %}
+    <div class="  login" id="music">
+
+    
+    
+
+    {% if playing!=None and playing['song']!=None %}
+    <br><br>
+    <header class="login__header">
+      <h2><b>🔊 Playing<b></h2>
+    </header>
+    <a href="{{playing['weburl']}}">
+                      <div class="">
+                            <div class="bg-black itemTransformation itemTransform card border-left-teal shadow py-2">
+                                <div class=" card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="font-weight-bold text-primary text-uppercase mb-1">
+                                                <img style="border-radius:10px;" class="pad itemTransformation itemTransform " width=100 src = "{{playing['thumbnail']}}" onerror="this.onerror=null;this.src='/static/img/logos/astro.png'">&emsp;<a id="npTitle" class="text-blue" href="{{playing['weburl']}}">{{playing['song'][:20]}}...</a> | ⏳ <code>{{playing['duration']}}</code> | 🔊 <code>{{volume}}%</code></div>
+                                            <!-- <div class="h5 mb-0 font-weight-bold text-gray-800">Members: {{guild['approximate_member_count']}}</div> -->
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                        <br><br>
+    {% endif %}
+    <header class="login__header">
+      <!-- <h2><b>🎸 Music<b></h2>
+      <br><br> -->
+      <h2><b>⏯ Queue<b></h2>
+      
+    </header>
+    {% if queueLength == 0 %}
+    <br><br>
+    <header class="login__header">
+      <h2><b>🎧 Queue A Song Before Using This Feature<b></h2>
+    </header>
+    {% endif %}
+    {% for i in range(queueLength) %}
+    <a href="{{queue['link'][i]}}">
+                      <div class="">
+                            <div class="bg-black itemTransformation itemTransform card border-left-teal shadow py-2">
+                                <div class=" card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="font-weight-bold text-primary text-uppercase mb-1">
+                                                <img style="border-radius:10px;" class="pad itemTransformation itemTransform " width=100 src = "{{queue['thumbnail'][i]}}" onerror="this.onerror=null;this.src='/static/img/logos/astro.png'">&emsp;<a class="text-blue" href="{{queue['link'][i]}}">{{queue['name'][i][:23]}}...</a> | ⏳ <code>{{queue['duration'][i]}}</code> | 🔊 <code>{{volume}}%</code></div>
+                                            <!-- <div class="h5 mb-0 font-weight-bold text-gray-800">Members: {{guild['approximate_member_count']}}</div> -->
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                        <br><br>
+    <!-- <a href="{{queue['link'][i]}}">{{queue['name'][i]}}</a><br> -->
+    {% endfor %}
+
+
+    <!-- <form id="settings"  class="login__form" >
+
+      <div>
+        <label class="labels" for="email">Prefix</label>
+        <input type="prefix" id="prefix" name="prefix" value="{{prefix}}">
+      </div>
+
+      <div>
+        <label class="labels" for="password">Moderated Words</label>
+        <input class="inputa" type="mod_words" id="mod_words" name="mod_words" value="">
+      </div>
+
+      <div>
+        <br><br>
+        <input class="button button2" onclick="myFunction()" type="submit" value="✅ Save Changes">
+      </div>
+
+    </form> -->
+
+  </div>
+  </div>
+  {% if astroAdmin==True %}
+  <div class="panel" id="three-panel">
+
+    <div class="  login">
+
+    <header class="login__header">
+      <!-- <h2><b>🔊 Announcements<b></h2>> --><h2><b>
+    Use Discord's Rich Embeds To Send Announcements!</b></h2>
+    </header>
+    <style>
+      .textChannel{
+        color: #858796;
+      }
+      .embedText{
+        /* background-color:  */
+        color: white;
+        
+      }
+      .desc{
+        /* background-color:  */
+        font-weight: normal;
+      }
+      .textArea{
+        border-style: none; 
+    border-color: Transparent; 
+    overflow: hidden; 
+    resize:none;
+     width:100%;
+     
+      }
+
+select {
+    border:0;
+    /* border-color: teal; */
+    background:transparent;
+    height:32px;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: #858796;
+    border:1px solid #d8d8d8;
+    border-radius: 10px;
+    /* width:350px; */
+    /* -webkit-appearance: none; */
+}
+
+      </style>
+
+    <br><br>
+    <form autocomplete="off" id="announcement" action="/guild/{{guild['id']}}" class="login__form"method="post" >
+    <!-- <input list="servers" id="servers" /> -->
+    <label class="textChannel" for="">Channel</label>
+      <select id="channel" name="channel" required>
+        
+        {% for channel in channels %}
+  
+        <option value="{{channel['name']}}">{{channel['name']}}</option>
+
+
+        {% endfor %}
+      </select>
+      
+      <label class="textChannel" for="">Role To Ping</label>
+      <select id="role" name="role" required>
+        <option value="None">None</option>
+        {% for role in roles %}
+  
+        <option value="{{role['name']}}">{{role['name']}}</option>
+
+
+        {% endfor %}
+      </select>
+      <br>
+      <style>
+        .border-left-custom {
+            border-left: 0.25rem solid #00ffaa ;
+            border-right: none;
+            border-bottom: none;
+            border-top: none;
+          }
+        </style>
+        <script>
+          document.getElementById("color").addEventListener("change", onChangeColor);
+          function onChangeColor() {
+
+              console.log(this.value); //this.value contains the hexadecimal value of your input
+              //change your canvas color
+              document.getElementById("color").style.color="0.25rem solid #fff";
+
+            }
+
+            // document.getElementById("color").onchange = function() {
+            //   backRGB = this.value;
+            //   console.log(backRGB);
+            //   document.getElementById("color").style.border-left="0.25rem solid "+backRGB;
+            // }
+            
+          </script>
+    
+
+
+<!--         
+      </datalist> -->
+    <div class="">
+      <div class="bg-black itemTransformation itemTransform card border-left-custom shadow py-2">
+          <div class=" card-body">
+              <div class=" align-items-center">
+                  <div class="">
+                      <div class="font-weight-bold text-primary text-uppercase">
+                        </div>
+                        <img height=30 class="img-profile rounded-circle"
+                                    src="https://cdn.discordapp.com/avatars/{{userInfo['id']}}/{{userInfo['avatar']}}.png"
+                                    onerror="this.onerror=null;this.src='https://cdn.discordapp.com/embed/avatars/{{discriminator}}.png';">
+                        <span class="mr-2  text-white  medium">{{userInfo['username']}}</span>
+
+                        <div>
+                          <!-- <label class="labels" for="email">Prefix</label> -->
+                          <br>
+                          <input required class="bg-black embedText" type="title" id="title" name="title" value="" placeholder="Your Title">
+                
+                          <br>
+                          <div>
+                          <textarea required style="border-tyle: none; border-color: Transparent; overflow: auto" class="textArea bg-black desc embedText" type="description" id="description"  rows=3 name="description" placeholder="Your Description"></textarea>
+                       </div>
+                      <div id="fields">
+                          <!-- <input class="inputa bg-black embedText" type="fieldTitle" id="fieldTitle" name="fieldTitle" placeholder="Field Title">
+                          <br>
+                          <textarea required style="border-tyle: none; border-color: Transparent; overflow: auto" class="textArea bg-black desc embedText" type="fieldValue" id="fieldValue"  rows=2 name="fieldValue" placeholder="Field Value"></textarea> -->
+                            <!-- <br> -->
+                          <!-- <br> -->
+                      </div>
+                          <!-- <button type="button" class="button button2" onclick="addFields()">➕More</button> -->
+                          <input class="button button2" onclick="addFields2()" type="button" value="➕ More">
+                          <input class="buttonLogOut button2" onclick="removeFields2()" type="button" value="❌ Less">
+                        </div>
+                                
+                      <!-- <div class="h5 mb-0 font-weight-bold text-gray-800">Members: {{guild['approximate_member_count']}}</div> -->
+                  </div>
+                  <div class="col-auto">
+                      <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div>
+    <script type='text/javascript'>
+
+      var fields=0;
+        function addFields2(){
+            if (fields ==10){
+              return
+            }
+            fields=fields+1;
+            // Number of inputs to create
+            // var number = document.getElementById("member").value;
+            var number=1;
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("fields");
+            // Clear previous contents of the container
+            // while (container.hasChildNodes()) {
+            //     container.removeChild(container.lastChild);
+            // }
+            for (i=0;i<number;i++){
+                // Append a node with a random text
+                // container.appendChild(document.createElement("br"));
+                // container.appendChild(document.createElement("br"));
+                // container.appendChild(document.createTextNode("Mod " + (i+1)));
+                // Create an <input> element, set its type and name attributes
+                document.createElement("br");
+                var input = document.createElement("input");
+                input.type = "fieldTitle";
+                input.name = "fieldTitle"+fields;
+                input.id = "fieldTitle"+fields;
+                input.className="inputa bg-black embedText"
+                input.placeholder = "Field Title";
+                input.required = true; 
+                container.appendChild(input);
+                document.createElement("br");
+                var input = document.createElement("textarea");
+                input.type = "fieldValue";
+                input.placeholder = "Field Value";
+                input.className="textArea bg-black desc embedText"
+                input.name = "fieldValue"+fields;
+                input.required = true;
+                input.id = "fieldValue"+fields;
+                container.appendChild(input);
+                // Append a line break 
+                container.appendChild(document.createElement("br"));
+                console.log(mod_word)
+            }
+        }
+        addFields2()
+        function removeFields2(){
+          fields=fields-1;
+            // Number of inputs to create
+            // var number = document.getElementById("member").value;
+            var number=1;
+            // Container <div> where dynamic content will be placed
+            var container = document.getElementById("fields");
+            // container.document.getElementById("my-element").remove();
+            container.removeChild(container.lastChild);
+            container.removeChild(container.lastChild);
+            container.removeChild(container.lastChild);
+            // Clear previous contents of the container
+            // while (container.hasChildNodes()) {
+            //     container.removeChild(container.lastChild);
+            // }
+            // for (i=0;i<number;i++){
+            //     // Append a node with a random text
+            //     container.appendChild(document.createElement("br"));
+            //     container.appendChild(document.createElement("br"));
+            //     // container.appendChild(document.createTextNode("Mod " + (i+1)));
+            //     // Create an <input> element, set its type and name attributes
+            //     document.createElement("br");
+            //     var input = document.createElement("input");
+            //     input.type = "mod_words";
+            //     input.name = "mod_words" + i;
+            //     input.id = "next_mod_word"
+            //     container.appendChild(input);
+            //     // Append a line break 
+            //     container.appendChild(document.createElement("br"));
+            // }
+        }
+    </script>
+<!-- <br> -->
+<!-- <input class="check" type="checkbox" id="checkbox" name="ping" />
+<label for="test">Ping Everyone
+  
+</label> -->
+
+  
+
+</label>
+       <label class="labels"  id="textMod"for="password">Color </label>
+        <input class="button button2" id="color" name="color" value="#20c9a6" type="color">
+        <br><br>
+        <input class="button button2" onclick="myFunction()" type="submit" value="📪 Send">
+      </div>
+  </form>
+  </div>
+  </div>
+</div>
+<br><br><br><br><br>
+    
+<style>
+  input.check{
+    height: 30;
+    width: 30;
+  }
+
+</style>
+{% else %}
+<div class="panel" id="three-panel">
+
+    <div class="  login">
+
+    <header class="login__header">
+      <!-- <h2><b>🔊 Announcements<b></h2>> --><h2><b>
+    Give Astro An Administrative Role To Use This Feature! 📢</b></h2>
+    </header>
+    </div>
+</div>
+{% endif %}
+
+
+
+    <!-- <form id="settings"  class="login__form" >
+
+      <div>
+        <label class="labels" for="email">Prefix</label>
+        <input type="prefix" id="prefix" name="prefix" value="{{prefix}}">
+      </div>
+
+      <div>
+        <label class="labels" for="password">Moderated Words</label>
+        <input class="inputa" type="mod_words" id="mod_words" name="mod_words" value="">
+      </div>
+
+      <div>
+        <br><br>
+        <input class="button button2" onclick="myFunction()" type="submit" value="📩 Send"">
+      </div>
+
+    </form> -->
+
+  
+<!-- </div> -->
+
+
+
+
+
+<script>
+  function myFunction() {
+  //   alert('hi')
+  // window.location = "/submit/{{guild['id']}}?prefix="+".";
+  // var x = document.getElementById("settings").action;
+  // // document.getElementById("demo").innerHTML = x;
+  // var newPrefix = document.getElementById("prefix").value;
+  
+  // alert(nameValue);
+  // alert(x);
+}
+
+
+</script>
+
+
+
+
+
+
+                  <!-- form1 -->
+                  <!-- <div class=" bg-gray login-box ">
+  <h2><img class=" guild_image itemTransformation itemTransform rounded-circle" width=100 src = "https://cdn.discordapp.com/icons/{{guild['id']}}/{{guild['icon']}}.png" onerror="this.onerror=null;this.src='/static/img/logos/astro.png'"><br>{{guild['name']}} Settings</h2>
+  <form>
+    <label class="text-white">Prefix</label>
+    <div class="user-box">
+      <input type="text" name="" required="" value="{{prefix}}">
+      
+    </div>
+    <label class="text-white">Moderated Words</label>
+    <div class="user-box">
+      <input type="user-box" name="" required="" value="{{prefix}}">
+      
+    </div>
+    <a href="#" onclick="alert('click')">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      Save Changes
+    </a>
+  </form>
+</div> -->
+
+
+                    <!-- Page Heading -->
+                    <!-- {% if guilds|length != 0 %}
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-white">Your Servers</h1> -->
+                        <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
+                    <!-- </div>
+                    {% endif %} -->
+                    <!-- {% if guilds|length == 0 and guildsWithout|length == 0 %}
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-white">Currently, You Have No Servers. Create One To Use The Dashboard!</h1> -->
+                        <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
+                    <!-- </div>
+                    {% endif %} -->
+                    
+                    
+
+                    <!-- Content Row -->
+                    <!-- <div class="bg-gray row">
+                      {% for guild in guilds %}
+                      <a href="/guild/{{guild['id']}}">
+                      <div class=" col-md-6 mb-4">
+                            <div class="itemTransformation itemTransform card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="font-weight-bold text-primary text-uppercase mb-1">
+                                                <img class="pad itemTransformation itemTransform rounded-circle" width=50 src = "https://cdn.discordapp.com/icons/{{guild['id']}}/{{guild['icon']}}.png" onerror="this.onerror=null;this.src='/static/img/logos/astro.png'"><a href="/guild/{{guild['id']}}">{{guild['name']}}</a></div> -->
+                                            <!-- <div class="h5 mb-0 font-weight-bold text-gray-800">Members: {{guild['approximate_member_count']}}</div> -->
+                                        <!-- </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                      {% endfor %}
+                    </div> -->
+                    <!-- {% if guildsWithout|length != 0 %}
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-white">Servers To Setup</h1> -->
+                        <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
+                    <!-- </div>
+                    {% endif %} -->
+
+                    <!-- Content Row -->
+                    <!-- <div class="bg-gray row">
+                      {% for guild in guildsWithout %}
+                      <a href="/inv">
+                      <div class=" col-md-6 mb-4">
+                            <div class="itemTransformation itemTransform card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="font-weight-bold text-primary text-uppercase mb-1">
+                                                <img class="pad itemTransformation itemTransform rounded-circle" width=50 src = "https://cdn.discordapp.com/icons/{{guild['id']}}/{{guild['icon']}}.png" onerror="this.onerror=null;this.src='/static/img/logos/astro.png'"><a href="/inv">{{guild['name']}}</a></div> -->
+                                            <!-- <div class="h5 mb-0 font-weight-bold text-gray-800">Members: {{guild['approximate_member_count']}}</div> -->
+                                        <!-- </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                      {% endfor %}
+                    </div>
+                </div> -->
+                <!-- </div> -->
+                
+
+                      
+                 
+                   
+                 
+
+                    <!-- Page Heading -->
+                    
+
+                    <!-- Content Row -->
+                    
+
+                        <!-- Pie Chart -->
+                        <!-- <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <!-- <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                            aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header">Dropdown Header:</div>
+                                            <a class="dropdown-item" href="#">Action</a>
+                                            <a class="dropdown-item" href="#">Another action</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Something else here</a>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <!-- Card Body -->
+                                <!-- <div class="card-body">
+                                    <div class="chart-pie pt-4 pb-2">
+                                        <canvas id="myPieChart"></canvas>
+                                    </div>
+                                    <div class="mt-4 text-center small">
+                                        <span class="mr-2">
+                                            <i class="fas fa-circle text-primary"></i> Direct
+                                        </span>
+                                        <span class="mr-2">
+                                            <i class="fas fa-circle text-success"></i> Social
+                                        </span>
+                                        <span class="mr-2">
+                                            <i class="fas fa-circle text-info"></i> Referral
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <!-- Content Row -->
+                    <!-- <div class="row"> -->
+
+                        <!-- Content Column -->
+    
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <!-- <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Your Website 2020</span>
+                    </div>
+                </div>
+            </footer> -->
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <!-- <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a> -->
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/static/js/sb-admin-2.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="vendor/chart.js/Chart.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="js/demo/chart-area-demo.js"></script>
+    <script src="js/demo/chart-pie-demo.js"></script>
+
+</body>
+
+</html>
