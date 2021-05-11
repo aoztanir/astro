@@ -1,6 +1,7 @@
 import requests
 import config
 import time 
+sleepTime=3
 def get_token(code: str, tries=0):
   data = {
     'client_id': config.CLIENT_ID,
@@ -26,7 +27,7 @@ def get_token(code: str, tries=0):
     if "429" in str(e):
       if tries>3:
         return None
-      time.sleep(2)
+      time.sleep(sleepTime)
       tries=tries+1
       return get_token(code, tries)
     else:
@@ -40,7 +41,7 @@ def get_user_guilds(token: str, tries=0):
     if "429" in str(e):
       if tries>3:
         return None
-      time.sleep(2)
+      time.sleep(sleepTime)
       tries=tries+1
       return get_user_guilds(token, tries)
     else:
@@ -57,7 +58,7 @@ def get_bot_guilds(tries=0):
     if "429" in str(e):
       if tries>3:
         return None
-      time.sleep(2)
+      time.sleep(sleepTime)
       tries=tries+1
       return get_bot_guilds(tries)
     else:
@@ -92,7 +93,7 @@ def get_guild_data(guild_id: int, tries=0):
     if "429" in str(e):
       if tries>3:
         return None
-      time.sleep(2)
+      time.sleep(sleepTime)
       tries=tries+1
       return get_guild_data(guild_id, tries)
     else:
@@ -108,7 +109,7 @@ def get_channels(guild_id: int, tries=0):
     if "429" in str(e):
       if tries>3:
         return None
-      time.sleep(2)
+      time.sleep(sleepTime)
       tries=tries+1
       return get_channels(guild_id, tries)
     else:
@@ -123,7 +124,7 @@ def get_user_data(token: str, tries=0):
     if "429" in str(e):
       if tries>3:
         return None
-      time.sleep(2)
+      time.sleep(sleepTime)
       tries=tries+1
       return get_user_data(token, tries)
     else:
