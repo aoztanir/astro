@@ -356,8 +356,8 @@ class Player(wavelink.Player):
 
     async def play(self, track):
       if  isinstance(track, spotTrack):
-        
-        spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title)
+
+        spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title, retry_on_failure=True)
        
         trackToQueue = Track(spotifyTrack[0].id, spotifyTrack[0].info, requester=track.requester)
         # if self.loopSong==True:
@@ -993,7 +993,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if not URL_REG.match(query):
             query = f'ytsearch:{query}'
         if "open.spotify.com/track" not in query:
-          tracks = await self.bot.wavelink.get_tracks(query)
+          tracks = await self.bot.wavelink.get_tracks(query, retry_on_failure=True)
         else:
           track=None
        
@@ -1007,7 +1007,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 embed=discord.Embed(description=f'**Invalid Song URL**', color = discord.Color.red())
                 return await ctx.send(embed=embed, delete_after=10)
               # print(song.keys())
-              trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+song["name"]+" - "+song["artists"][0]["name"]))
+              trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+song["name"]+" - "+song["artists"][0]["name"]), retry_on_failure=True)
               trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
               await player.queue.put(trackToQueue)
               try:
@@ -1040,7 +1040,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 print(query)
                 playlist=spotify.playlist(query)
                 print(playlist["tracks"].keys())
-                trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+playlist['tracks']["items"][0]["track"]["name"]+" - "+playlist['tracks']["items"][0]["track"]["artists"][0]["name"]))
+                trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+playlist['tracks']["items"][0]["track"]["name"]+" - "+playlist['tracks']["items"][0]["track"]["artists"][0]["name"]), retry_on_failure=True)
                 trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
                 await player.queue.put(trackToQueue)
                 embed=discord.Embed(description=f'**Queued `{playlist["tracks"]["total"]}` Tracks From `{playlist["name"]}`**', color = discord.Color.green())
