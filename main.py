@@ -2,6 +2,9 @@
 #######pip install -r pyproject.toml
 
 
+###########INFO/NOTES
+#ONLY INSTALL DNSPYTHON==2.1.0
+
 
 import discord
 import datetime 
@@ -115,7 +118,8 @@ astroDB.insert_one({})
 
 def get_prefix(client, message):
   try:
-    prefixes = db["prefixes"]
+    return '.'
+    # prefixes = db["prefixes"]
     # with open('prefixes.json', 'r') as f: ##we open and read the prefixes.json, assuming it's in the same file
     #   prefixes = json.load(f) #load the json as prefixes
     try:
@@ -7076,10 +7080,16 @@ async def eightball(ctx, *, question):
 # Lava = Thread(target=os.system("java -jar Lavalink.jar"))
 # Lava.start()
 import subprocess
-client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
-#astro(aryah extension)
-# client.run('ODA5NjA5ODYxNDU2NzIzOTg4.YCXl8A.FlNO0N79eN0dbsiKlWPnDQTMV2s')
 
 
 #DEV BOT
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+
+
+
+#ASTRO REGULAR
+client.run('ODA5NjA5ODYxNDU2NzIzOTg4.YCXl8A.FlNO0N79eN0dbsiKlWPnDQTMV2s')
+
+
+
 
