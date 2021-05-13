@@ -14938,3 +14938,1396 @@ Caused by: java.lang.NullPointerException: null
 2021-05-11 19:31:54.838  INFO 19610 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 17 ms
 2021-05-11 19:31:54.876  INFO 19610 --- [XNIO-1 task-1] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /127.0.0.1:46380
 2021-05-11 19:31:55.017  INFO 19610 --- [XNIO-1 task-1] lavalink.server.io.SocketServer          : Connection successfully established from /127.0.0.1:46380
+2021-05-12 18:09:31.206  WARN 4182 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:09:31.260 ERROR 4182 --- [main] lavalink.server.Launcher                 : Application failed
+
+java.lang.UnsupportedClassVersionError: lavalink/server/info/AppInfo has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+	at java.lang.ClassLoader.defineClass1(Native Method) ~[na:1.8.0_281]
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:756) ~[na:1.8.0_281]
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142) ~[na:1.8.0_281]
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:468) ~[na:1.8.0_281]
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74) ~[na:1.8.0_281]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369) ~[na:1.8.0_281]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363) ~[na:1.8.0_281]
+	at java.security.AccessController.doPrivileged(Native Method) ~[na:1.8.0_281]
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362) ~[na:1.8.0_281]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[na:1.8.0_281]
+	at org.springframework.boot.loader.LaunchedURLClassLoader.loadClass(LaunchedURLClassLoader.java:93) ~[Lavalink.jar:na]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[na:1.8.0_281]
+	at lavalink.server.Launcher.getVersionInfo(Launcher.kt:50) [classes!/:na]
+	at lavalink.server.Launcher.getVersionInfo$default(Launcher.kt:49) [classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:118) ~[classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:43) ~[classes!/:na]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:172) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:165) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:139) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:127) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:76) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:53) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:342) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:305) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at lavalink.server.Launcher.main(Launcher.kt:127) [classes!/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_281]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_281]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_281]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_281]
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:48) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:87) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:51) [Lavalink.jar:na]
+	at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:52) [Lavalink.jar:na]
+
+2021-05-12 18:09:31.263 ERROR 4182 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+java.lang.UnsupportedClassVersionError: lavalink/server/info/AppInfo has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+	at java.lang.ClassLoader.defineClass1(Native Method) ~[na:1.8.0_281]
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:756) ~[na:1.8.0_281]
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142) ~[na:1.8.0_281]
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:468) ~[na:1.8.0_281]
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74) ~[na:1.8.0_281]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369) ~[na:1.8.0_281]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363) ~[na:1.8.0_281]
+	at java.security.AccessController.doPrivileged(Native Method) ~[na:1.8.0_281]
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362) ~[na:1.8.0_281]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[na:1.8.0_281]
+	at org.springframework.boot.loader.LaunchedURLClassLoader.loadClass(LaunchedURLClassLoader.java:93) ~[Lavalink.jar:na]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[na:1.8.0_281]
+	at lavalink.server.Launcher.getVersionInfo(Launcher.kt:50) [classes!/:na]
+	at lavalink.server.Launcher.getVersionInfo$default(Launcher.kt:49) [classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:118) ~[classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:43) ~[classes!/:na]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:172) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:165) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:139) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:127) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:76) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:53) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:342) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:305) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at lavalink.server.Launcher.main(Launcher.kt:127) [classes!/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_281]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_281]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_281]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_281]
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:48) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:87) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:51) [Lavalink.jar:na]
+	at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:52) [Lavalink.jar:na]
+
+2021-05-12 18:10:50.619  WARN 4345 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:10:50.676 ERROR 4345 --- [main] lavalink.server.Launcher                 : Application failed
+
+java.lang.UnsupportedClassVersionError: lavalink/server/info/AppInfo has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+	at java.lang.ClassLoader.defineClass1(Native Method) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:756) ~[na:1.8.0_291]
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:468) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363) ~[na:1.8.0_291]
+	at java.security.AccessController.doPrivileged(Native Method) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.LaunchedURLClassLoader.loadClass(LaunchedURLClassLoader.java:93) ~[Lavalink.jar:na]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[na:1.8.0_291]
+	at lavalink.server.Launcher.getVersionInfo(Launcher.kt:50) [classes!/:na]
+	at lavalink.server.Launcher.getVersionInfo$default(Launcher.kt:49) [classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:118) ~[classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:43) ~[classes!/:na]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:172) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:165) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:139) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:127) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:76) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:53) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:342) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:305) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at lavalink.server.Launcher.main(Launcher.kt:127) [classes!/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_291]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_291]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_291]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:48) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:87) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:51) [Lavalink.jar:na]
+	at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:52) [Lavalink.jar:na]
+
+2021-05-12 18:10:50.678 ERROR 4345 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+java.lang.UnsupportedClassVersionError: lavalink/server/info/AppInfo has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+	at java.lang.ClassLoader.defineClass1(Native Method) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:756) ~[na:1.8.0_291]
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:468) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363) ~[na:1.8.0_291]
+	at java.security.AccessController.doPrivileged(Native Method) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.LaunchedURLClassLoader.loadClass(LaunchedURLClassLoader.java:93) ~[Lavalink.jar:na]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[na:1.8.0_291]
+	at lavalink.server.Launcher.getVersionInfo(Launcher.kt:50) [classes!/:na]
+	at lavalink.server.Launcher.getVersionInfo$default(Launcher.kt:49) [classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:118) ~[classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:43) ~[classes!/:na]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:172) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:165) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:139) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:127) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:76) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:53) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:342) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:305) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at lavalink.server.Launcher.main(Launcher.kt:127) [classes!/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_291]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_291]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_291]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:48) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:87) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:51) [Lavalink.jar:na]
+	at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:52) [Lavalink.jar:na]
+
+2021-05-12 18:11:13.728  WARN 4409 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:11:13.792 ERROR 4409 --- [main] lavalink.server.Launcher                 : Application failed
+
+java.lang.UnsupportedClassVersionError: lavalink/server/info/AppInfo has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+	at java.lang.ClassLoader.defineClass1(Native Method) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:756) ~[na:1.8.0_291]
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:468) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363) ~[na:1.8.0_291]
+	at java.security.AccessController.doPrivileged(Native Method) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.LaunchedURLClassLoader.loadClass(LaunchedURLClassLoader.java:93) ~[Lavalink.jar:na]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[na:1.8.0_291]
+	at lavalink.server.Launcher.getVersionInfo(Launcher.kt:50) [classes!/:na]
+	at lavalink.server.Launcher.getVersionInfo$default(Launcher.kt:49) [classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:118) ~[classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:43) ~[classes!/:na]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:172) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:165) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:139) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:127) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:76) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:53) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:342) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:305) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at lavalink.server.Launcher.main(Launcher.kt:127) [classes!/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_291]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_291]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_291]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:48) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:87) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:51) [Lavalink.jar:na]
+	at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:52) [Lavalink.jar:na]
+
+2021-05-12 18:11:13.800 ERROR 4409 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+java.lang.UnsupportedClassVersionError: lavalink/server/info/AppInfo has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+	at java.lang.ClassLoader.defineClass1(Native Method) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:756) ~[na:1.8.0_291]
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:468) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363) ~[na:1.8.0_291]
+	at java.security.AccessController.doPrivileged(Native Method) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.LaunchedURLClassLoader.loadClass(LaunchedURLClassLoader.java:93) ~[Lavalink.jar:na]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[na:1.8.0_291]
+	at lavalink.server.Launcher.getVersionInfo(Launcher.kt:50) [classes!/:na]
+	at lavalink.server.Launcher.getVersionInfo$default(Launcher.kt:49) [classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:118) ~[classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:43) ~[classes!/:na]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:172) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:165) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:139) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:127) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:76) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:53) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:342) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:305) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at lavalink.server.Launcher.main(Launcher.kt:127) [classes!/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_291]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_291]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_291]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:48) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:87) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:51) [Lavalink.jar:na]
+	at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:52) [Lavalink.jar:na]
+
+2021-05-12 18:21:12.450  WARN 4538 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:21:12.483 ERROR 4538 --- [main] lavalink.server.Launcher                 : Application failed
+
+java.lang.UnsupportedClassVersionError: lavalink/server/info/AppInfo has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+	at java.lang.ClassLoader.defineClass1(Native Method) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:756) ~[na:1.8.0_291]
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:468) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363) ~[na:1.8.0_291]
+	at java.security.AccessController.doPrivileged(Native Method) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.LaunchedURLClassLoader.loadClass(LaunchedURLClassLoader.java:93) ~[Lavalink.jar:na]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[na:1.8.0_291]
+	at lavalink.server.Launcher.getVersionInfo(Launcher.kt:50) [classes!/:na]
+	at lavalink.server.Launcher.getVersionInfo$default(Launcher.kt:49) [classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:118) ~[classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:43) ~[classes!/:na]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:172) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:165) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:139) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:127) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:76) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:53) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:342) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:305) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at lavalink.server.Launcher.main(Launcher.kt:127) [classes!/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_291]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_291]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_291]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:48) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:87) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:51) [Lavalink.jar:na]
+	at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:52) [Lavalink.jar:na]
+
+2021-05-12 18:21:12.489 ERROR 4538 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+java.lang.UnsupportedClassVersionError: lavalink/server/info/AppInfo has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+	at java.lang.ClassLoader.defineClass1(Native Method) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:756) ~[na:1.8.0_291]
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:468) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363) ~[na:1.8.0_291]
+	at java.security.AccessController.doPrivileged(Native Method) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.LaunchedURLClassLoader.loadClass(LaunchedURLClassLoader.java:93) ~[Lavalink.jar:na]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[na:1.8.0_291]
+	at lavalink.server.Launcher.getVersionInfo(Launcher.kt:50) [classes!/:na]
+	at lavalink.server.Launcher.getVersionInfo$default(Launcher.kt:49) [classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:118) ~[classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:43) ~[classes!/:na]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:172) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:165) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:139) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:127) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:76) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:53) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:342) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:305) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at lavalink.server.Launcher.main(Launcher.kt:127) [classes!/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_291]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_291]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_291]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:48) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:87) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:51) [Lavalink.jar:na]
+	at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:52) [Lavalink.jar:na]
+
+2021-05-12 18:23:14.231  WARN 4556 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:23:14.273 ERROR 4556 --- [main] lavalink.server.Launcher                 : Application failed
+
+java.lang.UnsupportedClassVersionError: lavalink/server/info/AppInfo has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+	at java.lang.ClassLoader.defineClass1(Native Method) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:756) ~[na:1.8.0_291]
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:468) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363) ~[na:1.8.0_291]
+	at java.security.AccessController.doPrivileged(Native Method) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.LaunchedURLClassLoader.loadClass(LaunchedURLClassLoader.java:93) ~[Lavalink.jar:na]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[na:1.8.0_291]
+	at lavalink.server.Launcher.getVersionInfo(Launcher.kt:50) [classes!/:na]
+	at lavalink.server.Launcher.getVersionInfo$default(Launcher.kt:49) [classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:118) ~[classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:43) ~[classes!/:na]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:172) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:165) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:139) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:127) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:76) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:53) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:342) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:305) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at lavalink.server.Launcher.main(Launcher.kt:127) [classes!/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_291]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_291]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_291]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:48) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:87) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:51) [Lavalink.jar:na]
+	at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:52) [Lavalink.jar:na]
+
+2021-05-12 18:23:14.278 ERROR 4556 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+java.lang.UnsupportedClassVersionError: lavalink/server/info/AppInfo has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+	at java.lang.ClassLoader.defineClass1(Native Method) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:756) ~[na:1.8.0_291]
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:468) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:74) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:369) ~[na:1.8.0_291]
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:363) ~[na:1.8.0_291]
+	at java.security.AccessController.doPrivileged(Native Method) ~[na:1.8.0_291]
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:362) ~[na:1.8.0_291]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.LaunchedURLClassLoader.loadClass(LaunchedURLClassLoader.java:93) ~[Lavalink.jar:na]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[na:1.8.0_291]
+	at lavalink.server.Launcher.getVersionInfo(Launcher.kt:50) [classes!/:na]
+	at lavalink.server.Launcher.getVersionInfo$default(Launcher.kt:49) [classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:118) ~[classes!/:na]
+	at lavalink.server.Launcher$main$1.onApplicationEvent(Launcher.kt:43) ~[classes!/:na]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:172) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:165) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:139) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:127) ~[spring-context-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.boot.context.event.EventPublishingRunListener.environmentPrepared(EventPublishingRunListener.java:76) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplicationRunListeners.environmentPrepared(SpringApplicationRunListeners.java:53) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.prepareEnvironment(SpringApplication.java:342) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:305) ~[spring-boot-2.1.8.RELEASE.jar!/:2.1.8.RELEASE]
+	at lavalink.server.Launcher.main(Launcher.kt:127) [classes!/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_291]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_291]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_291]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_291]
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:48) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:87) [Lavalink.jar:na]
+	at org.springframework.boot.loader.Launcher.launch(Launcher.java:51) [Lavalink.jar:na]
+	at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:52) [Lavalink.jar:na]
+
+2021-05-12 18:27:33.050  INFO 4704 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 18:27:33.234  INFO 4704 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 4704 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 18:27:33.236  INFO 4704 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 18:27:33.386  WARN 4704 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:27:35.201  WARN 4704 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 18:27:35.269  INFO 4704 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 18:27:35.270  INFO 4704 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1917 ms
+2021-05-12 18:27:35.902  WARN 4704 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 18:27:36.424  INFO 4704 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 18:27:36.738  INFO 4704 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 18:27:36.738  WARN 4704 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 18:27:37.128  INFO 4704 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:27:37.612  INFO 4704 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 18:27:37.639  INFO 4704 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 18:27:37.769  INFO 4704 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 18:27:37.774  INFO 4704 --- [main] lavalink.server.Launcher                 : Started Launcher in 5.743 seconds (JVM running for 6.546)
+2021-05-12 18:27:37.780  INFO 4704 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 18:27:39.469  INFO 4704 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:27:39.470  INFO 4704 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 18:43:58.360  INFO 5075 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 18:43:58.529  INFO 5075 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5075 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 18:43:58.531  INFO 5075 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 18:43:58.579  WARN 5075 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:44:00.074  WARN 5075 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 18:44:00.118  INFO 5075 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 18:44:00.118  INFO 5075 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1494 ms
+2021-05-12 18:44:01.381  WARN 5075 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 18:44:02.105  INFO 5075 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 18:44:02.401  INFO 5075 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 18:44:02.402  WARN 5075 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 18:44:02.704  INFO 5075 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:44:03.060  INFO 5075 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 18:44:03.079  INFO 5075 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 18:44:03.189  INFO 5075 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 18:44:03.194  INFO 5075 --- [main] lavalink.server.Launcher                 : Started Launcher in 5.649 seconds (JVM running for 6.461)
+2021-05-12 18:44:03.198  INFO 5075 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 18:44:16.958  INFO 5075 --- [XNIO-1 task-1] io.undertow.servlet                      : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-05-12 18:44:16.961  INFO 5075 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2021-05-12 18:44:16.973  INFO 5075 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 11 ms
+2021-05-12 18:44:17.022  INFO 5075 --- [XNIO-1 task-1] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /127.0.0.1:50700
+2021-05-12 18:44:17.196  INFO 5075 --- [XNIO-1 task-1] lavalink.server.io.SocketServer          : Connection successfully established from /127.0.0.1:50700
+2021-05-12 18:44:17.402  WARN 5075 --- [pool-1-thread-1] oshi.software.os.mac.MacOSVersionInfoEx  : Unable to parse version 11.2 to a codename.
+2021-05-12 18:44:17.419 ERROR 5075 --- [pool-1-thread-1] oshi.software.os.mac.MacOperatingSystem  : Failed syctl call: kern.procargs2, Error code: 22
+2021-05-12 18:45:07.542  INFO 5075 --- [XNIO-1 task-2] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:my jam"
+2021-05-12 18:45:07.670  INFO 5075 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "809318345463562240", "sessionId": "f89fcaa223c1d15b2c81a441e719faca", "event": {"token": "817899e1f073ab80", "guild_id": "809318345463562240", "endpoint": "us-west9946.discord.media:443"}}
+2021-05-12 18:45:09.109  INFO 5075 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: my jam
+2021-05-12 18:45:09.346  INFO 5075 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "809318345463562240", "track": "QAAAlAIAKUtvbyBLb28gS2FuZ2EgUm9vIC0gTXkgSmFtIChEYW5jZS1BLUxvbmcpABFLb28gS29vIEthbmdhIFJvbwAAAAAAAoxYAAtHZzRrOVZGblBFMAABACtodHRwczovL3d3dy55b3V0dWJlLmNvbS93YXRjaD92PUdnNGs5VkZuUEUwAAd5b3V0dWJlAAAAAAAAAAA=", "noReplace": false, "startTime": "0"}
+2021-05-12 18:45:17.204 ERROR 5075 --- [pool-1-thread-1] oshi.software.os.mac.MacOperatingSystem  : Failed syctl call: kern.procargs2, Error code: 22
+2021-05-12 18:45:36.509  INFO 5075 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:45:36.511  INFO 5075 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 18:45:36.525  WARN 5075 --- [lava-daemon-pool-playback-1-thread-1] c.s.d.l.t.p.LocalAudioTrackExecutor      : Suspicious exception for playback of Gg4k9VFnPE0
+
+com.sedmelluq.discord.lavaplayer.tools.FriendlyException: The track was unexpectedly terminated.
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.handlePlaybackInterrupt(LocalAudioTrackExecutor.java:347) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.executeProcessingLoop(LocalAudioTrackExecutor.java:291) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.executeProcessingLoop(LocalAudioTrackExecutor.java:249) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaAudioTrack.process(MatroskaAudioTrack.java:38) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack.processDelegate(DelegatedAudioTrack.java:25) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack.processStatic(YoutubeAudioTrack.java:57) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack.process(YoutubeAudioTrack.java:49) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.execute(LocalAudioTrackExecutor.java:104) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.lambda$executeTrack$1(DefaultAudioPlayerManager.java:348) ~[lavaplayer-1.3.76.jar!/:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:831) ~[na:na]
+	Suppressed: com.sedmelluq.discord.lavaplayer.tools.exception.EnvironmentInformation: 
+  lavaplayer.version: 1.3.76
+  os.arch: x86_64
+  os.name: Mac OS X
+  os.version: 11.2
+  java.vendor: Oracle Corporation
+  java.version: 16.0.1
+  java.runtime.version: 16.0.1+9-24
+  java.vm.version: 16.0.1+9-24
+Caused by: java.lang.InterruptedException: null
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1627) ~[na:na]
+	at java.base/java.util.concurrent.ArrayBlockingQueue.put(ArrayBlockingQueue.java:370) ~[na:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.AllocatingAudioFrameBuffer.consume(AllocatingAudioFrameBuffer.java:178) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.common.OpusPacketRouter.passThrough(OpusPacketRouter.java:168) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.common.OpusPacketRouter.process(OpusPacketRouter.java:98) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaOpusTrackConsumer.consume(MatroskaOpusTrackConsumer.java:46) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.processFrameInBlock(MatroskaStreamingFile.java:371) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.parseClusterSimpleBlock(MatroskaStreamingFile.java:335) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.parseNextCluster(MatroskaStreamingFile.java:320) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.provideFrames(MatroskaStreamingFile.java:296) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaAudioTrack.lambda$process$0(MatroskaAudioTrack.java:39) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.executeProcessingLoop(LocalAudioTrackExecutor.java:275) ~[lavaplayer-1.3.76.jar!/:na]
+	... 10 common frames omitted
+
+2021-05-12 18:45:36.548  INFO 5075 --- [Thread-1] io.undertow.servlet                      : Destroying Spring FrameworkServlet 'dispatcherServlet'
+2021-05-12 18:45:36.555 ERROR 5075 --- [XNIO-1 I/O-4] org.xnio.listener                        : XNIO001007: A channel event listener threw an exception
+
+java.util.concurrent.RejectedExecutionException: XNIO007007: Thread is terminating
+	at org.xnio.nio.WorkerThread.execute(WorkerThread.java:590) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.websockets.jsr.UndertowSession$3.handleEvent(UndertowSession.java:396) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.UndertowSession$3.handleEvent(UndertowSession.java:388) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameCloseListener.handleEvent(AbstractFramedChannel.java:1063) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameCloseListener.handleEvent(AbstractFramedChannel.java:978) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.WriteReadyHandler$ChannelListenerHandler.terminated(WriteReadyHandler.java:70) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.writeTerminated(NioSocketConduit.java:234) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.terminateWrites(NioSocketConduit.java:223) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.truncateWrites(NioSocketConduit.java:228) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.conduits.IdleTimeoutConduit.truncateWrites(IdleTimeoutConduit.java:387) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.conduits.ConduitStreamSinkChannel.close(ConduitStreamSinkChannel.java:186) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.IoUtils.safeClose(IoUtils.java:134) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.WriteReadyHandler$ChannelListenerHandler.forceTermination(WriteReadyHandler.java:57) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.forceTermination(NioSocketConduit.java:107) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.WorkerThread.run(WorkerThread.java:494) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+
+2021-05-12 18:46:58.255  INFO 5176 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 18:46:58.431  INFO 5176 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5176 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 18:46:58.431  INFO 5176 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 18:46:58.601  WARN 5176 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:47:00.202  WARN 5176 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 18:47:00.481  INFO 5176 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 18:47:00.483  INFO 5176 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1980 ms
+2021-05-12 18:47:00.984  WARN 5176 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 18:47:01.759  INFO 5176 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 18:47:02.295  INFO 5176 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 18:47:02.296  WARN 5176 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 18:47:03.084  INFO 5176 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:47:03.433  INFO 5176 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 18:47:03.448  INFO 5176 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 18:47:03.559  INFO 5176 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 18:47:03.566  INFO 5176 --- [main] lavalink.server.Launcher                 : Started Launcher in 6.32 seconds (JVM running for 7.328)
+2021-05-12 18:47:03.577  INFO 5176 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 18:47:51.084  INFO 5176 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:47:51.087  INFO 5176 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 18:48:05.312  INFO 5212 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 18:48:05.614  INFO 5212 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5212 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 18:48:05.615  INFO 5212 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 18:48:05.998  WARN 5212 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:48:07.881  WARN 5212 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 18:48:07.944  INFO 5212 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 18:48:07.945  INFO 5212 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 2168 ms
+2021-05-12 18:48:08.536  WARN 5212 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 18:48:09.021  INFO 5212 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 18:48:09.345  INFO 5212 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 18:48:09.345  WARN 5212 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 18:48:09.654  INFO 5212 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:48:10.006  INFO 5212 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 18:48:10.034  INFO 5212 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 18:48:10.132  INFO 5212 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 18:48:10.136  INFO 5212 --- [main] lavalink.server.Launcher                 : Started Launcher in 5.724 seconds (JVM running for 6.399)
+2021-05-12 18:48:10.142  INFO 5212 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 18:49:03.934  INFO 5212 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:49:03.938  INFO 5212 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 18:49:33.874  INFO 5285 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 18:49:34.077  INFO 5285 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5285 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 18:49:34.079  INFO 5285 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 18:49:34.209  WARN 5285 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:49:35.787  WARN 5285 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 18:49:35.842  INFO 5285 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 18:49:35.843  INFO 5285 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1669 ms
+2021-05-12 18:49:36.300  WARN 5285 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 18:49:36.678  INFO 5285 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 18:49:36.939  INFO 5285 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 18:49:36.940  WARN 5285 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 18:49:37.274  INFO 5285 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:49:37.641  INFO 5285 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 18:49:37.682  INFO 5285 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 18:49:37.764  INFO 5285 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 18:49:37.768  INFO 5285 --- [main] lavalink.server.Launcher                 : Started Launcher in 4.739 seconds (JVM running for 6.667)
+2021-05-12 18:49:37.771  INFO 5285 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 18:50:15.563  INFO 5285 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:50:15.566  INFO 5285 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 18:50:31.056  INFO 5307 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 18:50:31.265  INFO 5307 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5307 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 18:50:31.266  INFO 5307 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 18:50:31.426  WARN 5307 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:50:32.953  WARN 5307 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 18:50:33.016  INFO 5307 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 18:50:33.017  INFO 5307 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1649 ms
+2021-05-12 18:50:33.487  WARN 5307 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 18:50:33.854  INFO 5307 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 18:50:34.078  INFO 5307 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 18:50:34.078  WARN 5307 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 18:50:34.383  INFO 5307 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:50:34.737  INFO 5307 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 18:50:34.755  INFO 5307 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 18:50:34.836  INFO 5307 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 18:50:34.841  INFO 5307 --- [main] lavalink.server.Launcher                 : Started Launcher in 4.588 seconds (JVM running for 5.252)
+2021-05-12 18:50:34.855  INFO 5307 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 18:51:33.536  INFO 5307 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:51:33.540  INFO 5307 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 18:51:41.851  INFO 5330 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 18:51:42.011  INFO 5330 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5330 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 18:51:42.012  INFO 5330 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 18:51:42.167  WARN 5330 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:51:44.136  WARN 5330 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 18:51:44.216  INFO 5330 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 18:51:44.216  INFO 5330 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 2075 ms
+2021-05-12 18:51:44.811  WARN 5330 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 18:51:45.348  INFO 5330 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 18:51:45.625  INFO 5330 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 18:51:45.626  WARN 5330 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 18:51:46.042  INFO 5330 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:51:46.503  INFO 5330 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 18:51:46.530  INFO 5330 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 18:51:46.653  INFO 5330 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 18:51:46.660  INFO 5330 --- [main] lavalink.server.Launcher                 : Started Launcher in 5.708 seconds (JVM running for 6.422)
+2021-05-12 18:51:46.670  INFO 5330 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 18:54:49.135  INFO 5330 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:54:49.138  INFO 5330 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 18:55:11.094  INFO 5367 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 18:55:11.309  INFO 5367 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5367 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 18:55:11.310  INFO 5367 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 18:55:11.414  WARN 5367 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:55:13.004  WARN 5367 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 18:55:13.051  INFO 5367 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 18:55:13.052  INFO 5367 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1645 ms
+2021-05-12 18:55:13.521  WARN 5367 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 18:55:13.882  INFO 5367 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 18:55:14.122  INFO 5367 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 18:55:14.123  WARN 5367 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 18:55:14.419  INFO 5367 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:55:14.752  INFO 5367 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 18:55:14.786  INFO 5367 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 18:55:14.874  INFO 5367 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 18:55:14.879  INFO 5367 --- [main] lavalink.server.Launcher                 : Started Launcher in 4.646 seconds (JVM running for 5.318)
+2021-05-12 18:55:14.881  INFO 5367 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 18:55:47.647  INFO 5367 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:55:47.649  INFO 5367 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 18:55:50.125  INFO 5381 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 18:55:50.502  INFO 5381 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5381 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 18:55:50.503  INFO 5381 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 18:55:50.772  WARN 5381 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:55:52.489  WARN 5381 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 18:55:52.582  INFO 5381 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 18:55:52.583  INFO 5381 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1926 ms
+2021-05-12 18:55:53.681  WARN 5381 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 18:55:54.275  INFO 5381 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 18:55:54.521  INFO 5381 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 18:55:54.521  WARN 5381 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 18:55:54.825  INFO 5381 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:55:55.192  INFO 5381 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 18:55:55.207  INFO 5381 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 18:55:55.284  INFO 5381 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 18:55:55.289  INFO 5381 --- [main] lavalink.server.Launcher                 : Started Launcher in 5.987 seconds (JVM running for 6.69)
+2021-05-12 18:55:55.292  INFO 5381 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 18:56:30.991  INFO 5381 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:56:30.995  INFO 5381 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 18:56:46.425  INFO 5426 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 18:56:46.622  INFO 5426 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5426 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 18:56:46.622  INFO 5426 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 18:56:46.802  WARN 5426 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 18:56:48.472  WARN 5426 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 18:56:48.527  INFO 5426 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 18:56:48.529  INFO 5426 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1807 ms
+2021-05-12 18:56:49.007  WARN 5426 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 18:56:49.359  INFO 5426 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 18:56:49.575  INFO 5426 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 18:56:49.576  WARN 5426 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 18:56:49.871  INFO 5426 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:56:50.193  INFO 5426 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 18:56:50.208  INFO 5426 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 18:56:50.284  INFO 5426 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 18:56:50.290  INFO 5426 --- [main] lavalink.server.Launcher                 : Started Launcher in 4.656 seconds (JVM running for 5.311)
+2021-05-12 18:56:50.293  INFO 5426 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 18:57:05.027  INFO 5426 --- [XNIO-1 task-1] io.undertow.servlet                      : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-05-12 18:57:05.028  INFO 5426 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2021-05-12 18:57:05.038  INFO 5426 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 10 ms
+2021-05-12 18:57:05.094  INFO 5426 --- [XNIO-1 task-1] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /127.0.0.1:50929
+2021-05-12 18:57:05.255  INFO 5426 --- [XNIO-1 task-1] lavalink.server.io.SocketServer          : Connection successfully established from /127.0.0.1:50929
+2021-05-12 18:57:05.488  WARN 5426 --- [pool-1-thread-1] oshi.software.os.mac.MacOSVersionInfoEx  : Unable to parse version 11.2 to a codename.
+2021-05-12 18:57:05.505 ERROR 5426 --- [pool-1-thread-1] oshi.software.os.mac.MacOperatingSystem  : Failed syctl call: kern.procargs2, Error code: 22
+2021-05-12 18:57:18.282  INFO 5426 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "809318345463562240", "sessionId": "b8762e0c600122cd9144862f7d7ea876", "event": {"token": "e79b55a7a416580e", "guild_id": "809318345463562240", "endpoint": "us-west9946.discord.media:443"}}
+2021-05-12 18:59:44.601  INFO 5426 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 18:59:44.604  INFO 5426 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 18:59:44.610  INFO 5426 --- [Thread-1] io.undertow.servlet                      : Destroying Spring FrameworkServlet 'dispatcherServlet'
+2021-05-12 18:59:44.619 ERROR 5426 --- [XNIO-1 I/O-1] org.xnio.listener                        : XNIO001007: A channel event listener threw an exception
+
+java.util.concurrent.RejectedExecutionException: XNIO007007: Thread is terminating
+	at org.xnio.nio.WorkerThread.execute(WorkerThread.java:590) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.websockets.jsr.UndertowSession$3.handleEvent(UndertowSession.java:396) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.UndertowSession$3.handleEvent(UndertowSession.java:388) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameCloseListener.handleEvent(AbstractFramedChannel.java:1063) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameCloseListener.handleEvent(AbstractFramedChannel.java:978) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.WriteReadyHandler$ChannelListenerHandler.terminated(WriteReadyHandler.java:70) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.writeTerminated(NioSocketConduit.java:234) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.terminateWrites(NioSocketConduit.java:223) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.truncateWrites(NioSocketConduit.java:228) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.conduits.IdleTimeoutConduit.truncateWrites(IdleTimeoutConduit.java:387) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.conduits.ConduitStreamSinkChannel.close(ConduitStreamSinkChannel.java:186) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.IoUtils.safeClose(IoUtils.java:134) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.WriteReadyHandler$ChannelListenerHandler.forceTermination(WriteReadyHandler.java:57) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.forceTermination(NioSocketConduit.java:107) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.WorkerThread.run(WorkerThread.java:494) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+
+2021-05-12 19:00:01.406  INFO 5483 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 19:00:01.601  INFO 5483 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5483 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 19:00:01.603  INFO 5483 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 19:00:01.764  WARN 5483 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 19:00:03.500  WARN 5483 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 19:00:03.556  INFO 5483 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 19:00:03.558  INFO 5483 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1858 ms
+2021-05-12 19:00:04.212  WARN 5483 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 19:00:05.022  INFO 5483 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 19:00:05.742  INFO 5483 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 19:00:05.747  WARN 5483 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 19:00:06.457  INFO 5483 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 19:00:07.588  INFO 5483 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 19:00:07.607  INFO 5483 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 19:00:07.757  INFO 5483 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 19:00:07.775  INFO 5483 --- [main] lavalink.server.Launcher                 : Started Launcher in 7.453 seconds (JVM running for 8.462)
+2021-05-12 19:00:07.788  INFO 5483 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 19:00:19.369  INFO 5483 --- [XNIO-1 task-1] io.undertow.servlet                      : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-05-12 19:00:19.370  INFO 5483 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2021-05-12 19:00:19.382  INFO 5483 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 12 ms
+2021-05-12 19:00:19.419  INFO 5483 --- [XNIO-1 task-1] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /127.0.0.1:50968
+2021-05-12 19:00:19.542  INFO 5483 --- [XNIO-1 task-1] lavalink.server.io.SocketServer          : Connection successfully established from /127.0.0.1:50968
+2021-05-12 19:00:19.773  WARN 5483 --- [pool-1-thread-1] oshi.software.os.mac.MacOSVersionInfoEx  : Unable to parse version 11.2 to a codename.
+2021-05-12 19:00:19.786 ERROR 5483 --- [pool-1-thread-1] oshi.software.os.mac.MacOperatingSystem  : Failed syctl call: kern.procargs2, Error code: 22
+2021-05-12 19:00:26.289  INFO 5483 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "809318345463562240", "sessionId": "e0c7a3a623b89a86e99696448568fa8a", "event": {"token": "6b780d6951f3a3e2", "guild_id": "809318345463562240", "endpoint": "us-west9946.discord.media:443"}}
+2021-05-12 19:01:11.627  INFO 5483 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 19:01:11.630  INFO 5483 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 19:01:11.636  INFO 5483 --- [Thread-1] io.undertow.servlet                      : Destroying Spring FrameworkServlet 'dispatcherServlet'
+2021-05-12 19:01:11.643 ERROR 5483 --- [XNIO-1 I/O-4] org.xnio.listener                        : XNIO001007: A channel event listener threw an exception
+
+java.util.concurrent.RejectedExecutionException: XNIO007007: Thread is terminating
+	at org.xnio.nio.WorkerThread.execute(WorkerThread.java:590) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.websockets.jsr.UndertowSession$3.handleEvent(UndertowSession.java:396) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.UndertowSession$3.handleEvent(UndertowSession.java:388) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameCloseListener.handleEvent(AbstractFramedChannel.java:1063) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameCloseListener.handleEvent(AbstractFramedChannel.java:978) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.WriteReadyHandler$ChannelListenerHandler.terminated(WriteReadyHandler.java:70) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.writeTerminated(NioSocketConduit.java:234) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.terminateWrites(NioSocketConduit.java:223) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.truncateWrites(NioSocketConduit.java:228) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.conduits.IdleTimeoutConduit.truncateWrites(IdleTimeoutConduit.java:387) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.conduits.ConduitStreamSinkChannel.close(ConduitStreamSinkChannel.java:186) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.IoUtils.safeClose(IoUtils.java:134) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.WriteReadyHandler$ChannelListenerHandler.forceTermination(WriteReadyHandler.java:57) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.forceTermination(NioSocketConduit.java:107) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.WorkerThread.run(WorkerThread.java:494) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+
+2021-05-12 19:01:29.259  INFO 5524 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 19:01:29.448  INFO 5524 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5524 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 19:01:29.449  INFO 5524 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 19:01:29.595  WARN 5524 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 19:01:31.644  WARN 5524 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 19:01:31.724  INFO 5524 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 19:01:31.727  INFO 5524 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 2178 ms
+2021-05-12 19:01:32.575  WARN 5524 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 19:01:33.423  INFO 5524 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 19:01:33.861  INFO 5524 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 19:01:33.862  WARN 5524 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 19:01:34.239  INFO 5524 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 19:01:34.592  INFO 5524 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 19:01:34.606  INFO 5524 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 19:01:34.696  INFO 5524 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 19:01:34.702  INFO 5524 --- [main] lavalink.server.Launcher                 : Started Launcher in 6.608 seconds (JVM running for 7.639)
+2021-05-12 19:01:34.709  INFO 5524 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 19:01:47.097  INFO 5524 --- [XNIO-1 task-1] io.undertow.servlet                      : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-05-12 19:01:47.097  INFO 5524 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2021-05-12 19:01:47.111  INFO 5524 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 13 ms
+2021-05-12 19:01:47.168  INFO 5524 --- [XNIO-1 task-1] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /127.0.0.1:50990
+2021-05-12 19:01:47.292  INFO 5524 --- [XNIO-1 task-1] lavalink.server.io.SocketServer          : Connection successfully established from /127.0.0.1:50990
+2021-05-12 19:01:47.493  WARN 5524 --- [pool-1-thread-1] oshi.software.os.mac.MacOSVersionInfoEx  : Unable to parse version 11.2 to a codename.
+2021-05-12 19:01:47.505 ERROR 5524 --- [pool-1-thread-1] oshi.software.os.mac.MacOperatingSystem  : Failed syctl call: kern.procargs2, Error code: 22
+2021-05-12 19:02:06.865  INFO 5524 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "809318345463562240", "sessionId": "aaa4841a62e79385d0070415056dbf42", "event": {"token": "31337b4515bebe36", "guild_id": "809318345463562240", "endpoint": "us-west9946.discord.media:443"}}
+2021-05-12 19:02:45.014  INFO 5524 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 19:02:45.018  INFO 5524 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 19:02:45.025  INFO 5524 --- [Thread-1] io.undertow.servlet                      : Destroying Spring FrameworkServlet 'dispatcherServlet'
+2021-05-12 19:02:45.038 ERROR 5524 --- [XNIO-1 I/O-2] org.xnio.listener                        : XNIO001007: A channel event listener threw an exception
+
+java.util.concurrent.RejectedExecutionException: XNIO007007: Thread is terminating
+	at org.xnio.nio.WorkerThread.execute(WorkerThread.java:590) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.websockets.jsr.UndertowSession$3.handleEvent(UndertowSession.java:396) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.UndertowSession$3.handleEvent(UndertowSession.java:388) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameCloseListener.handleEvent(AbstractFramedChannel.java:1063) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameCloseListener.handleEvent(AbstractFramedChannel.java:978) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.WriteReadyHandler$ChannelListenerHandler.terminated(WriteReadyHandler.java:70) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.writeTerminated(NioSocketConduit.java:234) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.terminateWrites(NioSocketConduit.java:223) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.truncateWrites(NioSocketConduit.java:228) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.conduits.IdleTimeoutConduit.truncateWrites(IdleTimeoutConduit.java:387) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.conduits.ConduitStreamSinkChannel.close(ConduitStreamSinkChannel.java:186) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.IoUtils.safeClose(IoUtils.java:134) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.WriteReadyHandler$ChannelListenerHandler.forceTermination(WriteReadyHandler.java:57) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.forceTermination(NioSocketConduit.java:107) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.WorkerThread.run(WorkerThread.java:494) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+
+2021-05-12 19:02:59.640  INFO 5611 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 19:02:59.808  INFO 5611 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5611 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 19:02:59.810  INFO 5611 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 19:02:59.922  WARN 5611 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 19:03:01.459  WARN 5611 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 19:03:01.588  INFO 5611 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 19:03:01.593  INFO 5611 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1702 ms
+2021-05-12 19:03:02.157  WARN 5611 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 19:03:02.529  INFO 5611 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 19:03:02.762  INFO 5611 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 19:03:02.766  WARN 5611 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 19:03:03.080  INFO 5611 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 19:03:03.393  INFO 5611 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 19:03:03.407  INFO 5611 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 19:03:03.483  INFO 5611 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 19:03:03.487  INFO 5611 --- [main] lavalink.server.Launcher                 : Started Launcher in 4.653 seconds (JVM running for 5.324)
+2021-05-12 19:03:03.491  INFO 5611 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 19:03:18.265  INFO 5611 --- [XNIO-1 task-1] io.undertow.servlet                      : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-05-12 19:03:18.266  INFO 5611 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2021-05-12 19:03:18.279  INFO 5611 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 13 ms
+2021-05-12 19:03:18.323  INFO 5611 --- [XNIO-1 task-1] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /127.0.0.1:51011
+2021-05-12 19:03:18.511  INFO 5611 --- [XNIO-1 task-1] lavalink.server.io.SocketServer          : Connection successfully established from /127.0.0.1:51011
+2021-05-12 19:03:18.742  WARN 5611 --- [pool-1-thread-1] oshi.software.os.mac.MacOSVersionInfoEx  : Unable to parse version 11.2 to a codename.
+2021-05-12 19:03:18.755 ERROR 5611 --- [pool-1-thread-1] oshi.software.os.mac.MacOperatingSystem  : Failed syctl call: kern.procargs2, Error code: 22
+2021-05-12 19:03:28.713  INFO 5611 --- [XNIO-1 task-2] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:rockstar"
+2021-05-12 19:03:28.848  INFO 5611 --- [XNIO-1 I/O-3] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "809318345463562240", "sessionId": "6ed8425d559eb8fe3ab57bf22dfd78e1", "event": {"token": "cd32548313e3fe58", "guild_id": "809318345463562240", "endpoint": "us-west9946.discord.media:443"}}
+2021-05-12 19:03:29.897  INFO 5611 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: rockstar
+2021-05-12 19:03:30.185  INFO 5611 --- [XNIO-1 I/O-3] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "809318345463562240", "track": "QAAAigIAKkRhQmFieSDigJMgUk9DS1NUQVIgRlQgUk9ERFkgUklDQ0ggW0F1ZGlvXQAGRGFCYWJ5AAAAAAACxvAACzgzeEJQQ3c1aGg0AAEAK2h0dHBzOi8vd3d3LnlvdXR1YmUuY29tL3dhdGNoP3Y9ODN4QlBDdzVoaDQAB3lvdXR1YmUAAAAAAAAAAA==", "noReplace": false, "startTime": "0"}
+2021-05-12 19:04:00.409  INFO 5611 --- [XNIO-1 task-4] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:rock"
+2021-05-12 19:04:01.262  INFO 5611 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: rock
+2021-05-12 19:04:04.081  INFO 5611 --- [XNIO-1 I/O-3] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "809318345463562240"}
+2021-05-12 19:04:04.087  INFO 5611 --- [XNIO-1 I/O-3] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "809318345463562240", "track": "QAAAsgIATkNsYXNzaWMgUm9jayBHcmVhdGVzdCBIaXRzIDYwcyw3MHMsODBzIC0gVG9wIDEwMCBCZXN0IENsYXNzaWMgUm9jayBPZiBBbGwgVGltZQAKUm9jayBNdXNpYwAAAAAAWF0YAAt2MEJ1M000cjRLNAABACtodHRwczovL3d3dy55b3V0dWJlLmNvbS93YXRjaD92PXYwQnUzTTRyNEs0AAd5b3V0dWJlAAAAAAAAAAA=", "noReplace": false, "startTime": "0"}
+2021-05-12 19:04:18.520 ERROR 5611 --- [pool-1-thread-1] oshi.software.os.mac.MacOperatingSystem  : Failed syctl call: kern.procargs2, Error code: 22
+2021-05-12 19:05:07.645  INFO 5611 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 19:05:07.647  INFO 5611 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 19:05:07.668  WARN 5611 --- [lava-daemon-pool-playback-1-thread-1] c.s.d.l.t.p.LocalAudioTrackExecutor      : Suspicious exception for playback of v0Bu3M4r4K4
+
+com.sedmelluq.discord.lavaplayer.tools.FriendlyException: The track was unexpectedly terminated.
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.handlePlaybackInterrupt(LocalAudioTrackExecutor.java:347) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.executeProcessingLoop(LocalAudioTrackExecutor.java:291) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.executeProcessingLoop(LocalAudioTrackExecutor.java:249) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaAudioTrack.process(MatroskaAudioTrack.java:38) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack.processDelegate(DelegatedAudioTrack.java:25) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack.processStatic(YoutubeAudioTrack.java:57) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack.process(YoutubeAudioTrack.java:49) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.execute(LocalAudioTrackExecutor.java:104) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.lambda$executeTrack$1(DefaultAudioPlayerManager.java:348) ~[lavaplayer-1.3.76.jar!/:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:831) ~[na:na]
+	Suppressed: com.sedmelluq.discord.lavaplayer.tools.exception.EnvironmentInformation: 
+  lavaplayer.version: 1.3.76
+  os.arch: x86_64
+  os.name: Mac OS X
+  os.version: 11.2
+  java.vendor: Oracle Corporation
+  java.version: 16.0.1
+  java.runtime.version: 16.0.1+9-24
+  java.vm.version: 16.0.1+9-24
+Caused by: java.lang.InterruptedException: null
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1627) ~[na:na]
+	at java.base/java.util.concurrent.ArrayBlockingQueue.put(ArrayBlockingQueue.java:370) ~[na:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.AllocatingAudioFrameBuffer.consume(AllocatingAudioFrameBuffer.java:178) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.common.OpusPacketRouter.passThrough(OpusPacketRouter.java:168) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.common.OpusPacketRouter.process(OpusPacketRouter.java:98) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaOpusTrackConsumer.consume(MatroskaOpusTrackConsumer.java:46) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.processFrameInBlock(MatroskaStreamingFile.java:371) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.parseClusterSimpleBlock(MatroskaStreamingFile.java:335) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.parseNextCluster(MatroskaStreamingFile.java:320) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.provideFrames(MatroskaStreamingFile.java:296) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaAudioTrack.lambda$process$0(MatroskaAudioTrack.java:39) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.executeProcessingLoop(LocalAudioTrackExecutor.java:275) ~[lavaplayer-1.3.76.jar!/:na]
+	... 10 common frames omitted
+
+2021-05-12 19:05:07.697  INFO 5611 --- [Thread-1] io.undertow.servlet                      : Destroying Spring FrameworkServlet 'dispatcherServlet'
+2021-05-12 19:05:07.706 ERROR 5611 --- [XNIO-1 I/O-3] org.xnio.listener                        : XNIO001007: A channel event listener threw an exception
+
+java.util.concurrent.RejectedExecutionException: XNIO007007: Thread is terminating
+	at org.xnio.nio.WorkerThread.execute(WorkerThread.java:590) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.websockets.jsr.UndertowSession$3.handleEvent(UndertowSession.java:396) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.UndertowSession$3.handleEvent(UndertowSession.java:388) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameCloseListener.handleEvent(AbstractFramedChannel.java:1063) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameCloseListener.handleEvent(AbstractFramedChannel.java:978) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.WriteReadyHandler$ChannelListenerHandler.terminated(WriteReadyHandler.java:70) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.writeTerminated(NioSocketConduit.java:234) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.terminateWrites(NioSocketConduit.java:223) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.truncateWrites(NioSocketConduit.java:228) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.conduits.IdleTimeoutConduit.truncateWrites(IdleTimeoutConduit.java:387) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.conduits.ConduitStreamSinkChannel.close(ConduitStreamSinkChannel.java:186) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.IoUtils.safeClose(IoUtils.java:134) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.WriteReadyHandler$ChannelListenerHandler.forceTermination(WriteReadyHandler.java:57) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.forceTermination(NioSocketConduit.java:107) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.WorkerThread.run(WorkerThread.java:494) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+
+2021-05-12 19:05:22.418  INFO 5673 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            16.0.1
+	Lavaplayer      1.3.76
+
+2021-05-12 19:05:22.557  INFO 5673 --- [main] lavalink.server.Launcher                 : Starting Launcher on Aoztanir-Misfit with PID 5673 (/Users/aoztanir/Desktop/astro/Lavalink.jar started by aoztanir in /Users/aoztanir/Desktop/astro)
+2021-05-12 19:05:22.559  INFO 5673 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2021-05-12 19:05:22.699  WARN 5673 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2021-05-12 19:05:25.751  WARN 5673 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2021-05-12 19:05:25.821  INFO 5673 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2021-05-12 19:05:25.821  INFO 5673 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 3145 ms
+2021-05-12 19:05:26.528  WARN 5673 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2021-05-12 19:05:27.344  INFO 5673 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2021-05-12 19:05:27.810  INFO 5673 --- [main] lavalink.server.config.KoeConfiguration  : OS: Mac OS X, Arch: x86_64
+2021-05-12 19:05:27.812  WARN 5673 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2021-05-12 19:05:28.521  INFO 5673 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-05-12 19:05:29.226  INFO 5673 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2021-05-12 19:05:29.247  INFO 5673 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2021-05-12 19:05:29.444  INFO 5673 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 2333 (http) with context path ''
+2021-05-12 19:05:29.476  INFO 5673 --- [main] lavalink.server.Launcher                 : Started Launcher in 7.903 seconds (JVM running for 8.746)
+2021-05-12 19:05:29.480  INFO 5673 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2021-05-12 19:05:40.782  INFO 5673 --- [XNIO-1 task-1] io.undertow.servlet                      : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-05-12 19:05:40.782  INFO 5673 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2021-05-12 19:05:40.795  INFO 5673 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 12 ms
+2021-05-12 19:05:40.829  INFO 5673 --- [XNIO-1 task-1] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /127.0.0.1:51038
+2021-05-12 19:05:40.948  INFO 5673 --- [XNIO-1 task-1] lavalink.server.io.SocketServer          : Connection successfully established from /127.0.0.1:51038
+2021-05-12 19:05:41.200  WARN 5673 --- [pool-1-thread-1] oshi.software.os.mac.MacOSVersionInfoEx  : Unable to parse version 11.2 to a codename.
+2021-05-12 19:05:41.216 ERROR 5673 --- [pool-1-thread-1] oshi.software.os.mac.MacOperatingSystem  : Failed syctl call: kern.procargs2, Error code: 22
+2021-05-12 19:05:44.301  INFO 5673 --- [XNIO-1 task-2] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "https://open.spotify.com/playlist/6A83PFHKOMYMQTV6YwSeNk"
+2021-05-12 19:05:44.440  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "809318345463562240", "sessionId": "65353007fe2284c7e4c42f3f8828fa67", "event": {"token": "0af2e6d1255f7821", "guild_id": "809318345463562240", "endpoint": "us-west9946.discord.media:443"}}
+2021-05-12 19:05:45.515 ERROR 5673 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Load failed
+
+com.sedmelluq.discord.lavaplayer.tools.FriendlyException: Unknown file format.
+	at com.sedmelluq.discord.lavaplayer.source.ProbingAudioSourceManager.handleLoadResult(ProbingAudioSourceManager.java:34) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager.loadItem(HttpAudioSourceManager.java:81) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.checkSourcesForItemOnce(DefaultAudioPlayerManager.java:436) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.checkSourcesForItem(DefaultAudioPlayerManager.java:418) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.lambda$createItemLoader$0(DefaultAudioPlayerManager.java:217) ~[lavaplayer-1.3.76.jar!/:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:831) ~[na:na]
+	Suppressed: com.sedmelluq.discord.lavaplayer.tools.exception.EnvironmentInformation: 
+  lavaplayer.version: 1.3.76
+  os.arch: x86_64
+  os.name: Mac OS X
+  os.version: 11.2
+  java.vendor: Oracle Corporation
+  java.version: 16.0.1
+  java.runtime.version: 16.0.1+9-24
+  java.vm.version: 16.0.1+9-24
+
+2021-05-12 19:05:45.517 ERROR 5673 --- [lava-daemon-pool-info-loader-2-thread-1] l.server.player.AudioLoaderRestHandler   : Track loading failed
+
+com.sedmelluq.discord.lavaplayer.tools.FriendlyException: Unknown file format.
+	at com.sedmelluq.discord.lavaplayer.source.ProbingAudioSourceManager.handleLoadResult(ProbingAudioSourceManager.java:34) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager.loadItem(HttpAudioSourceManager.java:81) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.checkSourcesForItemOnce(DefaultAudioPlayerManager.java:436) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.checkSourcesForItem(DefaultAudioPlayerManager.java:418) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.lambda$createItemLoader$0(DefaultAudioPlayerManager.java:217) ~[lavaplayer-1.3.76.jar!/:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:831) ~[na:na]
+	Suppressed: com.sedmelluq.discord.lavaplayer.tools.exception.EnvironmentInformation: 
+  lavaplayer.version: 1.3.76
+  os.arch: x86_64
+  os.name: Mac OS X
+  os.version: 11.2
+  java.vendor: Oracle Corporation
+  java.version: 16.0.1
+  java.runtime.version: 16.0.1+9-24
+  java.vm.version: 16.0.1+9-24
+
+2021-05-12 19:05:45.949  INFO 5673 --- [XNIO-1 task-4] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:Sunshine Of Your Love - Cream"
+2021-05-12 19:05:46.759  INFO 5673 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: Sunshine Of Your Love - Cream
+2021-05-12 19:05:47.155  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "809318345463562240", "track": "QAAAiwIAIkNyZWFtIC0gU3Vuc2hpbmUgT2YgWW91ciBMb3ZlIChIRCkAD1JvY2sgcyBNw7pzaWNhcwAAAAAAA8DwAAt6dDUxcklUSDNFQQABACtodHRwczovL3d3dy55b3V0dWJlLmNvbS93YXRjaD92PXp0NTFySVRIM0VBAAd5b3V0dWJlAAAAAAAAAAA=", "noReplace": false, "startTime": "0"}
+2021-05-12 19:05:58.610  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "809318345463562240"}
+2021-05-12 19:05:58.618  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "destroy", "guildId": "809318345463562240"}
+2021-05-12 19:06:40.954 ERROR 5673 --- [pool-1-thread-1] oshi.software.os.mac.MacOperatingSystem  : Failed syctl call: kern.procargs2, Error code: 22
+2021-05-12 19:07:40.955 ERROR 5673 --- [pool-1-thread-1] oshi.software.os.mac.MacOperatingSystem  : Failed syctl call: kern.procargs2, Error code: 22
+2021-05-12 19:08:26.237  INFO 5673 --- [XNIO-1 task-6] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "https://open.spotify.com/playlist/6A83PFHKOMYMQTV6YwSeNk"
+2021-05-12 19:08:26.581  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "809318345463562240", "sessionId": "65353007fe2284c7e4c42f3f8828fa67", "event": {"token": "2bc7efeaf2f13296", "guild_id": "809318345463562240", "endpoint": "us-west9946.discord.media:443"}}
+2021-05-12 19:08:26.692 ERROR 5673 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Load failed
+
+com.sedmelluq.discord.lavaplayer.tools.FriendlyException: Unknown file format.
+	at com.sedmelluq.discord.lavaplayer.source.ProbingAudioSourceManager.handleLoadResult(ProbingAudioSourceManager.java:34) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager.loadItem(HttpAudioSourceManager.java:81) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.checkSourcesForItemOnce(DefaultAudioPlayerManager.java:436) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.checkSourcesForItem(DefaultAudioPlayerManager.java:418) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.lambda$createItemLoader$0(DefaultAudioPlayerManager.java:217) ~[lavaplayer-1.3.76.jar!/:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:831) ~[na:na]
+	Suppressed: com.sedmelluq.discord.lavaplayer.tools.exception.EnvironmentInformation: 
+  lavaplayer.version: 1.3.76
+  os.arch: x86_64
+  os.name: Mac OS X
+  os.version: 11.2
+  java.vendor: Oracle Corporation
+  java.version: 16.0.1
+  java.runtime.version: 16.0.1+9-24
+  java.vm.version: 16.0.1+9-24
+
+2021-05-12 19:08:26.694 ERROR 5673 --- [lava-daemon-pool-info-loader-2-thread-1] l.server.player.AudioLoaderRestHandler   : Track loading failed
+
+com.sedmelluq.discord.lavaplayer.tools.FriendlyException: Unknown file format.
+	at com.sedmelluq.discord.lavaplayer.source.ProbingAudioSourceManager.handleLoadResult(ProbingAudioSourceManager.java:34) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager.loadItem(HttpAudioSourceManager.java:81) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.checkSourcesForItemOnce(DefaultAudioPlayerManager.java:436) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.checkSourcesForItem(DefaultAudioPlayerManager.java:418) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.lambda$createItemLoader$0(DefaultAudioPlayerManager.java:217) ~[lavaplayer-1.3.76.jar!/:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:831) ~[na:na]
+	Suppressed: com.sedmelluq.discord.lavaplayer.tools.exception.EnvironmentInformation: 
+  lavaplayer.version: 1.3.76
+  os.arch: x86_64
+  os.name: Mac OS X
+  os.version: 11.2
+  java.vendor: Oracle Corporation
+  java.version: 16.0.1
+  java.runtime.version: 16.0.1+9-24
+  java.vm.version: 16.0.1+9-24
+
+2021-05-12 19:08:26.948  INFO 5673 --- [XNIO-1 task-8] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:Sunshine Of Your Love - Cream"
+2021-05-12 19:08:27.621  INFO 5673 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: Sunshine Of Your Love - Cream
+2021-05-12 19:08:28.031  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "809318345463562240", "track": "QAAAiwIAIkNyZWFtIC0gU3Vuc2hpbmUgT2YgWW91ciBMb3ZlIChIRCkAD1JvY2sgcyBNw7pzaWNhcwAAAAAAA8DwAAt6dDUxcklUSDNFQQABACtodHRwczovL3d3dy55b3V0dWJlLmNvbS93YXRjaD92PXp0NTFySVRIM0VBAAd5b3V0dWJlAAAAAAAAAAA=", "noReplace": false, "startTime": "0"}
+2021-05-12 19:08:40.971 ERROR 5673 --- [pool-1-thread-1] oshi.software.os.mac.MacOperatingSystem  : Failed syctl call: kern.procargs2, Error code: 22
+2021-05-12 19:09:23.717  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "809318345463562240", "position": 69477.740234375}
+2021-05-12 19:09:26.138  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "809318345463562240"}
+2021-05-12 19:09:26.144  INFO 5673 --- [XNIO-1 task-10] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:Sweet Child O' Mine - Guns N' Roses"
+2021-05-12 19:09:26.709  INFO 5673 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: Sweet Child O' Mine - Guns N' Roses
+2021-05-12 19:09:26.725  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "809318345463562240", "track": "QAAAoQIAOkd1bnMgTicgUm9zZXMgLSBTd2VldCBDaGlsZCBPJyBNaW5lIChPZmZpY2lhbCBNdXNpYyBWaWRlbykADUd1bnMgTicgUm9zZXMAAAAAAASfmAALMXc3T2dJTU1SYzQAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj0xdzdPZ0lNTVJjNAAHeW91dHViZQAAAAAAAAAA", "noReplace": false, "startTime": "0"}
+2021-05-12 19:09:30.644  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "809318345463562240"}
+2021-05-12 19:09:30.659  INFO 5673 --- [XNIO-1 task-12] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:I Hate Myself for Loving You - Joan Jett & The Blackhearts"
+2021-05-12 19:09:31.223  INFO 5673 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : No matches found
+2021-05-12 19:09:35.484  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "809318345463562240"}
+2021-05-12 19:09:40.936 ERROR 5673 --- [pool-1-thread-1] oshi.software.os.mac.MacOperatingSystem  : Failed syctl call: kern.procargs2, Error code: 22
+2021-05-12 19:09:48.186  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "809318345463562240"}
+2021-05-12 19:09:55.521  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "809318345463562240", "position": -15000}
+2021-05-12 19:09:55.523 ERROR 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : Exception while handling websocket message
+
+java.lang.RuntimeException: Can't seek when not playing anything
+	at lavalink.server.player.Player.seekTo(Player.java:91) ~[classes!/:na]
+	at lavalink.server.io.WebSocketHandlers.seek(WebSocketHandlers.kt:79) ~[classes!/:na]
+	at lavalink.server.io.SocketServer.handleTextMessageSafe(SocketServer.kt:155) ~[classes!/:na]
+	at lavalink.server.io.SocketServer.handleTextMessage(SocketServer.kt:129) ~[classes!/:na]
+	at org.springframework.web.socket.handler.AbstractWebSocketHandler.handleMessage(AbstractWebSocketHandler.java:43) ~[spring-websocket-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.web.socket.handler.WebSocketHandlerDecorator.handleMessage(WebSocketHandlerDecorator.java:75) ~[spring-websocket-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.web.socket.handler.LoggingWebSocketHandlerDecorator.handleMessage(LoggingWebSocketHandlerDecorator.java:56) ~[spring-websocket-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.web.socket.handler.ExceptionWebSocketHandlerDecorator.handleMessage(ExceptionWebSocketHandlerDecorator.java:58) ~[spring-websocket-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.web.socket.adapter.standard.StandardWebSocketHandlerAdapter.handleTextMessage(StandardWebSocketHandlerAdapter.java:113) ~[spring-websocket-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.web.socket.adapter.standard.StandardWebSocketHandlerAdapter.access$000(StandardWebSocketHandlerAdapter.java:42) ~[spring-websocket-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.web.socket.adapter.standard.StandardWebSocketHandlerAdapter$3.onMessage(StandardWebSocketHandlerAdapter.java:84) ~[spring-websocket-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at org.springframework.web.socket.adapter.standard.StandardWebSocketHandlerAdapter$3.onMessage(StandardWebSocketHandlerAdapter.java:81) ~[spring-websocket-5.1.9.RELEASE.jar!/:5.1.9.RELEASE]
+	at io.undertow.websockets.jsr.FrameHandler$7.run(FrameHandler.java:286) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.ServerWebSocketContainer$1.call(ServerWebSocketContainer.java:170) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.ServerWebSocketContainer$1.call(ServerWebSocketContainer.java:167) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.servlet.core.ContextClassLoaderSetupAction$1.call(ContextClassLoaderSetupAction.java:43) ~[undertow-servlet-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.ServerWebSocketContainer.invokeEndpointMethod(ServerWebSocketContainer.java:604) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.ServerWebSocketContainer.invokeEndpointMethod(ServerWebSocketContainer.java:594) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.FrameHandler.invokeTextHandler(FrameHandler.java:266) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.FrameHandler.onFullTextMessage(FrameHandler.java:317) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.core.AbstractReceiveListener$2.complete(AbstractReceiveListener.java:156) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.core.AbstractReceiveListener$2.complete(AbstractReceiveListener.java:152) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.core.BufferedTextMessage.read(BufferedTextMessage.java:105) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.core.AbstractReceiveListener.readBufferedText(AbstractReceiveListener.java:152) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.core.AbstractReceiveListener.bufferFullMessage(AbstractReceiveListener.java:90) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.FrameHandler.onText(FrameHandler.java:182) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.core.AbstractReceiveListener.handleEvent(AbstractReceiveListener.java:44) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.core.AbstractReceiveListener.handleEvent(AbstractReceiveListener.java:33) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameReadListener.handleEvent(AbstractFramedChannel.java:951) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameReadListener.handleEvent(AbstractFramedChannel.java:932) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.ReadReadyHandler$ChannelListenerHandler.readReady(ReadReadyHandler.java:66) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.handleReady(NioSocketConduit.java:88) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.WorkerThread.run(WorkerThread.java:561) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+
+2021-05-12 19:09:57.455  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "809318345463562240"}
+2021-05-12 19:10:15.284  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "809318345463562240"}
+2021-05-12 19:10:15.285  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "destroy", "guildId": "809318345463562240"}
+2021-05-12 19:10:19.685  INFO 5673 --- [XNIO-1 task-14] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "https://open.spotify.com/playlist/6A83PFHKOMYMQTV6YwSeNk"
+2021-05-12 19:10:19.882  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "809318345463562240", "sessionId": "65353007fe2284c7e4c42f3f8828fa67", "event": {"token": "25927ba13c33a10d", "guild_id": "809318345463562240", "endpoint": "us-west9946.discord.media:443"}}
+2021-05-12 19:10:19.913 ERROR 5673 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Load failed
+
+com.sedmelluq.discord.lavaplayer.tools.FriendlyException: Unknown file format.
+	at com.sedmelluq.discord.lavaplayer.source.ProbingAudioSourceManager.handleLoadResult(ProbingAudioSourceManager.java:34) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager.loadItem(HttpAudioSourceManager.java:81) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.checkSourcesForItemOnce(DefaultAudioPlayerManager.java:436) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.checkSourcesForItem(DefaultAudioPlayerManager.java:418) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.lambda$createItemLoader$0(DefaultAudioPlayerManager.java:217) ~[lavaplayer-1.3.76.jar!/:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:831) ~[na:na]
+	Suppressed: com.sedmelluq.discord.lavaplayer.tools.exception.EnvironmentInformation: 
+  lavaplayer.version: 1.3.76
+  os.arch: x86_64
+  os.name: Mac OS X
+  os.version: 11.2
+  java.vendor: Oracle Corporation
+  java.version: 16.0.1
+  java.runtime.version: 16.0.1+9-24
+  java.vm.version: 16.0.1+9-24
+
+2021-05-12 19:10:19.917 ERROR 5673 --- [lava-daemon-pool-info-loader-2-thread-1] l.server.player.AudioLoaderRestHandler   : Track loading failed
+
+com.sedmelluq.discord.lavaplayer.tools.FriendlyException: Unknown file format.
+	at com.sedmelluq.discord.lavaplayer.source.ProbingAudioSourceManager.handleLoadResult(ProbingAudioSourceManager.java:34) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager.loadItem(HttpAudioSourceManager.java:81) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.checkSourcesForItemOnce(DefaultAudioPlayerManager.java:436) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.checkSourcesForItem(DefaultAudioPlayerManager.java:418) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.lambda$createItemLoader$0(DefaultAudioPlayerManager.java:217) ~[lavaplayer-1.3.76.jar!/:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:831) ~[na:na]
+	Suppressed: com.sedmelluq.discord.lavaplayer.tools.exception.EnvironmentInformation: 
+  lavaplayer.version: 1.3.76
+  os.arch: x86_64
+  os.name: Mac OS X
+  os.version: 11.2
+  java.vendor: Oracle Corporation
+  java.version: 16.0.1
+  java.runtime.version: 16.0.1+9-24
+  java.vm.version: 16.0.1+9-24
+
+2021-05-12 19:10:20.185  INFO 5673 --- [XNIO-1 task-16] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:Sunshine Of Your Love - Cream"
+2021-05-12 19:10:20.735  INFO 5673 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: Sunshine Of Your Love - Cream
+2021-05-12 19:10:21.085  INFO 5673 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "809318345463562240", "track": "QAAAiwIAIkNyZWFtIC0gU3Vuc2hpbmUgT2YgWW91ciBMb3ZlIChIRCkAD1JvY2sgcyBNw7pzaWNhcwAAAAAAA8DwAAt6dDUxcklUSDNFQQABACtodHRwczovL3d3dy55b3V0dWJlLmNvbS93YXRjaD92PXp0NTFySVRIM0VBAAd5b3V0dWJlAAAAAAAAAAA=", "noReplace": false, "startTime": "0"}
+2021-05-12 19:10:30.646  INFO 5673 --- [Thread-1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-05-12 19:10:30.650  INFO 5673 --- [Thread-1] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring disabled.
+2021-05-12 19:10:30.655  WARN 5673 --- [lava-daemon-pool-playback-1-thread-1] c.s.d.l.t.p.LocalAudioTrackExecutor      : Suspicious exception for playback of zt51rITH3EA
+
+com.sedmelluq.discord.lavaplayer.tools.FriendlyException: The track was unexpectedly terminated.
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.handlePlaybackInterrupt(LocalAudioTrackExecutor.java:347) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.executeProcessingLoop(LocalAudioTrackExecutor.java:291) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.executeProcessingLoop(LocalAudioTrackExecutor.java:249) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaAudioTrack.process(MatroskaAudioTrack.java:38) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack.processDelegate(DelegatedAudioTrack.java:25) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack.processStatic(YoutubeAudioTrack.java:57) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack.process(YoutubeAudioTrack.java:49) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.execute(LocalAudioTrackExecutor.java:104) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.lambda$executeTrack$1(DefaultAudioPlayerManager.java:348) ~[lavaplayer-1.3.76.jar!/:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:831) ~[na:na]
+	Suppressed: com.sedmelluq.discord.lavaplayer.tools.exception.EnvironmentInformation: 
+  lavaplayer.version: 1.3.76
+  os.arch: x86_64
+  os.name: Mac OS X
+  os.version: 11.2
+  java.vendor: Oracle Corporation
+  java.version: 16.0.1
+  java.runtime.version: 16.0.1+9-24
+  java.vm.version: 16.0.1+9-24
+Caused by: java.lang.InterruptedException: null
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1627) ~[na:na]
+	at java.base/java.util.concurrent.ArrayBlockingQueue.put(ArrayBlockingQueue.java:370) ~[na:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.AllocatingAudioFrameBuffer.consume(AllocatingAudioFrameBuffer.java:178) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.common.OpusPacketRouter.passThrough(OpusPacketRouter.java:168) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.common.OpusPacketRouter.process(OpusPacketRouter.java:98) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaOpusTrackConsumer.consume(MatroskaOpusTrackConsumer.java:46) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.processFrameInBlock(MatroskaStreamingFile.java:371) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.parseClusterSimpleBlock(MatroskaStreamingFile.java:335) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.parseNextCluster(MatroskaStreamingFile.java:320) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.provideFrames(MatroskaStreamingFile.java:296) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaAudioTrack.lambda$process$0(MatroskaAudioTrack.java:39) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.executeProcessingLoop(LocalAudioTrackExecutor.java:275) ~[lavaplayer-1.3.76.jar!/:na]
+	... 10 common frames omitted
+
+2021-05-12 19:10:30.678  INFO 5673 --- [Thread-1] io.undertow.servlet                      : Destroying Spring FrameworkServlet 'dispatcherServlet'
+2021-05-12 19:10:30.690 ERROR 5673 --- [XNIO-1 I/O-2] org.xnio.listener                        : XNIO001007: A channel event listener threw an exception
+
+java.util.concurrent.RejectedExecutionException: XNIO007007: Thread is terminating
+	at org.xnio.nio.WorkerThread.execute(WorkerThread.java:590) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.websockets.jsr.UndertowSession$3.handleEvent(UndertowSession.java:396) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.websockets.jsr.UndertowSession$3.handleEvent(UndertowSession.java:388) ~[undertow-websockets-jsr-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameCloseListener.handleEvent(AbstractFramedChannel.java:1063) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at io.undertow.server.protocol.framed.AbstractFramedChannel$FrameCloseListener.handleEvent(AbstractFramedChannel.java:978) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.ChannelListeners.invokeChannelListener(ChannelListeners.java:92) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.WriteReadyHandler$ChannelListenerHandler.terminated(WriteReadyHandler.java:70) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.writeTerminated(NioSocketConduit.java:234) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.terminateWrites(NioSocketConduit.java:223) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.truncateWrites(NioSocketConduit.java:228) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at io.undertow.conduits.IdleTimeoutConduit.truncateWrites(IdleTimeoutConduit.java:387) ~[undertow-core-2.0.26.Final.jar!/:2.0.26.Final]
+	at org.xnio.conduits.ConduitStreamSinkChannel.close(ConduitStreamSinkChannel.java:186) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.IoUtils.safeClose(IoUtils.java:134) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.conduits.WriteReadyHandler$ChannelListenerHandler.forceTermination(WriteReadyHandler.java:57) ~[xnio-api-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.NioSocketConduit.forceTermination(NioSocketConduit.java:107) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+	at org.xnio.nio.WorkerThread.run(WorkerThread.java:494) ~[xnio-nio-3.3.8.Final.jar!/:3.3.8.Final]
+
