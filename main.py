@@ -336,8 +336,12 @@ class Player(wavelink.Player):
 
     async def play(self, track):
       if  isinstance(track, spotTrack):
-        
-        spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title)
+        try:
+          spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title, retry_on_failure=True)
+
+        except:
+          self.stop()
+          self.do_next()
        
         trackToQueue = Track(spotifyTrack[0].id, spotifyTrack[0].info, requester=track.requester)
         # if self.loopSong==True:
@@ -352,7 +356,7 @@ class Player(wavelink.Player):
     async def do_next(self) -> None:
         if self.is_playing or self.waiting:
             return
-
+        # print(self.current.title)
         # Clear the votes for a new song...
         self.pause_votes.clear()
         self.resume_votes.clear()
@@ -385,7 +389,7 @@ class Player(wavelink.Player):
         # print(player)
         if i!=0:
           # try:
-            # trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+tracks["items"][i]["track"]["name"]+" - "+tracks["items"][i]["track"]["artists"][0]["name"]))
+            # trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+tracks["items"][i]["track"]["name"]+" - "+tracks["items"][i]["track"]["artists"][0]["name"]), retry_on_failure=True)
           trackToQueue = spotTrack(name=tracks["items"][i]["track"]["name"]+" - "+tracks["items"][i]["track"]["artists"][0]["name"], requester=ctx.author)
           await player.queue.put(trackToQueue)
         
@@ -399,7 +403,7 @@ class Player(wavelink.Player):
         tracks = spotify.next(tracks)
         for item in tracks["items"]:
           try:
-            # trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+item["track"]["name"]+" - "+item["track"]["artists"][0]["name"]))
+            # trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+item["track"]["name"]+" - "+item["track"]["artists"][0]["name"]), retry_on_failure=True)
             # trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
             trackToQueue = spotTrack(name=item["track"]["name"]+" - "+item["track"]["artists"][0]["name"], requester=ctx.author)
             await player.queue.put(trackToQueue)
@@ -973,7 +977,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if not URL_REG.match(query):
             query = f'ytsearch:{query}'
       # if "open.spotify.com" not in query:
-        tracks = await self.bot.wavelink.get_tracks(query)
+        tracks = await self.bot.wavelink.get_tracks(query, retry_on_failure=True)
         # else:
         #   track=None
        
@@ -987,7 +991,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 embed=discord.Embed(description=f'**Invalid Song URL**', color = discord.Color.red())
                 return await ctx.send(embed=embed, delete_after=10)
               # print(song.keys())
-              trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+song["name"]+" - "+song["artists"][0]["name"]))
+              trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+song["name"]+" - "+song["artists"][0]["name"]), retry_on_failure=True)
               trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
               await player.queue.put(trackToQueue)
               try:
@@ -1020,7 +1024,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 print(query)
                 playlist=spotify.playlist(query)
                 print(playlist["tracks"].keys())
-                trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+playlist['tracks']["items"][0]["track"]["name"]+" - "+playlist['tracks']["items"][0]["track"]["artists"][0]["name"]))
+                trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+playlist['tracks']["items"][0]["track"]["name"]+" - "+playlist['tracks']["items"][0]["track"]["artists"][0]["name"]), retry_on_failure=True)
                 trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
                 await player.queue.put(trackToQueue)
                 embed=discord.Embed(description=f'**Queued `{playlist["tracks"]["total"]}` Tracks From `{playlist["name"]}`**', color = discord.Color.green())
@@ -1042,7 +1046,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
               # for item in playlist['tracks']["items"]:
 
               #   try:
-              #     trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+item["track"]["name"]))
+              #     trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+item["track"]["name"]), retry_on_failure=True)
               #     trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
               #     await player.queue.put(trackToQueue)
               #     trackLength+=1
@@ -1596,7 +1600,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
 #     @commands.command()
 #     async def playLava(self, ctx, *, query: str):
-#         tracks = await self.client.wavelink.get_tracks(f'ytsearch:{query}')
+#         tracks = await self.client.wavelink.get_tracks(f'ytsearch:{query}', retry_on_failure=True)
 
 #         if not tracks:
 #             return await ctx.send('Could not find any songs with that query.')
@@ -4507,7 +4511,7 @@ async def ping(ctx):
 
 
 
-# @client.event
+@client.event
 async def on_command_error(ctx, error):
     if "not connected to voice" in str(error).lower():
       await ctx.send(f"> Sorry {ctx.author.mention} Astro Doesnt Have Permissions To Connect To The Voice Channel You Are In.")
