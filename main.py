@@ -1,3 +1,8 @@
+###########PACKAGING INSTRUCTIONS:
+#######pip install -r pyproject.toml
+
+
+
 import discord
 import datetime 
 import syllables
@@ -59,7 +64,7 @@ import time
 import requests, json
 from discord.ext import commands
 import pafy
-import keep_alive
+# import keep_alive
 from threading import Thread
 import pyjokes
 from lyrics_extractor import SongLyrics
@@ -67,7 +72,7 @@ import psutil
 # intents = discord.Intents.all()
 # client = discord.Client(intents=intents)
 # import json 
-from emoji_translate.emoji_translate import Translator
+# from emoji_translate.emoji_translate import Translator #######Deprecated for RPI
 from PIL import Image
 import requests
 from io import StringIO
@@ -96,7 +101,18 @@ def formatTitle(title: str):
   title=title.replace("[","")
   title=title.replace("]","")
   return title
-#Prefixes
+
+
+
+
+mongoCli = MongoClient('mongodb+srv://aoztanir:astro@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority')
+
+# astroDB = pymongo.MongoClient("mongodb+srv://aoztanir:ladoo256@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority")
+datab = mongoCli.test
+astroDB = datab['astro']
+astroDB.insert_one({})
+
+
 def get_prefix(client, message):
   try:
     prefixes = db["prefixes"]
@@ -122,8 +138,8 @@ def get_prefix(client, message):
 #     command_prefix= (get_prefix),
 #     )
 
-# client = commands.AutoShardedBot(shard_count=2, command_prefix=(get_prefix), intents = discord.Intents.all())
-client = commands.AutoShardedBot(shard_count=2, command_prefix='.', intents = discord.Intents.all())
+client = commands.AutoShardedBot(shard_count=2, command_prefix=(get_prefix), intents = discord.Intents.all())
+# client = commands.AutoShardedBot(shard_count=2, command_prefix='.', intents = discord.Intents.all())
 
 slash = SlashCommand(client, sync_commands=True) # Declares slash commands through the client.
 
@@ -327,7 +343,7 @@ class Player(wavelink.Player):
 
         self.waiting = False
         self.updating = False
-
+        self.loopTrack=None
         self.pause_votes = set()
         self.resume_votes = set()
         self.skip_votes = set()
@@ -338,19 +354,20 @@ class Player(wavelink.Player):
       if  isinstance(track, spotTrack):
         try:
           spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title, retry_on_failure=True)
-
+          trackToQueue = Track(spotifyTrack[0].id, spotifyTrack[0].info, requester=track.requester)
+          # if self.loopSong==True:
+          #   await self.queue.put(trackToQueue)
+          # self.loopTrack=trackToQueue
+          return await super().play(trackToQueue)
         except:
-          self.stop()
-          self.do_next()
-       
-        trackToQueue = Track(spotifyTrack[0].id, spotifyTrack[0].info, requester=track.requester)
-        # if self.loopSong==True:
-        #   await self.queue.put(trackToQueue)
-        return await super().play(trackToQueue)
+          await self.stop()
+          return await self.do_next()
+   
+        
 
       # if self.loopSong==True:
       #   await self.queue.put(track)
-
+      # self.loopTrack=track
       await super().play( track)
 
     async def do_next(self) -> None:
@@ -371,7 +388,8 @@ class Player(wavelink.Player):
         except asyncio.TimeoutError:
             # No music has been played for 5 minutes, cleanup and disconnect...
             return await self.teardown()
-
+        # if self.loopSong and self.loopTrack!=None:
+        #   await self.queue.put(self.loopTrack)
         await self.play(track)
         self.waiting = False
 
@@ -1977,7 +1995,7 @@ async def on_message(msg):
       return
     # syls = syllables.estimate(msg.content)
     try:
-      from pyverse import Pyverse
+
       verse = Pyverse(msg.content)
       # print(str(verse.count))
       syls= verse.count
@@ -2089,11 +2107,11 @@ async def listmute(ctx):
   await ctx.send(embed=embed)
 
 
-cluster = MongoClient("mongodb+srv://astro:astro@cluster0.alu7p.mongodb.net/test")
-mongodb = cluster["AstroData"]
+# cluster = MongoClient("mongodb+srv://astro:astro@cluster0.alu7p.mongodb.net/test")
+# mongodb = cluster["AstroData"]
 
 async def update_db(server=None):
-  mongoQueue=mongodb["queue"]
+  # mongoQueue=mongodb["queue"]
   # db["reaction_roles"]={}
   while True:
     for i in  range(len(db["announcement"])):
@@ -7058,6 +7076,10 @@ async def eightball(ctx, *, question):
 # Lava = Thread(target=os.system("java -jar Lavalink.jar"))
 # Lava.start()
 import subprocess
-
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 #astro(aryah extension)
-client.run('ODA5NjA5ODYxNDU2NzIzOTg4.YCXl8A.FlNO0N79eN0dbsiKlWPnDQTMV2s')
+# client.run('ODA5NjA5ODYxNDU2NzIzOTg4.YCXl8A.FlNO0N79eN0dbsiKlWPnDQTMV2s')
+
+
+#DEV BOT
+
