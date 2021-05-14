@@ -480,8 +480,11 @@ class Player(wavelink.Player):
             await self.controller.start(self.context)
 
         else:
+            channel = self.bot.get_channel(int(self.channel_id))
             embed = self.build_embed()
-            await self.controller.message.edit(content=None, embed=embed)
+            embed2 = discord.Embed(title=f'ASTRO MUSIC | {channel.name}', colour=discord.Color.green())
+            await self.controller.message.edit(content=f'ASTRO MUSIC | {channel.name}', embed=embed)
+            
 
         self.updating = False
       except:
@@ -517,7 +520,7 @@ class Player(wavelink.Player):
         channel = self.bot.get_channel(int(self.channel_id))
         qsize = self.queue.qsize()
 
-        embed = discord.Embed(title=f'ASTRO MUSIC | {channel.name}', colour=discord.Color.green())
+        embed = discord.Embed(colour=discord.Color.green())
         embed.description = f'**Now Playing:**\n**[{formatTitle(track.title[:30])}...]({track.uri})**\n\n`{position}`\n\n'
         try:
           embed.set_thumbnail(url=track.thumb)
@@ -536,7 +539,7 @@ class Player(wavelink.Player):
 
         return embed
       except:
-        return discord.Embed(title=f'ASTRO MUSIC | {channel.name}', colour=discord.Color.green())
+        return discord.Embed(title=f'ASTRO MUSIC | ▶️', colour=discord.Color.green())
     async def is_position_fresh(self) -> bool:
         """Method which checks whether the player controller should be remade or updated."""
         try:
