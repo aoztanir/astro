@@ -355,26 +355,31 @@ class Player(wavelink.Player):
         self.stop_votes = set()
 
     async def play(self, track):
-      if  isinstance(track, spotTrack):
-        try:
-          spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title, retry_on_failure=True)
-          trackToQueue = Track(spotifyTrack[0].id, spotifyTrack[0].info, requester=track.requester)
-          # if self.loopSong==True:
-          #   await self.queue.put(trackToQueue)
-          # self.loopTrack=trackToQueue
-          return await super().play(trackToQueue)
-        except:
-          await self.stop()
-          return await self.do_next()
-   
-        
+      try:
+        if  isinstance(track, spotTrack):
+          try:
+            spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title, retry_on_failure=True)
+            trackToQueue = Track(spotifyTrack[0].id, spotifyTrack[0].info, requester=track.requester)
+            # if self.loopSong==True:
+            #   await self.queue.put(trackToQueue)
+            # self.loopTrack=trackToQueue
+            return await super().play(trackToQueue)
+          except:
+            await self.stop()
+            return await self.do_next()
+    
+          
 
-      # if self.loopSong==True:
-      #   await self.queue.put(track)
-      # self.loopTrack=track
-      await super().play( track)
+        # if self.loopSong==True:
+        #   await self.queue.put(track)
+        # self.loopTrack=track
+        await super().play( track)
+      except:
+        await self.stop()
+        return await self.do_next()
 
     async def do_next(self) -> None:
+      try:
         if self.is_playing or self.waiting:
             return
         # print(self.current.title)
@@ -410,7 +415,9 @@ class Player(wavelink.Player):
 
         # Invoke our players controller...
         await self.invoke_controller()
-
+      except:
+        await self.stop()
+        return await self.do_next()
 
 
 
