@@ -1286,7 +1286,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return
 
         if not self.is_privileged(ctx):
-            embed=discord.Embed(description="**Only DJ's Or Admins Can Stop The Player**", color = discord.Color.teal())
+            embed=discord.Embed(description="**Only DJ's Or Admins Can Control Volume**", color = discord.Color.teal())
             return await ctx.send(embed=embed, delete_after=10)
 
         if not 0 < vol < 101:
