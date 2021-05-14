@@ -457,6 +457,7 @@ class Player(wavelink.Player):
 
 
     async def invoke_controller(self) -> None:
+      try:
         """Method which updates or sends a new player controller."""
         if self.updating:
             return
@@ -483,8 +484,10 @@ class Player(wavelink.Player):
             await self.controller.message.edit(content=None, embed=embed)
 
         self.updating = False
-
+      except:
+        pass
     def build_embed(self) -> typing.Optional[discord.Embed]:
+      try:
         """Method which builds our players controller embed."""
         track = self.current
         if not track:
@@ -532,7 +535,8 @@ class Player(wavelink.Player):
         # embed.add_field(name="Show's This Command", value=f'` np `')
 
         return embed
-
+      except:
+        return discord.Embed(title=f'ASTRO MUSIC | {channel.name}', colour=discord.Color.green())
     async def is_position_fresh(self) -> bool:
         """Method which checks whether the player controller should be remade or updated."""
         try:
