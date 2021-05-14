@@ -217,36 +217,36 @@ async def on_ready():
 #         # do your stuff
 #         await asyncio.sleep(1)
 
-@client.event
-async def on_raw_reaction_add(payload):
-  # Channel = client.get_channel(db["reaction_roles"])
-  # print("hiHIIII")
-  guild = discord.utils.find(lambda g : g.id == payload.guild_id, client.guilds)
-  for element in db["reaction_roles"][str(payload.guild_id)]:
-    # print(element)
-    if payload.message_id == element["id"]:
-      # print(payload.emoji.name)
-      for element2 in element["roleAdds"]:
-        if payload.emoji.name== element2["emoji"]:
-          Role = discord.utils.get(guild.roles, name=element2["role"])
-          await payload.member.add_roles( Role)
+# @client.event
+# async def on_raw_reaction_add(payload):
+#   # Channel = client.get_channel(db["reaction_roles"])
+#   # print("hiHIIII")
+#   guild = discord.utils.find(lambda g : g.id == payload.guild_id, client.guilds)
+#   for element in db["reaction_roles"][str(payload.guild_id)]:
+#     # print(element)
+#     if payload.message_id == element["id"]:
+#       # print(payload.emoji.name)
+#       for element2 in element["roleAdds"]:
+#         if payload.emoji.name== element2["emoji"]:
+#           Role = discord.utils.get(guild.roles, name=element2["role"])
+#           await payload.member.add_roles( Role)
 
 
 
-@client.event
-async def on_raw_reaction_remove(payload):
-  # Channel = client.get_channel(db["reaction_roles"])
-  # print("hiHIIII")
-  guild = discord.utils.find(lambda g : g.id == payload.guild_id, client.guilds)
-  for element in db["reaction_roles"][str(payload.guild_id)]:
-    # print(element)
-    if payload.message_id == element["id"]:
-      # print(payload.emoji.name)
-      for element2 in element["roleAdds"]:
-        if payload.emoji.name== element2["emoji"]:
-          Role = discord.utils.get(guild.roles, name=element2["role"])
-          member = discord.utils.get(guild.members, id=payload.user_id)
-          await member.remove_roles( Role)
+# @client.event
+# async def on_raw_reaction_remove(payload):
+#   # Channel = client.get_channel(db["reaction_roles"])
+#   # print("hiHIIII")
+#   guild = discord.utils.find(lambda g : g.id == payload.guild_id, client.guilds)
+#   for element in db["reaction_roles"][str(payload.guild_id)]:
+#     # print(element)
+#     if payload.message_id == element["id"]:
+#       # print(payload.emoji.name)
+#       for element2 in element["roleAdds"]:
+#         if payload.emoji.name== element2["emoji"]:
+#           Role = discord.utils.get(guild.roles, name=element2["role"])
+#           member = discord.utils.get(guild.members, id=payload.user_id)
+#           await member.remove_roles( Role)
 
 
 
@@ -394,6 +394,17 @@ class Player(wavelink.Player):
             return await self.teardown()
         # if self.loopSong and self.loopTrack!=None:
         #   await self.queue.put(self.loopTrack)
+        if self.channel_id==None:
+          return await self.teardown()
+        channel =  client.get_channel(self.channel_id)
+        member_count=0
+        for element in channel.members:
+          if not element.bot:
+            member_count+=1
+        if member_count<1:
+          print("DISCONNECTING")
+          return await self.teardown()
+
         await self.play(track)
         self.waiting = False
 
@@ -489,7 +500,7 @@ class Player(wavelink.Player):
         for i in range(30):
           position+="▬"
         position+="|"
-        posNum=int(20*positionPercent)+1
+        posNum=int(30*positionPercent)+1
         position = position[:posNum] + status + position[posNum+1:]
         if track.is_stream:
           position = "🔴 LIVE"
@@ -530,10 +541,12 @@ class Player(wavelink.Player):
         """Clear internal states, remove player controller and disconnect."""
         try:
             await self.controller.message.delete()
-        except discord.HTTPException:
+        except:
             pass
-
-        self.controller.stop()
+        try:
+          self.controller.stop()
+        except:
+          pass
 
         try:
             # del self.searchPlaylist
@@ -590,6 +603,20 @@ class InteractiveController(menus.Menu):
     #     ctx.command = command
 
     #     await self.bot.invoke(ctx)
+    
+    @menus.button(emoji='⏪')
+    async def ff_command(self, payload: discord.RawReactionActionEvent):
+        """Volume up button"""
+        ctx = self.update_context(payload)
+
+        command = self.bot.get_command('f_down')
+        ctx.command = command
+
+        await self.bot.invoke(ctx)
+        command = self.bot.get_command('np')
+        ctx.command = command
+
+        await self.bot.invoke(ctx)
     @menus.button(emoji='⏯')
     async def pause_command(self, payload: discord.RawReactionActionEvent):
         """Pause button"""
@@ -616,19 +643,6 @@ class InteractiveController(menus.Menu):
           ctx.command = command
 
           return await self.bot.invoke(ctx)
-    @menus.button(emoji='⏪')
-    async def ff_command(self, payload: discord.RawReactionActionEvent):
-        """Volume up button"""
-        ctx = self.update_context(payload)
-
-        command = self.bot.get_command('f_down')
-        ctx.command = command
-
-        await self.bot.invoke(ctx)
-        command = self.bot.get_command('np')
-        ctx.command = command
-
-        await self.bot.invoke(ctx)
     @menus.button(emoji='⏩')
     async def fb_command(self, payload: discord.RawReactionActionEvent):
         """Volume down button."""
@@ -1308,7 +1322,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         vol = int(math.ceil((player.volume - 10) / 10)) * 10
 
-        if vol < 0:
+        if vol <= 0:
             vol = 0
             embed=discord.Embed(description=f"**🔇 Player Is Muted**", color = discord.Color.red())
             await ctx.send(embed=embed, delete_after=10)
