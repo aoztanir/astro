@@ -482,8 +482,8 @@ class Player(wavelink.Player):
         else:
             channel = self.bot.get_channel(int(self.channel_id))
             embed = self.build_embed()
-            # embed2 = discord.Embed(title=f'ASTRO MUSIC | {channel.name}', colour=discord.Color.green())
-            await self.controller.message.edit(content=f'ASTRO MUSIC | {channel.name}', embed=embed)
+            embed2 = discord.Embed(title=f'ASTRO MUSIC | {channel.name}', colour=discord.Color.green())
+            await self.controller.message.edit(content=f'** > 🔊 {voicechannel.name}**', embed=embed)
             
 
         self.updating = False
@@ -602,7 +602,8 @@ class InteractiveController(menus.Menu):
         return payload.emoji in self.buttons
 
     async def send_initial_message(self, ctx: commands.Context, channel: discord.TextChannel) -> discord.Message:
-        return await channel.send(embed=self.embed)
+        voicechannel = self.bot.get_channel(int(self.player.channel_id))
+        return await channel.send(content=f'** > 🔊 {voicechannel.name}**' , embed=self.embed)
 
     # @menus.button(emoji='\u25B6')
     # async def resume_command(self, payload: discord.RawReactionActionEvent):
