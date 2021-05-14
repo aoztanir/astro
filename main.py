@@ -482,7 +482,7 @@ class Player(wavelink.Player):
         else:
             channel = self.bot.get_channel(int(self.channel_id))
             embed = self.build_embed()
-            embed2 = discord.Embed(title=f'ASTRO MUSIC | {channel.name}', colour=discord.Color.green())
+            # embed2 = discord.Embed(title=f'ASTRO MUSIC | {channel.name}', colour=discord.Color.green())
             await self.controller.message.edit(content=f'ASTRO MUSIC | {channel.name}', embed=embed)
             
 
