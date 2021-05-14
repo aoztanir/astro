@@ -1182,7 +1182,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         required = self.required(ctx)
         player.pause_votes.add(ctx.author)
 
-        if len(player.pause_votes) > required:
+        if len(player.pause_votes) >= required:
             embed=discord.Embed(description="**⏸️ Vote Passed | Pausing**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
             player.pause_votes.clear()
@@ -1209,7 +1209,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         required = self.required(ctx)
         player.resume_votes.add(ctx.author)
 
-        if len(player.resume_votes) > required:
+        if len(player.resume_votes) >= required:
             embed=discord.Embed(description="**▶️ Vote Passed | Resuming**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
             player.resume_votes.clear()
@@ -1243,13 +1243,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         required = self.required(ctx)
         player.skip_votes.add(ctx.author)
 
-        if len(player.skip_votes) > required:
+        if len(player.skip_votes) >= required:
             embed=discord.Embed(description="**⏭ Vote Passed | Skipping**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
             player.skip_votes.clear()
             await player.stop()
         else:
-            embed=discord.Embed(description=f"{ctx.author.mention} Has Voted To Skip", color = discord.Color.blue())
+            embed=discord.Embed(description=f"**{ctx.author.mention} Has Voted To Skip**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
 
     @commands.command()
@@ -1268,7 +1268,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         required = self.required(ctx)
         player.stop_votes.add(ctx.author)
 
-        if len(player.stop_votes) > required:
+        if len(player.stop_votes) >= required:
             embed=discord.Embed(description="**🛑 Vote Passed | Stopped**", color = discord.Color.orange())
             await ctx.send(embed=embed, delete_after=10)
             await player.teardown()
@@ -1318,7 +1318,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         required = self.required(ctx)
         player.shuffle_votes.add(ctx.author)
 
-        if len(player.shuffle_votes) > required:
+        if len(player.shuffle_votes) >= required:
             embed=discord.Embed(description="**🔀 Vote Passed | Shuffled**", color = discord.Color.teal())
             await ctx.send(embed=embed, delete_after=10)
             player.shuffle_votes.clear()
