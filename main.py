@@ -461,6 +461,8 @@ class Player(wavelink.Player):
         """Method which updates or sends a new player controller."""
         if self.updating:
             return
+        if self.current==None:
+          return
 
         self.updating = True
 
@@ -483,7 +485,9 @@ class Player(wavelink.Player):
             channel = self.bot.get_channel(int(self.channel_id))
             embed = self.build_embed()
             embed2 = discord.Embed(title=f'ASTRO MUSIC | {channel.name}', colour=discord.Color.green())
-            await self.controller.message.edit(content=f'** > 🔊 {voicechannel.name}**', embed=embed)
+            # if embed.description==None:
+            #   await self.controller.message.edit(content=f"** > 🔊 {channel}**")
+            await self.controller.message.edit(content=None, embed=embed)
             
 
         self.updating = False
@@ -494,7 +498,7 @@ class Player(wavelink.Player):
         """Method which builds our players controller embed."""
         track = self.current
         if not track:
-            return
+            return discord.Embed(title=f'ASTRO MUSIC | ▶️', colour=discord.Color.green())
         # player: Player = self.bot.wavelink.get_player(guild_id=, cls=Player, context=ctx)
         try:
           length2 = track.length
@@ -603,7 +607,7 @@ class InteractiveController(menus.Menu):
 
     async def send_initial_message(self, ctx: commands.Context, channel: discord.TextChannel) -> discord.Message:
         voicechannel = self.bot.get_channel(int(self.player.channel_id))
-        return await channel.send(content=f'** > 🔊 {voicechannel.name}**' , embed=self.embed)
+        return await channel.send(content=None , embed=self.embed)
 
     # @menus.button(emoji='\u25B6')
     # async def resume_command(self, payload: discord.RawReactionActionEvent):
