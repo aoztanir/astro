@@ -14,14 +14,14 @@ from pymongo import MongoClient
 # from replit import db
 import random as rando
 import wavelink
-
+from discord_slash.utils.manage_commands import *
 # from covid19_data import JHU
 # from bottle import route, template, run
 # from recommender.api import Recommender
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import praw
-from discord_slash import SlashCommand, SlashContext
+from discord_slash import SlashCommand, SlashContext, cog_ext
 
 import asyncpraw
 from discord.voice_client import VoiceClient
@@ -147,9 +147,9 @@ client = commands.AutoShardedBot(shard_count=2, command_prefix=(get_prefix), int
 
 slash = SlashCommand(client, sync_commands=True) # Declares slash commands through the client.
 
-@slash.slash(name="ping")
-async def _ping(ctx): # Defines a new "context" (ctx) command called "ping."
-  await ctx.send(f"Pong! ({client.latency*1000}ms)")
+# @slash.slash(name="play")
+# async def playSlash(ctx, song:): # Defines a new "context" (ctx) command called "ping."
+#   await play(ctx,)
 
 
 @client.event
@@ -606,6 +606,7 @@ class InteractiveController(menus.Menu):
         return payload.emoji in self.buttons
 
     async def send_initial_message(self, ctx: commands.Context, channel: discord.TextChannel) -> discord.Message:
+   
         voicechannel = self.bot.get_channel(int(self.player.channel_id))
         return await channel.send(content=None , embed=self.embed)
 
@@ -974,7 +975,19 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     
 
 
-
+    @cog_ext.cog_slash(name="play",
+             description="Plays Music Through Any Voice Channel",
+             options=[
+               create_option(
+                 name="song",
+                 description="Song Name / Playlist URL",
+                 option_type=3,
+                 required=False
+               )
+             ])
+    async def playSlash(self, ctx: SlashContext, song: str):
+        # ctx=commands.context(ctx)
+        return await self.play(ctx,query=song)
 
     @commands.command(aliases = [ 'sing'])
     async def lyrics(self, ctx,*, song : str=None):
@@ -7114,9 +7127,9 @@ async def eightball(ctx, *, question):
 # Lava.start()
 import subprocess
 
-
+client.add_cog(Music(client))
 #DEV BOT
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
