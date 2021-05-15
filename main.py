@@ -607,7 +607,7 @@ class InteractiveController(menus.Menu):
     def reaction_check(self, payload: discord.RawReactionActionEvent):
         # if payload.event_type == 'REACTION_REMOVE':
         #     return False
-
+        print(payload.event_type)
         if not payload.member:
             return False
         if payload.member.bot:
