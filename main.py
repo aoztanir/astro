@@ -111,14 +111,27 @@ def formatTitle(title: str):
 mongoCli = MongoClient('mongodb+srv://aoztanir:astro@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority')
 
 # astroDB = pymongo.MongoClient("mongodb+srv://aoztanir:ladoo256@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority")
-datab = mongoCli.test
-astroDB = datab['astro']
-astroDB.insert_one({})
+datab = mongoCli.astro
+
+
 
 
 def get_prefix(client, message):
-  try:
+  # try:
     return '.'
+    prefixes = mongoCli['prefixes']
+    # if client.user.id==841760295432880168:
+    #   return '!'
+    # prefixes=datab['prefixes']
+    
+    prefixObj = prefixes[str(message.guild.id)]
+    if prefixObj == None:
+      prefixObj.insert_one({'server': str(message.guild.id), 'prefix':'.'})
+    prefixJson = prefixes.posts.find_one({'server': str(message.guild.id)})
+
+    return prefixJson['prefix']
+
+    # return '.'
     # prefixes = db["prefixes"]
     # with open('prefixes.json', 'r') as f: ##we open and read the prefixes.json, assuming it's in the same file
     #   prefixes = json.load(f) #load the json as prefixes
@@ -136,13 +149,14 @@ def get_prefix(client, message):
       return commands.when_mentioned_or(prefixes[str(message.guild.id)])(client, message)
 
       
-  except Exception as e:
-    print(e)
+  # except Exception as e:
+  #   print(e)
 # client = commands.Bot(
 #     command_prefix= (get_prefix),
 #     )
 
-client = commands.AutoShardedBot(shard_count=2, command_prefix=(get_prefix), intents = discord.Intents.all())
+
+client = commands.AutoShardedBot(shard_count=4, command_prefix=(get_prefix), intents = discord.Intents.all(), case_insensitive=True)
 # client = commands.AutoShardedBot(shard_count=2, command_prefix='.', intents = discord.Intents.all())
 
 slash = SlashCommand(client, sync_commands=True) # Declares slash commands through the client.
@@ -1450,6 +1464,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         await player.set_eq(eq)
 
     @commands.command(aliases=['q', 'que'])
+    @commands.cooldown(1,3,commands.BucketType.user)
     async def queue(self, ctx: commands.Context,*, song=None):
         """Display the players queued songs."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
@@ -2124,7 +2139,7 @@ async def prefix(ctx, *, prefixNew:str=None):
   await ctx.send(embed=embed)
 
 
-@client.command(aliases=['listMute','muted','Muted','Listmute'])
+@client.command(aliases=['muted'])
 async def listmute(ctx):
   role = discord.utils.get(ctx.guild.roles, name="astroMuted")
   # if role is None:
@@ -2320,7 +2335,7 @@ async def update_db(server=None):
 # client.loop.create_task(update_db())
 
 
-@client.command(aliases=['unMute','Unmute'])
+@client.command()
 @commands.has_permissions(administrator=True)
 async def unmute(ctx, memb: discord.Member,*, reason:str =None):
   if reason == None:
@@ -2372,7 +2387,7 @@ async def unmute(ctx, memb: discord.Member,*, reason:str =None):
 
 
 
-@client.command(aliases=['Mute','silence','Silence'])
+@client.command(aliases=['silence'])
 @commands.has_permissions(administrator=True)
 async def mute(ctx, memb: discord.Member,*, reason :str =None):
   member=memb
@@ -2706,7 +2721,7 @@ async def help(ctx, *, commandType :str =None):
 
 
 
-@client.command(aliases=['Setup','quickstart','beginSetup'])
+@client.command(aliases=['quickstart','beginSetup'])
 async def setup(ctx):
   await on_guild_join(ctx.guild)
 
@@ -2904,7 +2919,7 @@ mainshop = [
 import json
 import os
 
-@client.command(aliases=['Sell'])
+@client.command()
 async def sell(ctx,amount = 1,*, item):
     await open_account(ctx.author)
 
@@ -3139,7 +3154,7 @@ async def use_item(user, item_name):
     return [True,"Worked",dmg, armor]
 
 
-@client.command(aliases=['heal','Heal','Use','utilize','Utilize'])
+@client.command(aliases=['heal', 'Utilize'])
 async def use(ctx, *, item):
   users = await get_bank_data()
   await open_account(ctx.author)
@@ -3251,7 +3266,7 @@ async def attack_person(user,victim,item_name):
     return [True,"Worked",dmg]
 
 
-@client.command(aliases=['Fight','Attack','fight'])
+@client.command(aliases=['Fight'])
 async def attack(ctx, member: discord.Member=None, *, item):
 
   await open_account(ctx.author)
@@ -3345,7 +3360,7 @@ async def attack(ctx, member: discord.Member=None, *, item):
 
 
 
-@client.command(aliases=['stats','Balance','gameinfo','bal'])
+@client.command(aliases=['stats','gameinfo','bal'])
 async def balance(ctx, member: discord.Member=None):
   if member != None:
     pass
@@ -3447,7 +3462,7 @@ jobsincome = [15,20,40,50,80,100,500,1000]
 
 
 
-@client.command(aliases=['Jobs','alljobs','listjobs','work'])
+@client.command(aliases=['alljobs','listjobs','work'])
 async def jobs(ctx):
   em = discord.Embed(title = f"All Jobs" , description = "Use The Earn Command And One of These Jobs, And If You Meet The Requirements, You Will Work A Day In That Job",color = discord.Color.gold(),timestamp=datetime.utcnow()) 
   em.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
@@ -3460,7 +3475,7 @@ async def jobs(ctx):
 
 
 
-@client.command(aliases=['Earn'])
+@client.command()
 async def earn(ctx, *, job: str=None):
   await open_account(ctx.author)
   users = await get_bank_data()
@@ -3680,7 +3695,7 @@ async def withdraw(ctx, amount: str):
   with open("mainbank.json","w") as f:
     json.dump(users,f)
 
-@client.command(aliases = ["lb", "ranks","Levels","levels"])
+@client.command(aliases = ["lb", "ranks","levels"])
 async def leaderboard(ctx,x = 10):
   server = ctx.guild.id
   with open("userJson.json","r") as f:
@@ -3790,7 +3805,7 @@ async def buy(ctx,amount = 1,*,item):
     await ctx.send("> "+f"You just bought {amount} {item}!")
 
 
-@client.command(aliases = ['items','item','object','objects','Bag','Items'])
+@client.command(aliases = ['items','objects'])
 async def bag(ctx, member: discord.Member = None):
     if member != None:
       user = member
@@ -3936,7 +3951,7 @@ async def get_bank_data():
 
 
 
-@client.command(aliases = ['emojiconvert', 'Emojiconvert', 'emojiConvert'])
+@client.command()
 async def _emojiconvert(ctx,*, words : str):
   emo = Translator(exact_match_only=False, randomize=True)
   await ctx.send(emo.emojify(words))
@@ -3946,7 +3961,7 @@ def split(word):
 
 
 
-@client.command(aliases = ['pfp', 'PFP','profilepic'])
+@client.command(aliases = ['pfp','profilepic'])
 async def _pfp(ctx, memb : discord.Member=None):
   if memb==None:
     pfp=ctx.author.avatar_url
@@ -3970,7 +3985,7 @@ def downloadImages(query):
   soup_page=soup(xml_page,"lxml")
   news_list=soup_page.find_all("a", class_="rg_i Q4LuWd")
 
-@client.command(aliases = ['nicknamemember','Nickmember', 'Nicknamemember','Nickname','Nick', 'nick'])
+@client.command(aliases = ['nicknamemember','Nickname','Nick'])
 @commands.has_permissions(administrator=True)
 async def nickmember(ctx, target: discord.Member=None, *, nickname: str):
     # target = ctx.message.author
@@ -4079,7 +4094,7 @@ async def nickmember(ctx, target: discord.Member=None, *, nickname: str):
 #         await ctx.send(f'Not enough permissions')
 
 
-@client.command(aliases=['level','rank','userInfo','exp','Userinfo', 'Rank', 'Level','Exp', 'Position', 'position'])
+@client.command(aliases=['level','rank','exp', 'position'])
 async def userinfo(ctx, target: discord.Member=None):
     if target==None:
       target=ctx.author
@@ -4118,7 +4133,7 @@ async def userinfo(ctx, target: discord.Member=None):
 
 
 
-@client.command(aliases = ['React', 'reactletters'])
+@client.command(aliases = ['reactletters'])
 async def react(ctx,*, words : str):
   finalWord = ""
   letterArr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -4135,7 +4150,7 @@ async def react(ctx,*, words : str):
   
 
 
-@client.command(aliases = ['emojify', 'Emojify'])
+@client.command(aliases = [ 'Emojify'])
 async def _emojify(ctx,*, words : str):
   finalWord = ""
   letterArr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -4197,7 +4212,7 @@ async def _emojify(ctx,*, words : str):
 
   
 
-@client.command(aliases = ['setStatus', 'Setstatus', 'status'])
+@client.command(aliases = [ 'status'])
 async def setstatus(ctx,*, status: str):
     # if skip == True:
     #     skip = False
@@ -4325,7 +4340,7 @@ async def _meetingSummary(ctx,*, question):
 
 
 
-@client.command(case_insensitive = True, aliases = ["timer", "Timer", "timeit"])
+@client.command(case_insensitive = True, aliases = ["timer", "timeit"])
 # @commands.bot_has_permissions(attach_files = True, embed_links = True)
 async def _timer(ctx, time):
     reminder = ""
@@ -4428,7 +4443,7 @@ async def reminder(ctx, time, *, reminder):
         return
     await ctx.send(embed=embed)
 
-@client.command(aliases = [ 'Kick'])
+@client.command()
 @commands.has_permissions(kick_members = True)
 async def kick(ctx, member : discord.Member, *, reason="Unspecified" ):
   # try:
@@ -4442,7 +4457,7 @@ async def kick(ctx, member : discord.Member, *, reason="Unspecified" ):
   await ctx.send(embed=embed)
   # await ctx.send(f'> {member.mention} Has Been Kicked By '+ctx.author.mention)
 
-@client.command(aliases = ['ban', 'Ban'])
+@client.command(aliases = ['ban'])
 @commands.has_permissions(ban_members = True)
 # @commands.has_permissions(ban_members = True)
 async def _ban(ctx, member : discord.Member, *, reason="Unspecified" ):
@@ -4480,12 +4495,12 @@ def downloadSong(url, ctx):
   voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
   voice.play(discord.FFmpegPCMAudio("song.mp3"))
 
-@client.command(aliases= ['hi','sup','whatsup', 'Hi', 'Sup', 'HI'])
+@client.command(aliases= ['hi','sup','whatsup'])
 async def _hi(ctx):
   await ctx.send('> ** Hi! 🚀 WHEEE!!! **')
 
 
-@client.command(aliases = ['meme','reddit','imgur','Meme','Reddit', 'Imgur'])
+@client.command(aliases = ['meme','reddit','imgur'])
 async def _meme( ctx, *, sub="dankmemes"):
   try:
     meme=""
@@ -4550,7 +4565,7 @@ async def _meme( ctx, *, sub="dankmemes"):
     pass
   
 
-@client.command(aliases= ['unban', 'Unban'])
+@client.command(aliases= ['unban'])
 @commands.has_permissions(ban_members = True)
 @commands.has_permissions(ban_members = True)
 async def _unban(ctx, *, member):
@@ -4665,7 +4680,7 @@ async def bye(ctx):
   await ctx.send("Bye!")
 
 
-@client.command(aliases = ["news", "headlines","News","Headlines", 'headline', 'Headline'])
+@client.command(aliases = ["news", "headlines", 'headline'])
 async def _news(ctx, amount):
     # await ctx.send("How many headlines?")
     # msg = await client.wait_for('message')
@@ -4705,7 +4720,7 @@ async def _news(ctx, amount):
 
 
 
-@client.command(aliases = ["googlelinks", "Googlelinks","googleLinks","searchLinks", "searchlinks", "Searchlinks"])
+@client.command(aliases = ["googlelinks", "Searchlinks"])
 async def _googleLinks(ctx, *, searchstr: str):
   query = searchstr
   embed=discord.Embed(title="Your 10 Results Are Ready!",colour=discord.Color.gold(), url="https://google.com", description="Here are your results:", timestamp=datetime.utcnow())
@@ -4724,7 +4739,7 @@ async def _googleLinks(ctx, *, searchstr: str):
   # for j in search(query, tld="co.in", num=10, stop=10, pause=2): 
   #     await ctx.send(j) 
 
-@client.command(aliases = ["google","Google", "search", "Search"])
+@client.command(aliases = ["google", "Search"])
 async def _google(ctx, *, searchstr: str):
   query = searchstr
   results = []
@@ -4753,8 +4768,8 @@ async def _google(ctx, *, searchstr: str):
 #   await ctx.send("> KEYWORDS/COMMAND PREFIXES:   '.',  'pls', 'astro', '', ' '. ")
 
 
-@client.command(aliases = ["purge", "Clear", 'clear', 'Purge'])
-@commands.has_permissions( manage_messages=True)
+@client.command(aliases = ["purge", "Clear"])
+# @commands.has_permissions( manage_messages=True)
 async def _clear(ctx, amount):
   try:
     if str(amount).lower()=="queue":
@@ -4770,7 +4785,7 @@ async def _clear(ctx, amount):
   
 
 
-@client.command(aliases = ['time', 'Time','now', 'Now'])
+@client.command(aliases = ['time', 'Now'])
 async def _time(ctx, inside, city):
   # city.replace('in', '');
   print(city)
@@ -4807,7 +4822,7 @@ async def _time(ctx, inside, city):
 async def _who(ctx):
     await ctx.send("Heya,\nI was created by Team Astro More About Them Here: https://teamastro.ml/")
 
-@client.command(aliases = ['weather', 'Weather','Temperature', 'temperature'])
+@client.command(aliases = ['weather','temperature'])
 async def _weather(ctx, *, city):
     api_key = "d4b4b3505a923d073e0e9ffd3cd1a606"
     base_url = "http://api.openweathermap.org/data/2.5/weather?"
@@ -4841,7 +4856,7 @@ async def _weather(ctx, *, city):
     else:
         await ctx.send(" City Not Found ")
 
-@client.command(aliases = ['wiki', 'Wiki'])
+@client.command(aliases = ['Wiki'])
 async def _wiki(ctx, *, topic):
     ny = wikipedia.page(topic)
     
@@ -4938,7 +4953,7 @@ async def listqueueOld(ctx):
 
     # await msg.delete()
 
-@client.command(aliases = ['Percentage','percentage','percent','Percent','amount','Amount'])
+@client.command(aliases = ['Percentage','Percent','amount'])
 async def _percentage(ctx, member: discord.Member,*, question):
   author = ctx.message.author
   author_name = author.name
@@ -4957,7 +4972,7 @@ async def _percentage(ctx, member: discord.Member,*, question):
   # embed.add_field(name="URL:", value = final_url , inline=False) 
 
   await ctx.send(embed = embed)
-@client.command(aliases = ['pollTimes', 'Polltimes','whencanyoucome','when', 'When'])
+@client.command(aliases = ['whencanyoucome','when'])
 async def polltimes(ctx, *, question):
   author = ctx.message.author
   author_name = author.name
@@ -5056,51 +5071,51 @@ async def poll(ctx,time,*, question):
   # embed.add_field(name="URL:", value = final_url , inline=False) 
 
 
-@client.command(aliases=['radio', 'stream'])
-async def Radio(ctx, url: str = 'http://stream.radioparadise.com/rock-128'):
-  try:
-    voiceChannel = ctx.message.author.voice.channel
-    voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-  except:
-    pass
-  voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-  try:
-    if voice.is_playing() and voiceChannel!=voice.channel:
-      await ctx.send("> "+ctx.author.mention+" Someone Else Is Already Listnening To Music Join That Channel To Listen To Music Too. The Voice Channel is: "+voice.channel.mention)
-      return
+# @client.command(aliases=['radio', 'stream'])
+# async def Radio(ctx, url: str = 'http://stream.radioparadise.com/rock-128'):
+#   try:
+#     voiceChannel = ctx.message.author.voice.channel
+#     voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+#   except:
+#     pass
+#   voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+#   try:
+#     if voice.is_playing() and voiceChannel!=voice.channel:
+#       await ctx.send("> "+ctx.author.mention+" Someone Else Is Already Listnening To Music Join That Channel To Listen To Music Too. The Voice Channel is: "+voice.channel.mention)
+#       return
       
-  except:
-    pass    # try:
-    #     voice_client = ctx.message.guild.voice_client
-    #     await voice_client.disconnect()
-    # except AttributeError:
-    #     pass
+#   except:
+#     pass    # try:
+#     #     voice_client = ctx.message.guild.voice_client
+#     #     await voice_client.disconnect()
+#     # except AttributeError:
+#     #     pass
 
-    if not ctx.message.author.voice:
-        await ctx.send("> You are not connected to a voice channel.".title())
-        return
+#     if not ctx.message.author.voice:
+#         await ctx.send("> You are not connected to a voice channel.".title())
+#         return
 
-    else:
-      try:
-      #   if not voice.is_connected():
-        await voiceChannel.connect()
-      except:
-        pass
-      # try:
-  channel = ctx.author.voice.channel
-  global player
-  try:
-      player = await channel.connect()
-  except:
-      pass
-  voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-  voice.stop()
-  # FFMPEG_OPTS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-  # ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
-  voice.play( await YTDLSource.from_url(url, stream=True))
+#     else:
+#       try:
+#       #   if not voice.is_connected():
+#         await voiceChannel.connect()
+#       except:
+#         pass
+#       # try:
+#   channel = ctx.author.voice.channel
+#   global player
+#   try:
+#       player = await channel.connect()
+#   except:
+#       pass
+#   voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+#   voice.stop()
+#   # FFMPEG_OPTS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+#   # ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
+#   voice.play( await YTDLSource.from_url(url, stream=True))
   
-  # FFMPEG_OPTS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'}
-  # video, source = await search(url)
+#   # FFMPEG_OPTS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'}
+#   # video, source = await search(url)
 
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -5149,18 +5164,18 @@ class YTDLSource(discord.PCMVolumeTransformer):
         return cls(discord.FFmpegPCMAudio(data['url']), data=data)
 
 
-@client.command(aliases=['serverNnme','nameServer','nameserver','Nameserver'])
+@client.command(aliases=['Nameserver'])
 @commands.has_permissions(administrator=True)
 async def serverName(ctx,*, newname: str=None):
   if newname == None:
-    await ctx.send("> Please Provide A Name.")
+    await ctx.send("**Please Provide A Name**")
     return
   else:
     await ctx.guild.edit(name=newname)
     await serverinfo(ctx)
 
 
-@client.command(aliases=['Info','info','Server','server','Serverinfo'])
+@client.command(aliases=['info','Server'])
 async def serverinfo(ctx):
   name = str(ctx.guild.name)
   description = str(ctx.guild.description)
@@ -6857,7 +6872,7 @@ async def stopOld(ctx, status: str=None):
 # async def clean(ctx):
 #     await ctx.send("Since this is hosted on repl.it, files are automatically cleaned!")
 
-@client.command(aliases=['tracktotal','trackcovidtotal','Covidtotal','Coronatotal','coronatotal','Coronavirustotal','coronavirustotal','Covid19total''trackCovidtotal','CovidTracktotal','covidtotal'])
+# @client.command(aliases=['tracktotal','trackcovidtotal','Covidtotal','Coronatotal','coronatotal','Coronavirustotal','coronavirustotal','Covid19total''trackCovidtotal','CovidTracktotal','covidtotal'])
 async def covidTrackertotal(ctx):
   
 
@@ -6905,7 +6920,7 @@ async def create_task_user(user):
 
 
 
-@client.command(case_insensitive = True, aliases = ["task", "Task", "taskfor"])
+@client.command(case_insensitive = True, aliases = ["task"])
 async def taskFor(ctx, memb: discord.Member, *, task:str):
   
   await ctx.send("When Is This Task Due?")
@@ -6941,7 +6956,7 @@ async def taskFor(ctx, memb: discord.Member, *, task:str):
     return
   await ctx.send(memb.mention+" has been assigned a new task, check your DM for all your tasks.")
 
-@client.command(case_insensitive = True, aliases = ["removeTask", "removetask", "deleteTask"])
+@client.command(case_insensitive = True, aliases = ["removeTask"])
 async def deletetask(ctx, memb: discord.Member, taskNum=None):
   if taskNum==None:
     await ctx.send("Specify the task number.")
@@ -6959,7 +6974,7 @@ async def deletetask(ctx, memb: discord.Member, taskNum=None):
   await ctx.send("Removed task number "+str(int(taskNum))+" for " + memb.mention+"!")
   
 
-@client.command(case_insensitive = True, aliases = ["listtasks", "listtask", "listTaskfor"])
+@client.command(case_insensitive = True, aliases = [ "listtask", "listTaskfor"])
 async def listTasks(ctx, memb: discord.Member):
 
   embed = discord.Embed(title="Tasks For "+memb.name, description = "Task List Below", colour=discord.Color.gold(), timestamp=datetime.utcnow())
@@ -7001,7 +7016,7 @@ async def listTasks(ctx, memb: discord.Member):
 
 
 
-@client.command(case_insensitive = True, aliases = ["taskList", "teamTask", "teamtasks", 'teamTaskList','teamtasklist','teamTasks'])
+# @client.command(case_insensitive = True, aliases = ["taskList", "teamTask", "teamtasks", 'teamTaskList','teamtasklist','teamTasks'])
 # @commands.bot_has_permissions(attach_files = True, embed_links = True)
 async def teamtask(ctx,*, question):
   author = ctx.message.author
@@ -7060,7 +7075,7 @@ async def listteamtasks(ctx):
     
 
 
-@client.command(aliases=[ 'corona', 'Corona', 'Covid','Covid19','covid19'])
+# @client.command(aliases=[ 'corona', 'Corona', 'Covid','Covid19','covid19'])
 async def covid(ctx, stateName):
   import covid19_data  
 
@@ -7140,7 +7155,8 @@ import subprocess
 
 client.add_cog(Music(client))
 #DEV BOT
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
