@@ -4579,7 +4579,11 @@ async def ping(ctx):
     await ctx.send(f'> Pong! {round(client.latency*100)}ms!')
 
 
-
+async def didyouknow(ctx):
+  n = random.randint(1,10)
+  if n==1:
+    embed=discord.Embed(title="**ℹ️ Did you know**",description="Astro has a beta bot, invite him [here](https://discord.com/api/oauth2/authorize?client_id=841760295432880168&permissions=8&scope=bot%20applications.commands)", color = discord.Color.red())
+    return await ctx.send(embed=embed, delete_after=10)
 
 
 @client.event
@@ -4620,7 +4624,7 @@ async def on_command_error(ctx, error):
       await play(ctx)
     if isinstance(error, commands.CommandOnCooldown):
       embed=discord.Embed(description="**⏰ Woah! This Command Is On Cooldown! Try Again In {:.2f}s!**".format(error.retry_after), color = discord.Color.red())
-      return await ctx.send(embed=embed)
+      return await ctx.send(embed=embed, delete_after=5)
     if isinstance(error, IncorrectChannelError):
       return
     if "ZeroConnectedNodes" in str(error) or "UnboundLocalError" in str(error):
