@@ -1235,7 +1235,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await ctx.send(embed=embed, delete_after=10)
 
     @commands.command()
-    @commands.cooldown(1,3,commands.BucketType.guild)
+    # @commands.cooldown(1,3,commands.BucketType.guild)
     async def skip(self, ctx: commands.Context):
         """Skip the currently playing song."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
