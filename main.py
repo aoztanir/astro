@@ -616,7 +616,8 @@ class InteractiveController(menus.Menu):
             return False
         if payload.member not in self.bot.get_channel(int(self.player.channel_id)).members:
             return False
-
+        if payload.event_type == 'REACTION_REMOVE':
+            return payload.emoji in self.buttons
         return payload.emoji in self.buttons
 
     async def send_initial_message(self, ctx: commands.Context, channel: discord.TextChannel) -> discord.Message:
