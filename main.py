@@ -371,8 +371,6 @@ class Player(wavelink.Player):
     async def play(self, track):
       try:
         if  isinstance(track, spotTrack):
-          if self.waiting:
-            return
           try:
             spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title, retry_on_failure=True)
             trackToQueue = Track(spotifyTrack[0].id, spotifyTrack[0].info, requester=track.requester)
@@ -1237,6 +1235,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await ctx.send(embed=embed, delete_after=10)
 
     @commands.command()
+    @commands.cooldown(1,3,commands.BucketType.guild)
     async def skip(self, ctx: commands.Context):
         """Skip the currently playing song."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
