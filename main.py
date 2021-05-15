@@ -990,6 +990,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         return await self.play(ctx,query=song)
 
     @commands.command(aliases = [ 'sing'])
+    @commands.cooldown(1,3,commands.BucketType.user)
     async def lyrics(self, ctx,*, song : str=None):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       if song==None:
@@ -1021,7 +1022,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         await ctx.send(embed=embed)
         return
     
-    @commands.command()
+    @commands.command(aliases=['p'])
+    @commands.cooldown(1,2,commands.BucketType.user)
     async def play(self, ctx: commands.Context, *, query: str=None):
         """Play or queue a song with the given query."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
@@ -1468,6 +1470,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         await paginator.start(ctx)
     @commands.command()
+    @commands.cooldown(1,8,commands.BucketType.user)
     async def question_controller(self, ctx: commands.Context):
       embed=discord.Embed(description=f"**⏯ -> ` Pause/Play `\n\n⏪ -> ` Back 15 Seconds `\n\n⏩ -> ` Forward 15 Seconds `\n\n⏭ -> ` Skip To Next Song `\n\n⏺ -> ` Rewind Song `\n\n🔀 -> ` Shuffle Queue `\n\n🔊 -> ` Sound Up `\n\n🔉 -> ` Sound Down `\n\n🎸 -> ` Shows Queue `\n\n🛑 -> ` Stops Player `\n\n🔃 -> ` Updates Controller `\n\n🔂 -> ` Loops The Current Song `\n\n⁉ -> ` Shows This Message `**", color = discord.Color.orange())
       return await ctx.send(embed=embed, delete_after=10)
@@ -4615,7 +4618,9 @@ async def on_command_error(ctx, error):
       
     if "Unable To Download" in str(error):
       await play(ctx)
-
+    if isinstance(error, commands.CommandOnCooldown):
+      embed=discord.Embed(description="**⏰ Woah! This Command Is On Cooldown! Try Again In {:.2f}s!**".format(error.retry_after), color = discord.Color.red())
+      return await ctx.send(embed=embed)
     if isinstance(error, IncorrectChannelError):
       return
     if "ZeroConnectedNodes" in str(error) or "UnboundLocalError" in str(error):
@@ -4752,11 +4757,13 @@ async def _clear(ctx, amount):
       command = client.get_command('clearqueue')
       ctx.command = command
       return await client.invoke(ctx)
-      
-
-    await ctx.channel.purge(limit = int(amount)+1)
   except:
-    pass
+    pass 
+  if ctx.message.author.server_permissions.administrator:
+    await ctx.channel.purge(limit = int(amount)+1)
+  else:
+    raise discord.ext.commands.MissingPermissions
+  
 
 
 @client.command(aliases = ['time', 'Time','now', 'Now'])
