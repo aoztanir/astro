@@ -605,8 +605,8 @@ class InteractiveController(menus.Menu):
         return ctx
 
     def reaction_check(self, payload: discord.RawReactionActionEvent):
-        if payload.event_type == 'REACTION_REMOVE':
-            return False
+        # if payload.event_type == 'REACTION_REMOVE':
+        #     return False
 
         if not payload.member:
             return False
@@ -621,7 +621,7 @@ class InteractiveController(menus.Menu):
 
     async def send_initial_message(self, ctx: commands.Context, channel: discord.TextChannel) -> discord.Message:
    
-        voicechannel = self.bot.get_channel(int(self.player.channel_id))
+        # voicechannel = self.bot.get_channel(int(self.player.channel_id))
         return await channel.send(content=None , embed=self.embed)
 
     # @menus.button(emoji='\u25B6')
