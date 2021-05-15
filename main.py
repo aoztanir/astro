@@ -371,6 +371,8 @@ class Player(wavelink.Player):
     async def play(self, track):
       try:
         if  isinstance(track, spotTrack):
+          if self.waiting:
+            return
           try:
             spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title, retry_on_failure=True)
             trackToQueue = Track(spotifyTrack[0].id, spotifyTrack[0].info, requester=track.requester)
