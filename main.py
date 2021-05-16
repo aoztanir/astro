@@ -4856,9 +4856,11 @@ async def _clear(ctx, amount):
   except:
     pass 
   if ctx.message.author.guild_permissions.administrator:
-    await ctx.channel.purge(limit = int(amount)+1)
-    embed=discord.Embed(description=f"**❎ {ctx.author.mention} Successfully Cleared {amount} Message(s)**", color = discord.Color.green())
+    
+    embed=discord.Embed(description=f"**❎ {ctx.author.mention} Successfully Clearing {amount} Message(s)**", color = discord.Color.green())
     await ctx.send(embed=embed, delete_after=5)
+    await ctx.channel.purge(limit = int(amount)+1)
+    
   else:
     raise discord.ext.commands.MissingPermissions('no perms')
   
