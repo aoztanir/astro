@@ -605,19 +605,26 @@ class InteractiveController(menus.Menu):
         return ctx
 
     def reaction_check(self, payload: discord.RawReactionActionEvent):
-        # if payload.event_type == 'REACTION_REMOVE':
-        #     return False
-        print(payload.event_type)
+        if payload.event_type == 'REACTION_REMOVE':
+            return False
         if not payload.member:
             return False
         if payload.member.bot:
+            return False
+        if payload.member==client.user:
             return False
         if payload.message_id != self.message.id:
             return False
         if payload.member not in self.bot.get_channel(int(self.player.channel_id)).members:
             return False
-        if payload.event_type == 'REACTION_REMOVE':
-            return payload.emoji in self.buttons
+
+        
+        
+
+        # if payload.event_type == 'REACTION_REMOVE':
+        #     return payload.emoji in self.buttons
+        # msg = client.fetch_message(payload.message_id)
+        # msg.remove_reaction(payload.emoji, payload.member)
         return payload.emoji in self.buttons
 
     async def send_initial_message(self, ctx: commands.Context, channel: discord.TextChannel) -> discord.Message:
@@ -642,7 +649,15 @@ class InteractiveController(menus.Menu):
     @menus.button(emoji='⏪')
     async def ff_command(self, payload: discord.RawReactionActionEvent):
         """Volume up button"""
+        
         ctx = self.update_context(payload)
+        # print(ctx.message.content)
+        # ctx2 = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
 
         command = self.bot.get_command('f_down')
         ctx.command = command
@@ -656,6 +671,11 @@ class InteractiveController(menus.Menu):
     async def pause_command(self, payload: discord.RawReactionActionEvent):
         """Pause button"""
         ctx = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
         player: Player = self.bot.wavelink.get_player(ctx.guild.id, cls=Player, context=ctx)
         if player.is_playing and not player.is_paused:
 
@@ -682,6 +702,11 @@ class InteractiveController(menus.Menu):
     async def fb_command(self, payload: discord.RawReactionActionEvent):
         """Volume down button."""
         ctx = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
 
         command = self.bot.get_command('f_up')
         ctx.command = command
@@ -695,6 +720,11 @@ class InteractiveController(menus.Menu):
     async def skip_command(self, payload: discord.RawReactionActionEvent):
         """Skip button."""
         ctx = self.update_context(payload)
+        amsg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
 
         command = self.bot.get_command('skip')
         ctx.command = command
@@ -704,6 +734,11 @@ class InteractiveController(menus.Menu):
     async def loop_command(self, payload: discord.RawReactionActionEvent):
         """Skip button."""
         ctx = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
 
         command = self.bot.get_command('loop')
         ctx.command = command
@@ -717,6 +752,11 @@ class InteractiveController(menus.Menu):
     async def rewind_command(self, payload: discord.RawReactionActionEvent):
         """Skip button."""
         ctx = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
 
         command = self.bot.get_command('rewind')
         ctx.command = command
@@ -727,6 +767,11 @@ class InteractiveController(menus.Menu):
     async def shuffle_command(self, payload: discord.RawReactionActionEvent):
         """Shuffle button."""
         ctx = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
 
         command = self.bot.get_command('shuffle')
         ctx.command = command
@@ -737,6 +782,11 @@ class InteractiveController(menus.Menu):
     async def volup_command(self, payload: discord.RawReactionActionEvent):
         """Volume up button"""
         ctx = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
 
         command = self.bot.get_command('vol_up')
         ctx.command = command
@@ -750,6 +800,11 @@ class InteractiveController(menus.Menu):
     async def voldown_command(self, payload: discord.RawReactionActionEvent):
         """Volume down button."""
         ctx = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
 
         command = self.bot.get_command('vol_down')
         ctx.command = command
@@ -763,6 +818,11 @@ class InteractiveController(menus.Menu):
     async def queue_command(self, payload: discord.RawReactionActionEvent):
         """Player queue button."""
         ctx = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
 
         command = self.bot.get_command('queue')
         ctx.command = command
@@ -774,15 +834,25 @@ class InteractiveController(menus.Menu):
     async def reload_command(self, payload: discord.RawReactionActionEvent):
         """Player Reload button."""
         ctx = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
 
         command = self.bot.get_command('np')
         ctx.command = command
 
         await self.bot.invoke(ctx)
-    @menus.button(emoji='⁉')
+    @menus.button(emoji='❓')
     async def help_command(self, payload: discord.RawReactionActionEvent):
         """Player Reload button."""
         ctx = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
 
         command = self.bot.get_command('question_controller')
         ctx.command = command
@@ -792,6 +862,11 @@ class InteractiveController(menus.Menu):
     async def stop_command(self, payload: discord.RawReactionActionEvent):
         """Stop button."""
         ctx = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
 
         command = self.bot.get_command('stop')
         ctx.command = command
@@ -1487,9 +1562,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         await paginator.start(ctx)
     @commands.command()
-    @commands.cooldown(1,8,commands.BucketType.user)
+    # @commands.cooldown(1,8,commands.BucketType.user)
     async def question_controller(self, ctx: commands.Context):
-      embed=discord.Embed(description=f"**⏯ -> ` Pause/Play `\n\n⏪ -> ` Back 15 Seconds `\n\n⏩ -> ` Forward 15 Seconds `\n\n⏭ -> ` Skip To Next Song `\n\n⏺ -> ` Rewind Song `\n\n🔀 -> ` Shuffle Queue `\n\n🔊 -> ` Sound Up `\n\n🔉 -> ` Sound Down `\n\n🎸 -> ` Shows Queue `\n\n🛑 -> ` Stops Player `\n\n🔃 -> ` Updates Controller `\n\n🔂 -> ` Loops The Current Song `\n\n⁉ -> ` Shows This Message `**", color = discord.Color.orange())
+      embed=discord.Embed(description=f"**⏯ -> ` Pause/Play `\n\n⏪ -> ` Back 15 Seconds `\n\n⏩ -> ` Forward 15 Seconds `\n\n⏭ -> ` Skip To Next Song `\n\n⏺ -> ` Rewind Song `\n\n🔀 -> ` Shuffle Queue `\n\n🔊 -> ` Sound Up `\n\n🔉 -> ` Sound Down `\n\n🎸 -> ` Shows Queue `\n\n🛑 -> ` Stops Player `\n\n🔃 -> ` Updates Controller `\n\n🔂 -> ` Loops The Current Song `\n\n❓ -> ` Shows This Message `**", color = discord.Color.orange())
       return await ctx.send(embed=embed, delete_after=10)
     @commands.command(aliases=['np', 'now_playing', 'current', 'playing'])
     async def nowplaying(self, ctx: commands.Context):
@@ -4780,10 +4855,12 @@ async def _clear(ctx, amount):
       return await client.invoke(ctx)
   except:
     pass 
-  if ctx.message.author.server_permissions.administrator:
+  if ctx.message.author.guild_permissions.administrator:
     await ctx.channel.purge(limit = int(amount)+1)
+    embed=discord.Embed(description=f"**❎ {ctx.author.mention} Successfully Cleared {amount} Message(s)**", color = discord.Color.green())
+    await ctx.send(embed=embed, delete_after=5)
   else:
-    raise discord.ext.commands.MissingPermissions
+    raise discord.ext.commands.MissingPermissions('no perms')
   
 
 
@@ -7158,7 +7235,7 @@ import subprocess
 client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
