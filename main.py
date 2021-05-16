@@ -720,7 +720,7 @@ class InteractiveController(menus.Menu):
     async def skip_command(self, payload: discord.RawReactionActionEvent):
         """Skip button."""
         ctx = self.update_context(payload)
-        amsg = await ctx.fetch_message(payload.message_id)
+        msg = await ctx.fetch_message(payload.message_id)
         try:
           await msg.remove_reaction(payload.emoji, payload.member)
         except:
