@@ -108,10 +108,10 @@ def formatTitle(title: str):
 
 
 
-mongoCli = MongoClient('mongodb+srv://aoztanir:astro@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority')
+# mongoCli = MongoClient('mongodb+srv://aoztanir:astro@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority')
 
 # astroDB = pymongo.MongoClient("mongodb+srv://aoztanir:ladoo256@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority")
-datab = mongoCli.astro
+# datab = mongoCli.astro
 
 
 
@@ -335,7 +335,7 @@ class Track(wavelink.Track):
 class spotTrack(wavelink.Track):
     """Wavelink Track object for spotify"""
 
-    __slots__ = ('requester', 'title', 'uri' )
+    __slots__ = ('requester', 'title', 'uri', 'length' , 'is_stream')
     
 
     def __init__(self,**kwargs):
@@ -343,6 +343,8 @@ class spotTrack(wavelink.Track):
         self.title=kwargs.get('name')
         self.uri="https://open.spotify.com/"
         # self.query=kwargs.get('query')
+        self.is_stream=False
+        self.length=kwargs.get('length')
         self.requester = kwargs.get('requester')
 
 
@@ -441,11 +443,11 @@ class Player(wavelink.Player):
       for i in range(len(tracks["items"])):
         # player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
         # print(player)
-        if i!=0:
+        # if i!=0:
           # try:
             # trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+tracks["items"][i]["track"]["name"]+" - "+tracks["items"][i]["track"]["artists"][0]["name"]), retry_on_failure=True)
-          trackToQueue = spotTrack(name=tracks["items"][i]["track"]["name"]+" - "+tracks["items"][i]["track"]["artists"][0]["name"], requester=ctx.author)
-          await player.queue.put(trackToQueue)
+        trackToQueue = spotTrack(name=tracks["items"][i]["track"]["name"]+" - "+tracks["items"][i]["track"]["artists"][0]["name"], requester=ctx.author, length=tracks["items"][i]["track"]["duration_ms"])
+        await player.queue.put(trackToQueue)
         
           # except:
           #   pass
@@ -459,7 +461,7 @@ class Player(wavelink.Player):
           try:
             # trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+item["track"]["name"]+" - "+item["track"]["artists"][0]["name"]), retry_on_failure=True)
             # trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
-            trackToQueue = spotTrack(name=item["track"]["name"]+" - "+item["track"]["artists"][0]["name"], requester=ctx.author)
+            trackToQueue = spotTrack(name=item["track"]["name"]+" - "+item["track"]["artists"][0]["name"], requester=ctx.author, length=item["track"]["duration_ms"])
             await player.queue.put(trackToQueue)
             # await player.queue.put(trackToQueue)
         
@@ -1183,10 +1185,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
               try:
                 print(query)
                 playlist=spotify.playlist(query)
-                print(playlist["tracks"].keys())
-                trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+playlist['tracks']["items"][0]["track"]["name"]+" - "+playlist['tracks']["items"][0]["track"]["artists"][0]["name"]), retry_on_failure=True)
-                trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
-                await player.queue.put(trackToQueue)
+                # print(playlist["tracks"].keys())
+                # trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+playlist['tracks']["items"][0]["track"]["name"]+" - "+playlist['tracks']["items"][0]["track"]["artists"][0]["name"]), retry_on_failure=True)
+                # trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
+                # await player.queue.put(trackToQueue)
                 embed=discord.Embed(description=f'**Queued `{playlist["tracks"]["total"]}` Tracks From `{playlist["name"]}`**', color = discord.Color.green())
                 await ctx.send(embed=embed, delete_after=20)
               except Exception as e:
@@ -1238,7 +1240,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
               length = str(datetime.timedelta(milliseconds=int(track.length)))
             except:
               length="LIVE"
-            embed=discord.Embed(description=f'**Queued [{formatTitle(track.title[:30])})...]({track.uri}) ` {length} ` | Requestor: {track.requester.mention}**', color = discord.Color.green())
+            embed=discord.Embed(description=f'**Queued [{formatTitle(track.title[:30])}...]({track.uri}) ` {length} ` | Requestor: {track.requester.mention}**', color = discord.Color.green())
             try:
               embed.set_thumbnail(url=track.thumb)
               if track.thumb==None:
@@ -1541,7 +1543,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         await player.set_eq(eq)
 
     @commands.command(aliases=['q', 'que'])
-    @commands.cooldown(1,3,commands.BucketType.user)
+ 
     async def queue(self, ctx: commands.Context,*, song=None):
         """Display the players queued songs."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
@@ -1550,12 +1552,46 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if not player.is_connected:
             return
 
-        if player.queue.qsize() == 0:
+        if player.queue.qsize() == 0 and player.current==None:
             embed=discord.Embed(description=f"**✋ Add More Songs Before Using The Queue Command**", color = discord.Color.orange())
             return await ctx.send(embed=embed, delete_after=10)
         entries=[]
+        if player.current!=None:
+          track=player.current
+          try:
+            length2 = track.length
+          except:
+            length2=1
+          try:
+            length=str(datetime.timedelta(milliseconds=int(track.length)))
+    
+          except:
+            length="LIVE"
+          status='🔘'
+          if player.is_paused:
+            status="⏸"
+          positionPercent =  float(player.position/length2)
+          position="|"
+          for i in range(30):
+            position+="▬"
+          position+="|"
+          posNum=int(30*positionPercent)+1
+          position = position[:posNum] + status + position[posNum+1:]
+          if player.current.is_stream:
+            position = "🔴 LIVE"
+
+          entries.append(f" ▶️    **[{player.current.title[:30]}...]({player.current.uri}) | {player.current.requester.mention}**\n\n`{position}`\n")
+
+
         for i in range(len(player.queue._queue)):
-          entries.append(f" `{i+1}.`**   [{player.queue._queue[i].title}]({player.queue._queue[i].uri})**")
+          try:
+            trackLength=str(datetime.timedelta(seconds=int(player.queue._queue[i].length/1000)))
+          except:
+            trackLength="🔴 LIVE"
+          
+          if player.queue._queue[i].is_stream:
+            trackLength="🔴 LIVE"
+          entries.append(f" `{i+1}.`**   [{player.queue._queue[i].title[:30]}...]({player.queue._queue[i].uri}) | `{str(trackLength)}` | {player.queue._queue[i].requester.mention}**")
         # entries = [track.title for track in player.queue._queue]
         pages = PaginatorSource(entries=entries)
         paginator = menus.MenuPages(source=pages, timeout=None, delete_message_after=True)
@@ -1615,10 +1651,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           return await ctx.send(embed=embed, delete_after=10)
       except:
         return
-      queueSave=[]
-      for i in range(int(index)):
-        await player.stop()
-        await player.do_next()
+      # queueSave=[]
+      # for i in range(int(index)):
+      #   await player.stop()
+      #   await player.do_next()
       # player.queue._queue=queueSave
 
       # for i in range(len(player.queue._queue)):
@@ -5614,8 +5650,8 @@ async def previousQueue(server ,url=None, title=None, duration=None, thumbnail=N
       return -1,-1
   # return True
 
-@client.command()
-async def previous(ctx):
+# @client.command()
+async def previousOld(ctx):
   state=False
   try:
     url, title, duration, thumbnail, link, requestor = await previousQueue(ctx.guild.id)
@@ -7237,7 +7273,7 @@ import subprocess
 client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
