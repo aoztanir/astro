@@ -350,7 +350,7 @@ class spotTrack(wavelink.Track):
 
 class Player(wavelink.Player):
     """Custom wavelink Player class."""
-
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -814,6 +814,7 @@ class InteractiveController(menus.Menu):
         await self.bot.invoke(ctx)
         command = self.bot.get_command('np')
         ctx.command = command
+        await self.bot.invoke(ctx)
     
     
     @menus.button(emoji='🎸')
@@ -1580,7 +1581,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           if player.current.is_stream:
             position = "🔴 LIVE"
 
-          entries.append(f" ▶️    **[{player.current.title[:30]}...]({player.current.uri}) | {player.current.requester.mention}**\n\n`{position}`\n")
+          entries.append(f" ▶️    **[{formatTitle(player.current.title[:30])}...]({player.current.uri}) | {player.current.requester.mention}**\n\n`{position}`\n")
 
 
         for i in range(len(player.queue._queue)):
@@ -1591,7 +1592,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           
           if player.queue._queue[i].is_stream:
             trackLength="🔴 LIVE"
-          entries.append(f" `{i+1}.`**   [{player.queue._queue[i].title[:30]}...]({player.queue._queue[i].uri}) | `{str(trackLength)}` | {player.queue._queue[i].requester.mention}**")
+          entries.append(f" `{i+1}.`**   [{formatTitle(player.queue._queue[i].title[:30])}...]({player.queue._queue[i].uri}) | `{str(trackLength)}` | {player.queue._queue[i].requester.mention}**")
         # entries = [track.title for track in player.queue._queue]
         pages = PaginatorSource(entries=entries)
         paginator = menus.MenuPages(source=pages, timeout=None, delete_message_after=True)
@@ -1627,7 +1628,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
 
 
-    @commands.command(aliases=['skipto'])
+    @commands.command(aliases=['skipto', 'jump'])
     async def st(self, ctx: commands.Context, index=None):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
@@ -1651,7 +1652,19 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           return await ctx.send(embed=embed, delete_after=10)
       except:
         return
-      # queueSave=[]
+      # queueSave=player.queue._queue
+      # queueSave=queueSave[0:int(index)]
+      # player.queue._queue=queueSave
+      # await player.stop()
+      # for i in range(int(index)):
+      #   player.queue._queue.remove(player.queue._queue[i])
+      #   i=i-1
+      i=1
+      while i<(int(index)):
+        player.queue._queue.remove(player.queue._queue[0])
+        i=i+1
+      await player.stop()
+      await player.do_next()
       # for i in range(int(index)):
       #   await player.stop()
       #   await player.do_next()
