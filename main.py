@@ -210,7 +210,7 @@ async def on_ready():
     # await client.change_presence(activity=discord.Streaming(name="🚀Team Astro", url="https://teamastro.ml/")) 
     # await client.change_presence(discord.Activity(name="Test"))
     # await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Hooked On A Feeling"))
-    await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = '@Astro | teamastro.ml'))
+    await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = '@Astro | .help'))
     # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="a song"))
 
     # await client.change_presence()
@@ -394,9 +394,10 @@ class Player(wavelink.Player):
         await self.stop()
         return await self.do_next()
 
-    async def do_next(self) -> None:
+    async def do_next(self, jumping=False) -> None:
       try:
         if self.is_playing or self.waiting:
+          if jumping==False:
             return
         # print(self.current.title)
         # Clear the votes for a new song...
@@ -892,7 +893,7 @@ class PaginatorSource(menus.ListPageSource):
         # We always want to embed even on 1 page of results...
         return True
 
-
+from discord.ext import tasks, commands
 class Music(commands.Cog, wavelink.WavelinkMixin):
     """Music Cog."""
 
@@ -903,6 +904,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             bot.wavelink = wavelink.Client(bot=bot)
 
         bot.loop.create_task(self.start_nodes())
+        self.update_np.start()
     # async def start_nodes(self):
     #     await self.bot.wait_until_ready()
 
@@ -1067,6 +1069,14 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     
     
 
+    @tasks.loop(seconds=10)
+    async def update_np(self):
+      for player in self.bot.wavelink.players.values():
+        # embed = # add your embed code here
+        try:
+          await player.invoke_controller()
+        except:
+          pass
 
     @cog_ext.cog_slash(name="play",
              description="Plays Music Through Any Voice Channel",
@@ -1628,7 +1638,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
 
 
-    @commands.command(aliases=['skipto', 'jump'])
+    # @commands.command(aliases=['skipto', 'jump'])
     async def st(self, ctx: commands.Context, index=None):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
@@ -1661,8 +1671,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       #   i=i-1
       i=1
       while i<(int(index)):
-        player.queue._queue.remove(player.queue._queue[0])
+        player.queue.get_nowait()
         i=i+1
+      # await self.queue(ctx)
       await player.stop()
       await player.do_next()
       # for i in range(int(index)):
@@ -2215,10 +2226,10 @@ async def on_message(msg):
   await client.process_commands(msg)
 
 
-
+from discord.ext import tasks, commands
 
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import random
 
 
@@ -4628,67 +4639,67 @@ async def _hi(ctx):
 
 @client.command(aliases = ['meme','reddit','imgur'])
 async def _meme( ctx, *, sub="dankmemes"):
+
+  meme=""
+  reddit = asyncpraw.Reddit(client_id = 'b6zkTf4V07VdCA',
+                    client_secret = 'RrI3uvddWXLNj-CneA4Pot65hl36Pw', 
+                    user_agent = 'aoztanirBot')
+  # print(sub) 
+  # subreddit = self.reddit.subreddit(sub.replace(' ', ''))
+  # print(sub) 
+  # posts = subreddit.hot(limit=10)
+  
   try:
-    meme=""
-    reddit = asyncpraw.Reddit(client_id = 'b6zkTf4V07VdCA',
-                      client_secret = 'RrI3uvddWXLNj-CneA4Pot65hl36Pw', 
-                      user_agent = 'aoztanirBot')
-    # print(sub) 
-    # subreddit = self.reddit.subreddit(sub.replace(' ', ''))
-    # print(sub) 
-    # posts = subreddit.hot(limit=10)
-    
-    try:
 
-      # loop = asyncio.get_event_loop()
+    # loop = asyncio.get_event_loop()
 
-      # meme= await loop.run_in_executor(None, lambda:reddit.subreddit(sub.replace(" ", '')).random()) 
-      # subreddit = await reddit.subreddit("redditdev", fetch=True)
-      subreddit = await reddit.subreddit(sub.replace(" ", ' '))
-      # await reddit.close()
-      # subreddit = await reddit.subreddit("learnpython")
-      # meme = await subreddit.hot(limit=1000)
-      # async for element in meme:
-      #   meme=element
-      arr=[]
-      async for submission in subreddit.hot(limit=30):
-        arr.append(submission)
-      meme= random.choice(arr)
-      await reddit.close()
-      # for element in meme:
-      #   meme=element
-      #   break
+    # meme= await loop.run_in_executor(None, lambda:reddit.subreddit(sub.replace(" ", '')).random()) 
+    # subreddit = await reddit.subreddit("redditdev", fetch=True)
+    subreddit = await reddit.subreddit(sub.replace(" ", ' '))
+    # await reddit.close()
+    # subreddit = await reddit.subreddit("learnpython")
+    # meme = await subreddit.hot(limit=1000)
+    # async for element in meme:
+    #   meme=element
+    arr=[]
+    async for submission in subreddit.hot(limit=30):
+      arr.append(submission)
+    meme= random.choice(arr)
+    await reddit.close()
+    # for element in meme:
+    #   meme=element
+    #   break
 
-      # meme=None
-      # for element in reddit.subreddit(sub.replace(" ", '')).random_rising(limit=1):
-      #   meme = element
-      #   # break
-    except Exception as e:
-      print(e)
-      await ctx.send("> Subreddit/images on subreddit not found...")
+    # meme=None
+    # for element in reddit.subreddit(sub.replace(" ", '')).random_rising(limit=1):
+    #   meme = element
+    #   # break
+  except Exception as e:
+    print(e)
+    await ctx.send("> Subreddit/images on subreddit not found...")
 
-    if meme.over_18:
-      # channel_nsfw = await self.is_nsfw(ctx.message.channel)
-      if ctx.channel.is_nsfw():
-        pass
-      else:
-        await ctx.send("> You are not in an NSFW channel.")
-        return
-    # print(meme.url)
-    embed=discord.Embed(title=str(meme.title).title()+" From r/"+sub+" By: "+str(meme.author).title(),colour=discord.Color.gold(), url="https://reddit.com", description="Here is your image:", timestamp=datetime.utcnow())
+  if meme.over_18:
+    # channel_nsfw = await self.is_nsfw(ctx.message.channel)
+    if ctx.channel.is_nsfw():
+      pass
+    else:
+      await ctx.send("> You are not in an NSFW channel.")
+      return
+  # print(meme.url)
+  embed=discord.Embed(title=str(meme.title).title()+" From r/"+sub+" By: "+str(meme.author).title(),colour=discord.Color.gold(), url="https://reddit.com", description="Here is your image:", timestamp=datetime.utcnow())
 
-    # Add author, thumbnail, fields, and footer to the embed
-    embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  # Add author, thumbnail, fields, and footer to the embed
+  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
 
-    embed.set_thumbnail(url="https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?auto=webp&s=38648ef0dc2c3fce76d5e1d8639234d8da0152b2")
-    embed.set_image(url=meme.url)
+  embed.set_thumbnail(url="https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?auto=webp&s=38648ef0dc2c3fce76d5e1d8639234d8da0152b2")
+  embed.set_image(url=meme.url)
 
-    embed.add_field(name="Image Link:" , value=str(meme.url), inline=False) 
+  embed.add_field(name="Image Link:" , value=str(meme.url), inline=False) 
 
-    embed.add_field(name="Image Stats:", value="🚀 "+ str(meme.upvote_ratio*100)+"% | 👍 "+str(meme.score)+" | 💭 "+str(meme.num_comments), inline=False)
-    await ctx.send(embed=embed)
-  except:
-    pass
+  embed.add_field(name="Image Stats:", value="🚀 "+ str(meme.upvote_ratio*100)+"% | 👍 "+str(meme.score)+" | 💭 "+str(meme.num_comments), inline=False)
+  await ctx.send(embed=embed)
+  # except:
+  #   pass
   
 
 @client.command(aliases= ['unban'])
@@ -4770,6 +4781,7 @@ async def on_command_error(ctx, error):
       return
     if "ZeroConnectedNodes" in str(error) or "UnboundLocalError" in str(error):
       # pass
+      await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = '@Astro | .help'))
       client.add_cog(Music(client))
     # if "Cannot send an empty message" in str(error):
     #   embed=discord.Embed(description="**Currently Nothing Is Playing**".title(), color = discord.Color.red())
@@ -7286,7 +7298,7 @@ import subprocess
 client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
