@@ -515,7 +515,7 @@ class Player(wavelink.Player):
         """Method which builds our players controller embed."""
         track = self.current
         if not track:
-            return discord.Embed(title=f'ASTRO MUSIC | ▶️', colour=discord.Color.green())
+            return discord.Embed(description=f'**✋ Currently Nothing is Playing**', colour=discord.Color.green())
         # player: Player = self.bot.wavelink.get_player(guild_id=, cls=Player, context=ctx)
         try:
           length2 = track.length
@@ -560,7 +560,7 @@ class Player(wavelink.Player):
 
         return embed
       except:
-        return discord.Embed(title=f'ASTRO MUSIC | ▶️', colour=discord.Color.green())
+        return discord.Embed(description=f'**✋ Currently Nothing is Playing**', colour=discord.Color.green())
     async def is_position_fresh(self) -> bool:
         """Method which checks whether the player controller should be remade or updated."""
         try:
@@ -1060,6 +1060,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             raise NoChannelProvided
 
         await player.connect(channel.id)
+        await ctx.guild.change_voice_state(channel=ctx.author.voice.channel, self_deaf=True)
 
 
     # @commands.command(aliases=['seek','moveto'])
