@@ -1,7 +1,9 @@
 ###########PACKAGING INSTRUCTIONS:
 #######pip install -r pyproject.toml
 #######FOR AXEL SPOTIFY
-#pip3 install  git+https://github.com/mental32/spotify.py#egg=spotify
+# pip install git+https://github.com/Axelancerr/spotify.py.git
+#OR
+#pip3 install git+https://github.com/Axelancerr/spotify.py.git
 
 ###########INFO/NOTES
 #ONLY INSTALL DNSPYTHON==2.1.0
@@ -199,7 +201,10 @@ async def on_ready():
     process = subprocess.Popen("java -jar Lavalink.jar", shell=True)
     client.db = client.mongo["astro"]
     client.prefixes= Document(client.db, 'prefixes')
-    await asyncio.sleep(20)
+    if client.user.id == 809609861456723988:
+      await asyncio.sleep(120)
+    else:
+      await asyncio.sleep(20)
     client.add_cog(Music(client))
     # keep_alive.keep_alive()
     # dbd.openDash(client)
