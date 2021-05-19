@@ -4895,6 +4895,9 @@ async def didyouknow(ctx):
 
 @client.event
 async def on_command_error(ctx, error):
+    if "Bad Request" in str(error):
+      embed=discord.Embed(description=f'**Invalid URL**', color = discord.Color.red())
+      return await ctx.send(embed=embed, delete_after=10)
     if "not connected to voice" in str(error).lower():
       await ctx.send(f"> Sorry {ctx.author.mention} Astro Doesnt Have Permissions To Connect To The Voice Channel You Are In.")
       return
