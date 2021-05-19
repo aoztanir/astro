@@ -133,7 +133,7 @@ async def get_prefix(client, message):
     # return '.'
     # prefixes = datab['prefixes']
     if not message.guild:
-      return commands.when_mentioned_or('.')(client, message)
+      return None
 
     try:
       data = await client.prefixes.find(message.guild.id)
@@ -571,7 +571,7 @@ class Player(wavelink.Player):
         except:
           length2=1
         try:
-          length=str(datetime.timedelta(milliseconds=int(track.length)))
+          length=str(datetime.timedelta(seconds=int(track.length/1000)))
   
         except:
           length="LIVE"
@@ -1380,7 +1380,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             track = Track(tracks[0].id, tracks[0].info, requester=ctx.author)
             
             try:
-              length = str(datetime.timedelta(milliseconds=int(track.length)))
+              length = str(datetime.timedelta(seconds=int(track.length/1000)))
             except:
               length="LIVE"
             embed=discord.Embed(description=f'**Queued [{formatTitle(track.title[:30])}...]({track.uri}) ` {length} ` | Requestor: {track.requester.mention}**', color = discord.Color.green())
@@ -1706,7 +1706,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           except:
             length2=1
           try:
-            length=str(datetime.timedelta(milliseconds=int(track.length)))
+            length=str(datetime.timedelta(seconds=int(track.length/1000)))
     
           except:
             length="LIVE"
