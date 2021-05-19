@@ -32,7 +32,7 @@ import wikipedia
 import textcaptcha
 from discord.ext import commands
 # Timedelta function demonstration  
-  
+import spotify
 
 import asyncio
 import async_timeout
@@ -98,7 +98,15 @@ website="https://teamastro.ml/"
 # thread.start_new_thread(os.system, ('java -jar Lavalink.jar',))
 intents = discord.Intents.default()
 intents.members = True
-spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id='b0d1cdbcce274e96905178376add6d61', client_secret="11a204d370c24b79891667ceb6fa5c31"))
+# spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id='b0d1cdbcce274e96905178376add6d61', client_secret="11a204d370c24b79891667ceb6fa5c31"))
+
+
+spotify_client = spotify.Client("b0d1cdbcce274e96905178376add6d61", "11a204d370c24b79891667ceb6fa5c31")
+spotify_http_client = spotify.HTTPClient("b0d1cdbcce274e96905178376add6d61", "11a204d370c24b79891667ceb6fa5c31")
+
+
+
+
 def formatTitle(title: str):
   title=title.replace("(","")
   title=title.replace(")","")
@@ -185,6 +193,7 @@ slash = SlashCommand(client, sync_commands=True) # Declares slash commands throu
 
 @client.event
 async def on_ready():
+    await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = '@Astro | .help'))
     client.mongo= motor.motor_asyncio.AsyncIOMotorClient(str('mongodb+srv://aoztanir:astro@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority'))
     process = subprocess.Popen("java -jar Lavalink.jar", shell=True)
     client.db = client.mongo["astro"]
@@ -229,7 +238,7 @@ async def on_ready():
     # await client.change_presence(activity=discord.Streaming(name="🚀Team Astro", url="https://teamastro.ml/")) 
     # await client.change_presence(discord.Activity(name="Test"))
     # await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Hooked On A Feeling"))
-    await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = '@Astro | .help'))
+    
     # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="a song"))
 
     # await client.change_presence()
@@ -329,7 +338,7 @@ async def checkAmounts():
 
 # URL matching REGEX...
 URL_REG = re.compile(r'https?://(?:www\.)?.+')
-SPOTIFY_URL_REG = re.compile(r'https?://open.spotify.com/(?P<type>album|playlist|track)/(?P<id>[a-zA-Z0-9]+)')
+SPOTIFY_URL_REG = re.compile(r'https?://open.spotify.com/(?P<type>album|playlist|track|artist)/(?P<id>[a-zA-Z0-9]+)')
 
 class NoChannelProvided(commands.CommandError):
     """Error raised when no suitable voice channel was supplied."""
@@ -391,20 +400,32 @@ class Player(wavelink.Player):
 
     async def play(self, track):
       try:
-        if  isinstance(track, spotTrack):
-          try:
-            spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title, retry_on_failure=True)
-            trackToQueue = Track(spotifyTrack[0].id, spotifyTrack[0].info, requester=track.requester)
+        try:
+          print(track.id)
+          if track.id == "spotify": 
+            spotify_track = await self.node.get_tracks(f"ytsearch:{track.title} - {track.author} audio", retry_on_failure=True)
+            if spotify_track==None:
+              await self.stop()
+              return await self.do_next()
+            trackToQueue = Track(spotify_track[0].id, spotify_track[0].info, requester=track.requester)
             if trackToQueue==None:
               await self.stop()
               return await self.do_next()
-            # if self.loopSong==True:
-            #   await self.queue.put(trackToQueue)
-            # self.loopTrack=trackToQueue
             return await super().play(trackToQueue)
-          except:
-            await self.stop()
-            return await self.do_next()
+            # try:
+            #   spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title, retry_on_failure=True)
+            #   trackToQueue = Track(spotifyTrack[0].id, spotifyTrack[0].info, requester=track.requester)
+            #   if trackToQueue==None:
+            #     await self.stop()
+            #     return await self.do_next()
+            #   # if self.loopSong==True:
+          #   #   await self.queue.put(trackToQueue)
+          #   # self.loopTrack=trackToQueue
+          #   return await super().play(trackToQueue)
+        except Exception as e:
+          print(e)
+          await self.stop()
+          return await self.do_next()
     
           
 
@@ -1171,6 +1192,82 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             query="https://open.spotify.com/playlist/6A83PFHKOMYMQTV6YwSeNk"
 
         query = query.strip('<>')
+        if SPOTIFY_URL_REG.match(query):
+            spoturl_check = SPOTIFY_URL_REG.match(query)
+            search_type = spoturl_check.group('type')
+            spotify_id = spoturl_check.group('id')
+
+            if search_type == "playlist":
+                results = spotify.Playlist(client=spotify_client, data=await spotify_http_client.get_playlist(spotify_id))
+                try:
+                    search_tracks = await results.get_all_tracks()
+                except:
+                    embed=discord.Embed(description=f'**Invalid URL**', color = discord.Color.red())
+                    return await ctx.send(embed=embed, delete_after=10)
+
+            # Last result is not a playlist, so check if its a album and queue accordingly       
+            elif search_type == "album":
+                results = await spotify_client.get_album(spotify_id=spotify_id)
+                try:
+                    search_tracks = await results.get_all_tracks()
+                except:
+                    embed=discord.Embed(description=f'**Invalid URL**', color = discord.Color.red())
+                    return await ctx.send(embed=embed, delete_after=10)
+            elif search_type=="artist":
+              results = await spotify_client.get_artist(spotify_id=spotify_id)
+              try:
+                  search_tracks = await results.top_tracks()
+              except:
+                  embed=discord.Embed(description=f'**Invalid URL**', color = discord.Color.red())
+                  return await ctx.send(embed=embed, delete_after=10)
+
+            # Last result was not a album or a playlist, queue up track accordingly
+            elif search_type == 'track':
+                results = await spotify_client.get_track(spotify_id=spotify_id)
+                search_tracks = [results]
+
+
+            # This part is very important, this is the "fake track" that we'll look for when we queue up the track to play
+            tracks=[]
+            for track in search_tracks:
+              tracks.append(Track('spotify', {'title': track.name or 'Unknown', 'author': ', '.join(artist.name for artist in track.artists) or 'Unknown',
+                                          'length': track.duration or 0, 'identifier': track.id or 'Unknown', 'uri': track.url or 'https://open.spotify.com/',
+                                          'isStream': False, 'isSeekable': False, 'position': 0, 'thumbnail': track.images[0].url if track.images else None}, requester=ctx.author
+                      ))
+
+            if not tracks:
+                embed=discord.Embed(description=f'**Invalid URL**', color = discord.Color.red())
+                return await ctx.send(embed=embed, delete_after=10)
+                
+
+            if search_type == "playlist":
+                for track in tracks:
+                    player.queue.put_nowait(track)
+
+                embed=discord.Embed(description=f'**Queued `{results.total_tracks}` Tracks From `{results.name}`**', color = discord.Color.green())
+                await ctx.send(embed=embed, delete_after=20)
+            elif search_type == "album":
+                for track in tracks:
+                    player.queue.put_nowait(track)
+
+                embed=discord.Embed(description=f'**Queued `{results.total_tracks}` Tracks From `{results.name}`**', color = discord.Color.green())
+                await ctx.send(embed=embed, delete_after=20)
+            elif search_type == "artist":
+                for track in tracks:
+                    player.queue.put_nowait(track)
+
+                embed=discord.Embed(description=f'**Queued `{len(tracks)}` Tracks By `{results.name}`**', color = discord.Color.green())
+                await ctx.send(embed=embed, delete_after=20)
+            else:
+                # if player.is_playing:
+                #     await ctx.send(f"Queued **{len(tracks)}** tracks")
+                embed=discord.Embed(description=f'**Queued `{tracks[0].title}`**', color = discord.Color.green())
+                await ctx.send(embed=embed, delete_after=20)
+                player.queue.put_nowait(tracks[0])
+            if not player.is_playing:
+              return await player.do_next()
+            return
+
         if not URL_REG.match(query):
             query = f'ytsearch:{query}'
       # if "open.spotify.com" not in query:
@@ -1181,79 +1278,79 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if not tracks:
             # print(query)
             
-            if "open.spotify.com/track"in query and SPOTIFY_URL_REG.match(query):
-              try:
-                song=spotify.track(query)
-              except Exception as e:
-                print(e)
-                embed=discord.Embed(description=f'**Invalid Song URL**', color = discord.Color.red())
-                return await ctx.send(embed=embed, delete_after=10)
-              # print(song.keys())
-              trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+song["name"]+" - "+song["artists"][0]["name"]), retry_on_failure=True)
-              trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
-              await player.queue.put(trackToQueue)
-              try:
-                length = str(datetime.timedelta(milliseconds=int(trackToQueue.length)))
-              except:
-                length="LIVE"
-              embed=discord.Embed(description=f'**Queued [{formatTitle(trackToQueue.title[:30])}...]({trackToQueue.uri}) ` {length} ` | Requestor: {trackToQueue.requester.mention}**', color = discord.Color.green())
-              try:
-                embed.set_thumbnail(url=trackToQueue.thumb)
-                if trackToQueue.thumb==None:
-                  embed.set_thumbnail(url=f"{client.user.avatar_url}")
-              except:
-                embed.set_thumbnail(url=f"{client.user.avatar_url}")
-              await ctx.send(embed=embed, delete_after=20)
-              if not player.is_playing:
-                return await player.do_next()
-              return
-
-            # if "open.spotify.com/album" in query:
+            # if "open.spotify.com/track"in query and SPOTIFY_URL_REG.match(query):
             #   try:
-            #     album=spotify.album(query)
-            #   except:
-            #     embed=discord.Embed(description=f'**Invalid Album URL**', color = discord.Color.red())
+            #     song=spotify.track(query)
+            #   except Exception as e:
+            #     print(e)
+            #     embed=discord.Embed(description=f'**Invalid Song URL**', color = discord.Color.red())
             #     return await ctx.send(embed=embed, delete_after=10)
-            #   await self.searchPlaylist(ctx, album)
+            #   # print(song.keys())
+            #   trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+song["name"]+" - "+song["artists"][0]["name"]), retry_on_failure=True)
+            #   trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
+            #   await player.queue.put(trackToQueue)
+            #   try:
+            #     length = str(datetime.timedelta(milliseconds=int(trackToQueue.length)))
+            #   except:
+            #     length="LIVE"
+            #   embed=discord.Embed(description=f'**Queued [{formatTitle(trackToQueue.title[:30])}...]({trackToQueue.uri}) ` {length} ` | Requestor: {trackToQueue.requester.mention}**', color = discord.Color.green())
+            #   try:
+            #     embed.set_thumbnail(url=trackToQueue.thumb)
+            #     if trackToQueue.thumb==None:
+            #       embed.set_thumbnail(url=f"{client.user.avatar_url}")
+            #   except:
+            #     embed.set_thumbnail(url=f"{client.user.avatar_url}")
+            #   await ctx.send(embed=embed, delete_after=20)
+            #   if not player.is_playing:
+            #     return await player.do_next()
             #   return
 
-            if "open.spotify.com/playlist"  in query  and SPOTIFY_URL_REG.match(query):
-              try:
-                print(query)
-                playlist=spotify.playlist(query)
-                # print(playlist["tracks"].keys())
-                # trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+playlist['tracks']["items"][0]["track"]["name"]+" - "+playlist['tracks']["items"][0]["track"]["artists"][0]["name"]), retry_on_failure=True)
-                # trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
-                # await player.queue.put(trackToQueue)
-                embed=discord.Embed(description=f'**Queued `{playlist["tracks"]["total"]}` Tracks From `{playlist["name"]}`**', color = discord.Color.green())
-                await ctx.send(embed=embed, delete_after=20)
-              except Exception as e:
-                print(e)
-                embed=discord.Embed(description=f'**Invalid Playlist URL**', color = discord.Color.red())
-                return await ctx.send(embed=embed, delete_after=10)
-              # playlist=spotify.playlist(query)
-              # print(playlist)
-              
-              
-              
-              await player.searchPlaylist(ctx, playlist)
-              if not player.is_playing:
-                await player.do_next()
-              # trackLength=0
+            # # if "open.spotify.com/album" in query:
+            # #   try:
+            # #     album=spotify.album(query)
+            # #   except:
+            # #     embed=discord.Embed(description=f'**Invalid Album URL**', color = discord.Color.red())
+            # #     return await ctx.send(embed=embed, delete_after=10)
+            # #   await self.searchPlaylist(ctx, album)
+            # #   return
 
-              # for item in playlist['tracks']["items"]:
+            # if "open.spotify.com/playlist"  in query  and SPOTIFY_URL_REG.match(query):
+            #   try:
+            #     print(query)
+            #     playlist=spotify.playlist(query)
+            #     # print(playlist["tracks"].keys())
+            #     # trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+playlist['tracks']["items"][0]["track"]["name"]+" - "+playlist['tracks']["items"][0]["track"]["artists"][0]["name"]), retry_on_failure=True)
+            #     # trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
+            #     # await player.queue.put(trackToQueue)
+            #     embed=discord.Embed(description=f'**Queued `{playlist["tracks"]["total"]}` Tracks From `{playlist["name"]}`**', color = discord.Color.green())
+            #     await ctx.send(embed=embed, delete_after=20)
+            #   except Exception as e:
+            #     print(e)
+            #     embed=discord.Embed(description=f'**Invalid Playlist URL**', color = discord.Color.red())
+            #     return await ctx.send(embed=embed, delete_after=10)
+            #   # playlist=spotify.playlist(query)
+            #   # print(playlist)
+              
+              
+              
+            #   await player.searchPlaylist(ctx, playlist)
+            #   if not player.is_playing:
+            #     await player.do_next()
+            #   # trackLength=0
 
-              #   try:
-              #     trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+item["track"]["name"]), retry_on_failure=True)
-              #     trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
-              #     await player.queue.put(trackToQueue)
-              #     trackLength+=1
-              #   except:
-              #     pass
+            #   # for item in playlist['tracks']["items"]:
+
+            #   #   try:
+            #   #     trackSpot = await self.bot.wavelink.get_tracks(str(f'ytsearch:'+item["track"]["name"]), retry_on_failure=True)
+            #   #     trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
+            #   #     await player.queue.put(trackToQueue)
+            #   #     trackLength+=1
+            #   #   except:
+            #   #     pass
         
-              if not player.is_playing:
-                return await player.do_next()
-              return
+            #   if not player.is_playing:
+            #     return await player.do_next()
+            #   return
               
             embed=discord.Embed(description=f'**✋ Nothing Found**'.title(), color = discord.Color.orange())
             return await ctx.send(embed=embed, delete_after=10)
@@ -1262,11 +1359,11 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if isinstance(tracks, wavelink.TrackPlaylist):
             for track in tracks.tracks:
                 track = Track(track.id, track.info, requester=ctx.author)
-                await player.queue.put(track)
+                player.queue.put_nowait(track)
 
             # await ctx.send(f'```ini\nAdded the playlist {tracks.data["playlistInfo"]["name"]}'
             #                f' with {len(tracks.tracks)} songs to the queue.\n```', delete_after=15)
-            embed=discord.Embed(description=f'**Queued {len(tracks.tracks)} Tracks**', color = discord.Color.green())
+            embed=discord.Embed(description=f'**Queued `{len(tracks.tracks)}` Tracks**', color = discord.Color.green())
             await ctx.send(embed=embed, delete_after=10)
         else:
      
@@ -1286,7 +1383,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await ctx.send(embed=embed, delete_after=20)
             # await ctx.send(f'```ini\nAdded {track.title} to the Queue\n```', delete_after=15)
             try:
-              await player.queue.put(track)
+              player.queue.put_nowait(track)
             except:
               pass
 
@@ -7349,7 +7446,7 @@ import subprocess
 client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
