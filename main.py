@@ -1199,9 +1199,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         query = query.strip('<>')
         if SPOTIFY_URL_REG.match(query):
-            spoturl_check = SPOTIFY_URL_REG.match(query)
-            search_type = spoturl_check.group('type')
-            spotify_id = spoturl_check.group('id')
+            try:
+              spoturl_check = SPOTIFY_URL_REG.match(query)
+              search_type = spoturl_check.group('type')
+              spotify_id = spoturl_check.group('id')
+            except:
+              embed=discord.Embed(description=f'**Invalid URL**', color = discord.Color.red())
+              return await ctx.send(embed=embed, delete_after=10)
 
             if search_type == "playlist":
                 results = spotify.Playlist(client=spotify_client, data=await spotify_http_client.get_playlist(spotify_id))
@@ -7452,7 +7456,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
