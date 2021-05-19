@@ -7449,7 +7449,7 @@ async def eightball(ctx, *, question):
 # Lava.start()
 import subprocess
 
-client.add_cog(Music(client))
+# client.add_cog(Music(client))
 #DEV BOT
 
 # client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
