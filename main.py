@@ -9,6 +9,7 @@
 import discord
 import datetime 
 import syllables
+import motor.motor_asyncio
 import pymongo
 from pymongo import MongoClient
 # from replit import db
@@ -83,7 +84,7 @@ import urllib.request
 from google_images_search import GoogleImagesSearch
 from pyiku import haiku
 ctxSave=None
-
+from mongo import Document
 # mutedUsers=[][]
 import threading
 QueList = []
@@ -111,42 +112,58 @@ def formatTitle(title: str):
 # mongoCli = MongoClient('mongodb+srv://aoztanir:astro@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority')
 
 # astroDB = pymongo.MongoClient("mongodb+srv://aoztanir:ladoo256@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority")
-# datab = mongoCli.astro
+# datab = mongoCli["astro"]
+# astroDB=
 
 
 
-
-def get_prefix(client, message):
+async def get_prefix(client, message):
   # try:
-    return '.'
-    prefixes = mongoCli['prefixes']
+    # return '.'
+    # prefixes = datab['prefixes']
+    if not message.guild:
+      return commands.when_mentioned_or('.')(client, message)
+
+    try:
+      data = await client.prefixes.find(message.guild.id)
+
+      if not data or  "prefix" not in data:
+        await client.prefixes.upsert({"_id": message.guild.id, "prefix": '.'})
+        return commands.when_mentioned_or('.')(client, message)
+
+      return commands.when_mentioned_or(data["prefix"])(client, message) 
+
+    except Exception as e:
+      print(e)
+      await client.prefixes.upsert({"_id": message.guild.id, "prefix": '.'})
+      return commands.when_mentioned_or('.')(client, message)   
     # if client.user.id==841760295432880168:
     #   return '!'
     # prefixes=datab['prefixes']
     
-    prefixObj = prefixes[str(message.guild.id)]
-    if prefixObj == None:
-      prefixObj.insert_one({'server': str(message.guild.id), 'prefix':'.'})
-    prefixJson = prefixes.posts.find_one({'server': str(message.guild.id)})
+    # prefixObj = prefixes[str(message.guild.id)]
+    # if prefixObj == None:
+    #   prefixObj.insert_one({'server': str(message.guild.id), 'prefix':'.'})
+    # prefixJson = prefixes.posts.find_one({'server': str(message.guild.id)})
 
-    return prefixJson['prefix']
+    # return prefixJson['prefix']
 
-    # return '.'
-    # prefixes = db["prefixes"]
-    # with open('prefixes.json', 'r') as f: ##we open and read the prefixes.json, assuming it's in the same file
-    #   prefixes = json.load(f) #load the json as prefixes
-    try:
-      return commands.when_mentioned_or(prefixes[str(message.guild.id)])(client, message) #recieve the prefix for the guild id given
-    except:
-      # with open('prefixes.json', 'r') as f: #read the prefix.json file
-      #   prefixes = json.load(f) #load the json file
-      prefixes=db["prefixes"]
-      prefixes[str(message.guild.id)] = '.'#default prefix
-      db["prefixes"]=prefixes
+    # # return '.'
+    # # prefixes = db["prefixes"]
+    # # with open('prefixes.json', 'r') as f: ##we open and read the prefixes.json, assuming it's in the same file
+    # #   prefixes = json.load(f) #load the json as prefixes
+    # try:
+    #   return commands.when_mentioned_or(prefixes[str(message.guild.id)])(client, message) #recieve the prefix for the guild id given
+    # except:
+    #   # with open('prefixes.json', 'r') as f: #read the prefix.json file
+    #   #   prefixes = json.load(f) #load the json file
+    #   prefixes=db["prefixes"]
+    #   prefixes[str(message.guild.id)] = '.'#default prefix
+    #   db["prefixes"]=prefixes
 
-      # with open('prefixes.json', 'w') as f: #write in the prefix.json "message.guild.id": "bl!"
-      #   json.dump(prefixes, f, indent=4) #the indent is to make everything look a bit neater
-      return commands.when_mentioned_or(prefixes[str(message.guild.id)])(client, message)
+    #   # with open('prefixes.json', 'w') as f: #write in the prefix.json "message.guild.id": "bl!"
+    #   #   json.dump(prefixes, f, indent=4) #the indent is to make everything look a bit neater
+    #   return commands.when_mentioned_or(prefixes[str(message.guild.id)])(client, message)
 
       
   # except Exception as e:
@@ -168,8 +185,10 @@ slash = SlashCommand(client, sync_commands=True) # Declares slash commands throu
 
 @client.event
 async def on_ready():
+    client.mongo= motor.motor_asyncio.AsyncIOMotorClient(str('mongodb+srv://aoztanir:astro@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority'))
     process = subprocess.Popen("java -jar Lavalink.jar", shell=True)
-    
+    client.db = client.mongo["astro"]
+    client.prefixes= Document(client.db, 'prefixes')
     await asyncio.sleep(20)
     client.add_cog(Music(client))
     # keep_alive.keep_alive()
@@ -310,7 +329,7 @@ async def checkAmounts():
 
 # URL matching REGEX...
 URL_REG = re.compile(r'https?://(?:www\.)?.+')
-
+SPOTIFY_URL_REG = re.compile(r'https?://open.spotify.com/(?P<type>album|playlist|track)/(?P<id>[a-zA-Z0-9]+)')
 
 class NoChannelProvided(commands.CommandError):
     """Error raised when no suitable voice channel was supplied."""
@@ -376,6 +395,9 @@ class Player(wavelink.Player):
           try:
             spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title, retry_on_failure=True)
             trackToQueue = Track(spotifyTrack[0].id, spotifyTrack[0].info, requester=track.requester)
+            if trackToQueue==None:
+              await self.stop()
+              return await self.do_next()
             # if self.loopSong==True:
             #   await self.queue.put(trackToQueue)
             # self.loopTrack=trackToQueue
@@ -1072,6 +1094,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     @tasks.loop(seconds=10)
     async def update_np(self):
+      # await self.bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = '@Astro | .help'))
       for player in self.bot.wavelink.players.values():
         # embed = # add your embed code here
         try:
@@ -1157,9 +1180,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
        
         if not tracks:
             # print(query)
-            if "open.spotify.com/track"in query:
+            
+            if "open.spotify.com/track"in query and SPOTIFY_URL_REG.match(query):
               try:
-                song=spotify.track("query")
+                song=spotify.track(query)
               except Exception as e:
                 print(e)
                 embed=discord.Embed(description=f'**Invalid Song URL**', color = discord.Color.red())
@@ -1193,7 +1217,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             #   await self.searchPlaylist(ctx, album)
             #   return
 
-            if "open.spotify.com/playlist"  in query:
+            if "open.spotify.com/playlist"  in query  and SPOTIFY_URL_REG.match(query):
               try:
                 print(query)
                 playlist=spotify.playlist(query)
@@ -1211,7 +1235,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
               # print(playlist)
               
               
-             
+              
               await player.searchPlaylist(ctx, playlist)
               if not player.is_playing:
                 await player.do_next()
@@ -1226,7 +1250,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
               #     trackLength+=1
               #   except:
               #     pass
-       
+        
               if not player.is_playing:
                 return await player.do_next()
               return
@@ -2042,13 +2066,19 @@ async def on_message(msg):
   # msg.content=msg.content.lower()
   # await update_db(msg.guild.id)
   # print(msg.content)
-  if msg.content == "<@!809609861456723988>":
+  if msg.content == f"<@!{client.user.id}>":
     # with open('prefixes.json', 'r') as f: #read the prefix.json file
     #   prefixes = json.load(f) #load the json file
-    prefixes=db["prefixes"]
+    # prefixes=db["prefixes"]
 
-    prefix= prefixes[str(msg.guild.id)]
-    embed=discord.Embed(title="My Current Prefix Here Is  ` "+prefix+" ` ".title(), color = discord.Color.orange())
+    # prefix= prefixes[str(msg.guild.id)]
+    prefixData = await client.prefixes.get_by_id(msg.guild.id)
+    if not prefixData or "prefix" not in prefixData:
+      await client.prefixes.upsert({"_id": msg.guild.id, "prefix": "."})
+
+    prefix=prefixData["prefix"]
+
+    embed=discord.Embed(description="**My Prefix Here Is  ` "+prefix+" ` **".title(), color = discord.Color.orange())
     await msg.channel.send(embed=embed)
 
     # prefixes[str(guild.id)] = ['.']#default prefix
@@ -2059,7 +2089,7 @@ async def on_message(msg):
 
     await check(msg)
     return
-  await check(msg)
+  # await check(msg)
   
   try:
   #   try:
@@ -2131,7 +2161,8 @@ async def on_message(msg):
     # db["mod_words"]={
     
     # }
-    users = db["mod_words"]
+    ###MODWORDS_TODO
+    users = {}
 
     if str(msg.guild.id) not in users:
       users[str(msg.guild.id)]={}
@@ -2200,28 +2231,28 @@ async def on_message(msg):
       await msg.delete()
       return
     # syls = syllables.estimate(msg.content)
-    try:
+    # try:
 
-      verse = Pyverse(msg.content)
-      # print(str(verse.count))
-      syls= verse.count
-      # await msg.channel.send(my_haiku)
-      # print(msg.content)
-      # print(syls)
-      if "astro" in msg.content.lower() and "ty" in msg.content.lower():
-        await msg.add_reaction("🚀")
-        await msg.add_reaction("🤍")
-      if "astro" in msg.content.lower() and "thank" in msg.content.lower():
-        await msg.add_reaction("🚀")
-        await msg.add_reaction("🤍")
-      # if "aryah" in msg.content.lower() or "dhruv" in msg.content.lower() or "aoztanir" in msg.content.lower() or "driftrs" in msg.content.lower():
-      #   # await msg.add_reaction("🚀")
-      #   await msg.add_reaction("🚀")
-      if syls == 17:
-        pass
-        # await msg.channel.send("> Nice Haiku "+msg.author.mention+"!")
-    except:
-      pass
+    #   verse = Pyverse(msg.content)
+    #   # print(str(verse.count))
+    #   syls= verse.count
+    #   # await msg.channel.send(my_haiku)
+    #   # print(msg.content)
+    #   # print(syls)
+    #   if "astro" in msg.content.lower() and "ty" in msg.content.lower():
+    #     await msg.add_reaction("🚀")
+    #     await msg.add_reaction("🤍")
+    #   if "astro" in msg.content.lower() and "thank" in msg.content.lower():
+    #     await msg.add_reaction("🚀")
+    #     await msg.add_reaction("🤍")
+    #   # if "aryah" in msg.content.lower() or "dhruv" in msg.content.lower() or "aoztanir" in msg.content.lower() or "driftrs" in msg.content.lower():
+    #   #   # await msg.add_reaction("🚀")
+    #   #   await msg.add_reaction("🚀")
+    #   if syls == 17:
+    #     pass
+    #     # await msg.channel.send("> Nice Haiku "+msg.author.mention+"!")
+    # except:
+    #   pass
   except Exception as e:
     print(e)
   await client.process_commands(msg)
@@ -2258,22 +2289,33 @@ async def dashboard(ctx, *, prefixNew:str=None):
   await ctx.send(embed=embed)
 
 @client.command()
-@commands.has_permissions(administrator=True)
+@commands.has_permissions(manage_guild=True)
 async def prefix(ctx, *, prefixNew:str=None):
   # with open('prefixes.json', 'r') as f: #read the prefix.json file
   #   prefixes = json.load(f) #load the json file
-  prefixes=db["prefixes"]
+  # prefixes=db["prefixes"]
   if prefixNew==None:
-    prefix=prefixes[str(ctx.guild.id)]
-    embed=discord.Embed(title="My Current Prefix Here Is  ` "+prefix+" ` ".title(), color = discord.Color.orange())
-    await ctx.send(embed=embed)
-    return
-  prefixes[str(ctx.guild.id)] = prefixNew
-  db["prefixes"]=prefixes
-  # with open('prefixes.json', 'w') as f: #write in the prefix.json "message.guild.id": "bl!"
-  #   json.dump(prefixes, f, indent=4) #the indent is to
-  prefix= prefixes[str(ctx.guild.id)]
-  embed=discord.Embed(title="My Prefix Is Now  ` "+prefix+" ` ".title(), color = discord.Color.orange())
+    # prefix=prefixes[str(ctx.guild.id)]
+    prefixData = await client.prefixes.get_by_id(ctx.guild.id)
+    if not prefixData or "prefix" not in prefixData:
+      await client.prefixes.upsert({"_id": ctx.guild.id, "prefix": "."})
+
+    prefix=prefixData["prefix"]
+    embed=discord.Embed(description="**My Prefix Here Is  ` "+prefix+" ` **".title(), color = discord.Color.orange())
+    return await ctx.send(embed=embed)
+  
+  if prefixNew.lower() =="reset":
+    await client.prefixes.upsert({"_id": ctx.guild.id, "prefix": '.'})
+    embed=discord.Embed(description="**✅ My Prefix Has Been Reset To  ` "+'.'+" ` **", color = discord.Color.orange())
+    return await ctx.send(embed=embed)
+    
+  # prefixes[str(ctx.guild.id)] = prefixNew
+  # db["prefixes"]=prefixes
+  # # with open('prefixes.json', 'w') as f: #write in the prefix.json "message.guild.id": "bl!"
+  # #   json.dump(prefixes, f, indent=4) #the indent is to
+  # prefix= prefixes[str(ctx.guild.id)]
+  await client.prefixes.upsert({"_id": ctx.guild.id, "prefix": prefixNew})
+  embed=discord.Embed(description="**✅ My Prefix Is Now  ` "+prefixNew+" ` **", color = discord.Color.orange())
   await ctx.send(embed=embed)
 
 
@@ -2726,8 +2768,13 @@ client.remove_command("help")
 async def help(ctx, *, commandType :str =None):
   # with open('prefixes.json', 'r') as f: #read the prefix.json file
   #   prefixes = json.load(f) #load the json file
-  prefixes=db["prefixes"]
-  prefix = prefixes[str(ctx.guild.id)]
+  # prefixes=db["prefixes"]
+  # prefix = prefixes[str(ctx.guild.id)]
+  prefixData = await client.prefixes.get_by_id(ctx.guild.id)
+  if not prefixData or "prefix" not in prefixData:
+    await client.prefixes.upsert({"_id": ctx.guild.id, "prefix": "."})
+
+  prefix=prefixData["prefix"]
   if commandType==None:
     embed = discord.Embed( colour=discord.Color.orange())
     embed.set_author(name="Astro's Command Categories", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
@@ -4918,11 +4965,14 @@ async def _clear(ctx, amount):
   except:
     pass 
   if ctx.message.author.guild_permissions.administrator:
+    if not isinstance(int(amount), int):
+      # await ctx.send("> Please Type A Number Representing The Seconds.")
+      embed=discord.Embed(description="**Please Type A Number**".title(), color = discord.Color.red())
+      return await ctx.send(embed=embed)
     
+    await ctx.channel.purge(limit = int(amount)+1)
     embed=discord.Embed(description=f"**❎ {ctx.author.mention} Successfully Clearing {amount} Message(s)**", color = discord.Color.green())
     await ctx.send(embed=embed, delete_after=5)
-    await ctx.channel.purge(limit = int(amount)+1)
-    
   else:
     raise discord.ext.commands.MissingPermissions('no perms')
   
@@ -7299,7 +7349,7 @@ import subprocess
 client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
