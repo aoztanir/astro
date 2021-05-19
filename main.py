@@ -1245,24 +1245,24 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                     player.queue.put_nowait(track)
 
                 embed=discord.Embed(description=f'**Queued `{results.total_tracks}` Tracks From `{results.name}`**', color = discord.Color.green())
-                await ctx.send(embed=embed, delete_after=20)
+                await ctx.send(embed=embed, delete_after=10)
             elif search_type == "album":
                 for track in tracks:
                     player.queue.put_nowait(track)
 
                 embed=discord.Embed(description=f'**Queued `{results.total_tracks}` Tracks From `{results.name}`**', color = discord.Color.green())
-                await ctx.send(embed=embed, delete_after=20)
+                await ctx.send(embed=embed, delete_after=10)
             elif search_type == "artist":
                 for track in tracks:
                     player.queue.put_nowait(track)
 
                 embed=discord.Embed(description=f'**Queued `{len(tracks)}` Tracks By `{results.name}`**', color = discord.Color.green())
-                await ctx.send(embed=embed, delete_after=20)
+                await ctx.send(embed=embed, delete_after=10)
             else:
                 # if player.is_playing:
                 #     await ctx.send(f"Queued **{len(tracks)}** tracks")
                 embed=discord.Embed(description=f'**Queued `{tracks[0].title}`**', color = discord.Color.green())
-                await ctx.send(embed=embed, delete_after=20)
+                await ctx.send(embed=embed, delete_after=10)
                 player.queue.put_nowait(tracks[0])
             if not player.is_playing:
               return await player.do_next()
@@ -1380,7 +1380,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 embed.set_thumbnail(url=f"{client.user.avatar_url}")
             except:
               embed.set_thumbnail(url=f"{client.user.avatar_url}")
-            await ctx.send(embed=embed, delete_after=20)
+            await ctx.send(embed=embed, delete_after=10)
             # await ctx.send(f'```ini\nAdded {track.title} to the Queue\n```', delete_after=15)
             try:
               player.queue.put_nowait(track)
