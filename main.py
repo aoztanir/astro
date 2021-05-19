@@ -1,6 +1,7 @@
 ###########PACKAGING INSTRUCTIONS:
 #######pip install -r pyproject.toml
-
+#######FOR AXEL SPOTIFY
+#pip3 install  git+https://github.com/mental32/spotify.py#egg=spotify
 
 ###########INFO/NOTES
 #ONLY INSTALL DNSPYTHON==2.1.0
@@ -7446,7 +7447,7 @@ import subprocess
 client.add_cog(Music(client))
 #DEV BOT
 
-client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
