@@ -11,7 +11,7 @@
 
 import discord
 # import datetime 
-from datetime import *
+# from datetime import *
 import syllables
 import motor.motor_asyncio
 import pymongo
@@ -65,7 +65,7 @@ from youtubesearchpython import VideosSearch
 # import bs4
 from bs4 import BeautifulSoup as soup
 from urllib.request import urlopen
-from datetime import timedelta
+from datetime import timedelta datetime
 import pytz 
 import time
 # from pyowm import OWM
