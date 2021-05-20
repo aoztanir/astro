@@ -10,7 +10,8 @@
 
 
 import discord
-import datetime 
+# import datetime 
+from datetime import *
 import syllables
 import motor.motor_asyncio
 import pymongo
@@ -68,7 +69,7 @@ from datetime import timedelta
 import pytz 
 import time
 # from pyowm import OWM
-import requests, json
+import requests, at
 from discord.ext import commands
 import pafy
 # import keep_alive
@@ -201,6 +202,7 @@ async def on_ready():
     process = subprocess.Popen("java -jar Lavalink.jar", shell=True)
     client.db = client.mongo["astro"]
     client.prefixes= Document(client.db, 'prefixes')
+    client.mod_words = Document(client.db, 'mod_words')
     if client.user.id == 809609861456723988:
       await asyncio.sleep(120)
     else:
@@ -2270,14 +2272,18 @@ async def on_message(msg):
     # }
     ###MODWORDS_TODO
     users = {}
-
-    if str(msg.guild.id) not in users:
-      users[str(msg.guild.id)]={}
-      users[str(msg.guild.id)]["words"]=[]
+    try:
+      el = await client.mod_words.get_by_id(int(msg.guild.id))
+      vals=el["mod_words"]
+    except:
+      vals=[]
+    # if str(msg.guild.id) not in users:
+    #   users[str(msg.guild.id)]={}
+    #   users[str(msg.guild.id)]["words"]=[]
     # with open("swearWords.json","r") as f:
     #   users = json.load(f)
     try:
-      for word in users[str(msg.guild.id)]["words"]:
+      for word in vals:
         if word.lower() in msg.content.lower():
           words.append(word)
     except:
@@ -2335,8 +2341,8 @@ async def on_message(msg):
       except:
         pass
       # await msg.author.send("Hello, In an effort to create a less toxic environment, Astro is moderating words that are deemed explicit or innapropriate by the server. Please know that this is meant to detoxify an environment!")
-      await msg.delete()
-      return
+      return await msg.delete()
+      
     # syls = syllables.estimate(msg.content)
     # try:
 
@@ -7430,7 +7436,7 @@ async def covid(ctx, stateName):
 
 
 
-@client.command(aliases=['8ball','test'])
+# @client.command(aliases=['8ball','test'])
 async def eightball(ctx, *, question):
     responses = ['It is certain.', 'No.', 'No', 'No', 'No' 'Yes.', 'Obviously.', 'Never.', 'Repeat please.'
     ]
@@ -7459,7 +7465,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
