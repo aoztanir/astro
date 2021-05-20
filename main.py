@@ -1496,7 +1496,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             embed=discord.Embed(description=f"**{ctx.author.mention} Has Voted To Skip**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
 
-    @commands.command(alieses="disconnect")
+    @commands.command(aliases=["disconnect"])
     async def dc(self, ctx: commands.Context):
         """Stop the player and clear all internal states."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
@@ -2749,125 +2749,125 @@ async def mute(ctx, memb: discord.Member,*, reason :str =None):
   
 
 
-@client.command()
-async def tictactoe(ctx, p1: discord.Member, p2: discord.Member):
-    global count
-    global player1
-    global player2
-    global turn
-    global gameover1
+# @client.command()
+# async def tictactoe(ctx, p1: discord.Member, p2: discord.Member):
+#     global count
+#     global player1
+#     global player2
+#     global turn
+#     global gameover1
 
-    if gameover1:
-        global board
-        board = [":white_large_square:", ":white_large_square:", ":white_large_square:",
-                 ":white_large_square:", ":white_large_square:", ":white_large_square:",
-                 ":white_large_square:", ":white_large_square:", ":white_large_square:"]
-        turn = ""
-        gameover1 = False
-        count = 0
+#     if gameover1:
+#         global board
+#         board = [":white_large_square:", ":white_large_square:", ":white_large_square:",
+#                  ":white_large_square:", ":white_large_square:", ":white_large_square:",
+#                  ":white_large_square:", ":white_large_square:", ":white_large_square:"]
+#         turn = ""
+#         gameover1 = False
+#         count = 0
 
-        player1 = p1
-        player2 = p2
+#         player1 = p1
+#         player2 = p2
 
-        # print the board
-        line = ""
-        for x in range(len(board)):
-            if x == 2 or x == 5 or x == 8:
-                line += " " + board[x]
-                await ctx.send(line)
-                line = ""
-            else:
-                line += " " + board[x]
+#         # print the board
+#         line = ""
+#         for x in range(len(board)):
+#             if x == 2 or x == 5 or x == 8:
+#                 line += " " + board[x]
+#                 await ctx.send(line)
+#                 line = ""
+#             else:
+#                 line += " " + board[x]
 
-        # determine who goes first
-        num = random.randint(1, 2)
-        if num == 1:
-            turn = player1
-            await ctx.send("It is <@" + str(player1.id) + ">'s turn.")
-        elif num == 2:
-            turn = player2
-            await ctx.send("It is <@" + str(player2.id) + ">'s turn.")
-    else:
-        await ctx.send("> A game is already in progress! Finish it before starting a new one.")
+#         # determine who goes first
+#         num = random.randint(1, 2)
+#         if num == 1:
+#             turn = player1
+#             await ctx.send("It is <@" + str(player1.id) + ">'s turn.")
+#         elif num == 2:
+#             turn = player2
+#             await ctx.send("It is <@" + str(player2.id) + ">'s turn.")
+#     else:
+#         await ctx.send("> A game is already in progress! Finish it before starting a new one.")
 
-@client.command()
-async def place(ctx, pos: int):
-    global turn
-    global player1
-    global player2
-    global board
-    global count
-    global gameover1
+# @client.command()
+# async def place(ctx, pos: int):
+#     global turn
+#     global player1
+#     global player2
+#     global board
+#     global count
+#     global gameover1
 
-    if not gameover1:
-        mark = ""
-        if turn == ctx.author:
-            if turn == player1:
-                mark = ":regional_indicator_x:"
-            elif turn == player2:
-                mark = ":o2:"
-            if 0 < pos < 10 and board[pos - 1] == ":white_large_square:" :
-                board[pos - 1] = mark
-                count += 1
+#     if not gameover1:
+#         mark = ""
+#         if turn == ctx.author:
+#             if turn == player1:
+#                 mark = ":regional_indicator_x:"
+#             elif turn == player2:
+#                 mark = ":o2:"
+#             if 0 < pos < 10 and board[pos - 1] == ":white_large_square:" :
+#                 board[pos - 1] = mark
+#                 count += 1
 
-                # print the board
-                line = ""
-                for x in range(len(board)):
-                    if x == 2 or x == 5 or x == 8:
-                        line += " " + board[x]
-                        await ctx.send(line)
-                        line = ""
-                    else:
-                        line += " " + board[x]
+#                 # print the board
+#                 line = ""
+#                 for x in range(len(board)):
+#                     if x == 2 or x == 5 or x == 8:
+#                         line += " " + board[x]
+#                         await ctx.send(line)
+#                         line = ""
+#                     else:
+#                         line += " " + board[x]
 
-                checkWinner(winningConditions, mark)
-                print(count)
+#                 checkWinner(winningConditions, mark)
+#                 print(count)
 
-                if gameover1 == True:
-                    await ctx.send(mark + " wins!")
-                elif count >= 9:
-                    gameover1 = True
-                    await ctx.send("It's a tie!")
+#                 if gameover1 == True:
+#                     await ctx.send(mark + " wins!")
+#                 elif count >= 9:
+#                     gameover1 = True
+#                     await ctx.send("It's a tie!")
 
-                # switch turns
-                if turn == player1:
-                    turn = player2
-                elif turn == player2:
-                    turn = player1
-            else:
-                await ctx.send("Be sure to choose an integer between 1 and 9 (inclusive) and an unmarked tile.")
-        else:
-            await ctx.send("It is not your turn.")
-    else:
-        await ctx.send("Please start a new game using the !tictactoe command.")
+#                 # switch turns
+#                 if turn == player1:
+#                     turn = player2
+#                 elif turn == player2:
+#                     turn = player1
+#             else:
+#                 await ctx.send("Be sure to choose an integer between 1 and 9 (inclusive) and an unmarked tile.")
+#         else:
+#             await ctx.send("It is not your turn.")
+#     else:
+#         await ctx.send("Please start a new game using the !tictactoe command.")
 
 
-def checkWinner(winningConditions, mark):
-    global gameover1
-    for condition in winningConditions:
-        if board[condition[0]] == mark and board[condition[1]] == mark and board[condition[2]] == mark:
-            gameover1 = True
+# def checkWinner(winningConditions, mark):
+#     global gameover1
+#     for condition in winningConditions:
+#         if board[condition[0]] == mark and board[condition[1]] == mark and board[condition[2]] == mark:
+#             gameover1 = True
 
-@client.command(aliases=['cleartictactoe','stoptictatoe','stoptictactoegame'])
-async def endtictactoegame(ctx):
-  global gameover1
-  gameover1 = True
-  await ctx.send("Game ended!")
+# @client.command(aliases=['cleartictactoe','stoptictatoe','stoptictactoegame'])
+# async def endtictactoegame(ctx):
+#   global gameover1
+#   gameover1 = True
+#   await ctx.send("Game ended!")
 
-@tictactoe.error
-async def tictactoe_error(ctx, error):
-    print(error)
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("Please mention 2 players for this command.")
-    elif isinstance(error, commands.BadArgument):
-        await ctx.send("Please make sure to mention/ping players (ie. <@688534433879556134>).")
+# @tictactoe.error
+# async def tictactoe_error(ctx, error):
+#     print(error)
+#     if isinstance(error, commands.MissingRequiredArgument):
+#         await ctx.send("Please mention 2 players for this command.")
+#     elif isinstance(error, commands.BadArgument):
+#         await ctx.send("Please make sure to mention/ping players (ie. <@688534433879556134>).")
 
-@place.error
-async def place_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("Please enter a position you would like to mark.")
-    elif isinstance(error, commands.BadArgument):
-        await ctx.send("Please make sure to enter an integer.")
+# @place.error
+# async def place_error(ctx, error):
+#     if isinstance(error, commands.MissingRequiredArgument):
+#         await ctx.send("Please enter a position you would like to mark.")
+#     elif isinstance(error, commands.BadArgument):
+#         await ctx.send("Please make sure to enter an integer.")
 
 
 client.remove_command("help")
@@ -2880,6 +2880,28 @@ client.remove_command("help")
 # async def _test(ctx: SlashContext):
 #     embed = discord.Embed(title="embed test")
 #     await ctx.send(content="test", embeds=[embed])
+
+@client.command(aliases=["info"])
+async def about(ctx):
+  prefix='.'
+  # aryah = client.get_user(int(694969942054928395))
+  embed = discord.Embed( colour=discord.Color.orange())
+  embed.set_author(name=f"aoztanir#2396", url="https://teamastro.ml/commands", icon_url=f"https://images-ext-2.discordapp.net/external/jnmcZizHr0cIApoGG3FssnEtM3dy8fS9_OXryxgYqWU/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/608778878835621900/76e69643d799ee584dd46afa91127105.webp?width=300&height=300")
+  # embed.add_field(name="**Develeper**", value=f"{aryah.mention}", inline=True)
+  embed.add_field(name="**Server Count**", value=f"` {len(client.guilds)} `", inline=True)
+  embed.add_field(name="**Shards**", value=f"` {len(client.shards)} `", inline=True)
+  embed.add_field(name="**Latency**", value=f"` {round(client.latency*100)}ms `", inline=True)
+  embed.add_field(name="**Website**", value=f"[Click Here]({website})", inline=True)
+  
+  # embed.add_field(name="**Fun**", value=f"` {prefix}help fun `", inline=True)
+  embed.add_field(name="**Dashboard**", value=f" [Dashboard]( {website}/guild/{ctx.guild.id} )", inline=True)
+  # embed.add_field(name="**CPU**", value=f"` {psutil.cpu_percent(0)}% `", inline=True)
+  # embed.add_field(name="**RAM**", value=f"` {psutil.virtual_memory()[2]}% `", inline=True)
+  
+  embed.set_thumbnail(url=client.user.avatar_url)
+  await ctx.send(embed=embed, delete_after=30)
+  return
+
 
 @client.command()
 async def help(ctx, *, commandType :str =None):
@@ -5492,7 +5514,7 @@ async def serverName(ctx,*, newname: str=None):
     await serverinfo(ctx)
 
 
-@client.command(aliases=['info','Server'])
+@client.command(aliases=['Server'])
 async def serverinfo(ctx):
   name = str(ctx.guild.name)
   description = str(ctx.guild.description)
@@ -7473,7 +7495,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
