@@ -69,7 +69,7 @@ from datetime import timedelta
 import pytz 
 import time
 # from pyowm import OWM
-import requests, at
+import requests
 from discord.ext import commands
 import pafy
 # import keep_alive
