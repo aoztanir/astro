@@ -197,7 +197,10 @@ slash = SlashCommand(client, sync_commands=True) # Declares slash commands throu
 
 @client.event
 async def on_ready():
-    await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = '@Astro | .help'))
+    for element in client.shards:
+      await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = f'@Astro | .help | {len(client.guilds)} Servers ➡ Shard {element+1}'), shard_id=client.shards[element].id)
+      print(element)
+    
     client.mongo= motor.motor_asyncio.AsyncIOMotorClient(str('mongodb+srv://aoztanir:astro@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority'))
     process = subprocess.Popen("java -jar Lavalink.jar", shell=True)
     client.db = client.mongo["astro"]
@@ -222,22 +225,22 @@ async def on_ready():
     #         pass
     #       else:
     #         break
-    with open("previous.json","r") as f:
-      users = json.load(f)
-    users={}
-    with open("previous.json","w") as f:
-      json.dump(users,f)
-    # if skip == True:
-    #     skip = False
-    users = await get_bank_data()
-    for user in users:
-      users[str(user)]["job"]=False
-      users[str(user)]["attacking"]=False
-      users[str(user)]["attacking"]=False
-      users[str(user)]["healing"]=False
-    with open("mainbank.json","w") as f:
-      json.dump(users,f)
-    gameover1=True
+    # with open("previous.json","r") as f:
+    #   users = json.load(f)
+    # users={}
+    # with open("previous.json","w") as f:
+    #   json.dump(users,f)
+    # # if skip == True:
+    # #     skip = False
+    # users = await get_bank_data()
+    # for user in users:
+    #   users[str(user)]["job"]=False
+    #   users[str(user)]["attacking"]=False
+    #   users[str(user)]["attacking"]=False
+    #   users[str(user)]["healing"]=False
+    # with open("mainbank.json","w") as f:
+    #   json.dump(users,f)
+    # gameover1=True
     # await client.change_presence(activity=discord.Game(name = '🚀https://teamastro.ml/'))
     
     # await bot.change_presence(activity=discord.Game(name="a game"))
@@ -914,7 +917,7 @@ class InteractiveController(menus.Menu):
         ctx.command = command
 
         await self.bot.invoke(ctx)
-    @menus.button(emoji='🛑')
+    @menus.button(emoji='👋')
     async def stop_command(self, payload: discord.RawReactionActionEvent):
         """Stop button."""
         ctx = self.update_context(payload)
@@ -924,7 +927,7 @@ class InteractiveController(menus.Menu):
         except:
           pass
 
-        command = self.bot.get_command('stop')
+        command = self.bot.get_command('dc')
         ctx.command = command
 
         await self.bot.invoke(ctx)
@@ -1385,7 +1388,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             try:
               length = str(timedelta(seconds=int(track.length/1000)))
             except:
-              length="LIVE"
+              length="🔴 LIVE"
             embed=discord.Embed(description=f'**Queued [{formatTitle(track.title[:30])}...]({track.uri}) ` {length} ` | Requestor: {track.requester.mention}**', color = discord.Color.green())
             try:
               embed.set_thumbnail(url=track.thumb)
@@ -1403,7 +1406,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if not player.is_playing:
             await player.do_next()
 
-    @commands.command()
+    @commands.command(aliases=["stop"])
     async def pause(self, ctx: commands.Context):
         """Pause the currently playing song."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
@@ -1493,8 +1496,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             embed=discord.Embed(description=f"**{ctx.author.mention} Has Voted To Skip**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
 
-    @commands.command()
-    async def stop(self, ctx: commands.Context):
+    @commands.command(alieses="disconnect")
+    async def dc(self, ctx: commands.Context):
         """Stop the player and clear all internal states."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
@@ -1502,7 +1505,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return
 
         if self.is_privileged(ctx):
-            embed=discord.Embed(description="**🛑 Stopped**", color = discord.Color.orange())
+            embed=discord.Embed(description="**👋 Disconnected**", color = discord.Color.orange())
             await ctx.send(embed=embed, delete_after=10)
             return await player.teardown()
 
@@ -1510,11 +1513,11 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player.stop_votes.add(ctx.author)
 
         if len(player.stop_votes) >= required:
-            embed=discord.Embed(description="**🛑 Vote Passed | Stopped**", color = discord.Color.orange())
+            embed=discord.Embed(description="**👋 Vote Passed | Disconnected****", color = discord.Color.orange())
             await ctx.send(embed=embed, delete_after=10)
             await player.teardown()
         else:
-            embed=discord.Embed(description=f'**{ctx.author.mention} Has Voted To Stop**', color = discord.Color.orange())
+            embed=discord.Embed(description=f'**{ctx.author.mention} Has Voted To Disconnect**', color = discord.Color.orange())
             await ctx.send(embed=embed, delete_after=10)
             # await ctx.send(f'{ctx.author.mention} has voted to stop the player.', delete_after=15)
 
@@ -4796,7 +4799,7 @@ def downloadSong(url, ctx):
 
 @client.command(aliases= ['hi','sup','whatsup'])
 async def _hi(ctx):
-  await ctx.send('> ** Hi! 🚀 WHEEE!!! **')
+  return await help(ctx)
 
 
 @client.command(aliases = ['meme','reddit','imgur'])
@@ -4888,9 +4891,10 @@ async def _unban(ctx, *, member):
 #     # print(f'{member} went out the airlock :D !')
 #     await ctx.send(f'> {member} Has Left The Server.')
 
-@client.command()
+@client.command(aliases=["latency"])
 async def ping(ctx):
-    await ctx.send(f'> Pong! {round(client.latency*100)}ms!')
+    embed=discord.Embed(title=f"**🏓 Pong! {round(client.latency*100)}ms Latency!**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
 
 
 async def didyouknow(ctx):
@@ -4978,12 +4982,12 @@ async def on_command_error(ctx, error):
       await ctx.send(embed=embed, delete_after=5)
       # await ctx.send("> An Error Occured")
   
-@client.command()
+# @client.command()
 async def bye(ctx):
   await ctx.send("Bye!")
 
 
-@client.command(aliases = ["news", "headlines", 'headline'])
+# @client.command(aliases = ["news", "headlines", 'headline'])
 async def _news(ctx, amount):
     # await ctx.send("How many headlines?")
     # msg = await client.wait_for('message')
@@ -5023,7 +5027,7 @@ async def _news(ctx, amount):
 
 
 
-@client.command(aliases = ["googlelinks", "Searchlinks"])
+# @client.command(aliases = ["googlelinks", "Searchlinks"])
 async def _googleLinks(ctx, *, searchstr: str):
   query = searchstr
   embed=discord.Embed(title="Your 10 Results Are Ready!",colour=discord.Color.gold(), url="https://google.com", description="Here are your results:", timestamp=datetime.utcnow())
@@ -5042,7 +5046,7 @@ async def _googleLinks(ctx, *, searchstr: str):
   # for j in search(query, tld="co.in", num=10, stop=10, pause=2): 
   #     await ctx.send(j) 
 
-@client.command(aliases = ["google", "Search"])
+# @client.command(aliases = ["google", "Search"])
 async def _google(ctx, *, searchstr: str):
   query = searchstr
   results = []
@@ -5087,15 +5091,18 @@ async def _clear(ctx, amount):
       embed=discord.Embed(description="**Please Type A Number**".title(), color = discord.Color.red())
       return await ctx.send(embed=embed)
     
+    if amount>100:
+      embed=discord.Embed(description=f"**❌ Oops!\nYou can only purge 100 messages at a time**", color = discord.Color.green())
+      return await ctx.send()
     await ctx.channel.purge(limit = int(amount)+1)
-    embed=discord.Embed(description=f"**❎ {ctx.author.mention} Successfully Clearing {amount} Message(s)**", color = discord.Color.green())
-    await ctx.send(embed=embed, delete_after=5)
+    embed=discord.Embed(description=f"**❎ {ctx.author.mention} Successfully Cleared {amount} Message(s)**", color = discord.Color.green())
+    await ctx.send(embed=embed, delete_after=3)
   else:
     raise discord.ext.commands.MissingPermissions('no perms')
   
 
 
-@client.command(aliases = ['time', 'Now'])
+# @client.command(aliases = ['time', 'Now'])
 async def _time(ctx, inside, city):
   # city.replace('in', '');
   print(city)
@@ -5132,7 +5139,7 @@ async def _time(ctx, inside, city):
 async def _who(ctx):
     await ctx.send("Heya,\nI was created by Team Astro More About Them Here: https://teamastro.ml/")
 
-@client.command(aliases = ['weather','temperature'])
+# @client.command(aliases = ['weather','temperature'])
 async def _weather(ctx, *, city):
     api_key = "d4b4b3505a923d073e0e9ffd3cd1a606"
     base_url = "http://api.openweathermap.org/data/2.5/weather?"
@@ -5166,7 +5173,7 @@ async def _weather(ctx, *, city):
     else:
         await ctx.send(" City Not Found ")
 
-@client.command(aliases = ['Wiki'])
+# @client.command(aliases = ['Wiki'])
 async def _wiki(ctx, *, topic):
     ny = wikipedia.page(topic)
     
@@ -5263,7 +5270,7 @@ async def listqueueOld(ctx):
 
     # await msg.delete()
 
-@client.command(aliases = ['Percentage','Percent','amount'])
+# @client.command(aliases = ['Percentage','Percent','amount'])
 async def _percentage(ctx, member: discord.Member,*, question):
   author = ctx.message.author
   author_name = author.name
@@ -5282,7 +5289,7 @@ async def _percentage(ctx, member: discord.Member,*, question):
   # embed.add_field(name="URL:", value = final_url , inline=False) 
 
   await ctx.send(embed = embed)
-@client.command(aliases = ['whencanyoucome','when'])
+# @client.command(aliases = ['whencanyoucome','when'])
 async def polltimes(ctx, *, question):
   author = ctx.message.author
   author_name = author.name
@@ -6353,7 +6360,7 @@ async def queueOld(ctx, *, mysong: str=None):
     # await ctx.send(final_url)
     # await ctx.send("Qued!\nSong Name: " + mysong.title() + ".\nURL: " + final_url)
 
-@client.command()
+# @client.command()
 async def remove(ctx, *, mysong):
     server=ctx.guild.id
     try:
@@ -6470,13 +6477,13 @@ async def clearqueueOld(ctx):
   await ctx.send(embed=embed)
   QueList.clear()
 
-@client.command()
+# @client.command()
 # @commands.has_permissions(ban_members = True)
 async def cleartasks(ctx):
     await ctx.send("Cleared!")
     TaskList.clear()
 
-@client.command()
+# @client.command()
 async def will(ctx, *, question: str):
   answers = ['Obviously', 'Yes', 'Most definitely!', 'Not a doubt!']
   await ctx.send(rando.choice(answers))
@@ -7230,7 +7237,7 @@ async def create_task_user(user):
 
 
 
-@client.command(case_insensitive = True, aliases = ["task"])
+# @client.command(case_insensitive = True, aliases = ["task"])
 async def taskFor(ctx, memb: discord.Member, *, task:str):
   
   await ctx.send("When Is This Task Due?")
@@ -7266,7 +7273,7 @@ async def taskFor(ctx, memb: discord.Member, *, task:str):
     return
   await ctx.send(memb.mention+" has been assigned a new task, check your DM for all your tasks.")
 
-@client.command(case_insensitive = True, aliases = ["removeTask"])
+# @client.command(case_insensitive = True, aliases = ["removeTask"])
 async def deletetask(ctx, memb: discord.Member, taskNum=None):
   if taskNum==None:
     await ctx.send("Specify the task number.")
@@ -7284,7 +7291,7 @@ async def deletetask(ctx, memb: discord.Member, taskNum=None):
   await ctx.send("Removed task number "+str(int(taskNum))+" for " + memb.mention+"!")
   
 
-@client.command(case_insensitive = True, aliases = [ "listtask", "listTaskfor"])
+# @client.command(case_insensitive = True, aliases = [ "listtask", "listTaskfor"])
 async def listTasks(ctx, memb: discord.Member):
 
   embed = discord.Embed(title="Tasks For "+memb.name, description = "Task List Below", colour=discord.Color.gold(), timestamp=datetime.utcnow())
@@ -7365,7 +7372,7 @@ async def teamtask(ctx,*, question):
 
   await ctx.send(embed = embed)
 
-@client.command()
+# @client.command()
 async def listteamtasks(ctx):
   author = ctx.message.author
   author_name = author.name
@@ -7466,7 +7473,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
