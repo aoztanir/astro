@@ -1145,9 +1145,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                  required=False
                )
              ])
-    async def playSlash(self, ctx: SlashContext, song: str):
+    async def helpSLASH(self, ctx: SlashContext, song: str):
         # ctx=commands.context(ctx)
-        return await self.play(ctx,query=song)
+        return await help(ctx)
 
     @commands.command(aliases = [ 'sing'])
     @commands.cooldown(1,3,commands.BucketType.user)
@@ -2876,21 +2876,23 @@ client.remove_command("help")
 # menu = DefaultMenu(page_left="👍", page_right="👎",remove="❌", active_time=5)
 # client.help_command = PrettyHelp(menu=menu, ending_note=ending_note)
 
-# @slash.slash(name="test")
-# async def _test(ctx: SlashContext):
-#     embed = discord.Embed(title="embed test")
-#     await ctx.send(content="test", embeds=[embed])
+# @slash.slash(name="help")
+# async def help_slash(ctx: SlashContext):
+#   await help(ctx)
 
 @client.command(aliases=["info"])
 async def about(ctx):
   prefix='.'
-  # aryah = client.get_user(int(694969942054928395))
+
   embed = discord.Embed( colour=discord.Color.orange())
   embed.set_author(name=f"aoztanir#2396", url="https://teamastro.ml/commands", icon_url=f"https://images-ext-2.discordapp.net/external/jnmcZizHr0cIApoGG3FssnEtM3dy8fS9_OXryxgYqWU/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/608778878835621900/76e69643d799ee584dd46afa91127105.webp?width=300&height=300")
   # embed.add_field(name="**Develeper**", value=f"{aryah.mention}", inline=True)
   embed.add_field(name="**Server Count**", value=f"` {len(client.guilds)} `", inline=True)
   embed.add_field(name="**Shards**", value=f"` {len(client.shards)} `", inline=True)
   embed.add_field(name="**Latency**", value=f"` {round(client.latency*100)}ms `", inline=True)
+  if ctx.author.id == 608778878835621900:
+    embed.add_field(name="**CPU**", value=f"` {round(psutil.cpu_percent(1))}% `", inline=True)
+    embed.add_field(name="**RAM**", value=f"` {round( psutil.virtual_memory()[2])}% `", inline=True)
   embed.add_field(name="**Website**", value=f"[Click Here]({website})", inline=True)
   
   # embed.add_field(name="**Fun**", value=f"` {prefix}help fun `", inline=True)
@@ -5157,7 +5159,7 @@ async def _time(ctx, inside, city):
 
   await ctx.send(embed=embed)
 
-@client.command(aliases = ['Who are you?', 'who','creator', 'purpose'])
+# @client.command(aliases = ['Who are you?', 'who','creator', 'purpose'])
 async def _who(ctx):
     await ctx.send("Heya,\nI was created by Team Astro More About Them Here: https://teamastro.ml/")
 
