@@ -573,10 +573,11 @@ class Player(wavelink.Player):
         except:
           length2=1
         try:
-          length=str(datetime.timedelta(seconds=int(track.length/1000)))
+          length=str(timedelta(seconds=int(track.length/1000)))
   
-        except:
-          length="LIVE"
+        except Exception as e:
+          print(e)
+          length="🔴 LIVE"
         status='🔘'
         if self.is_paused:
           status="⏸"
@@ -1302,7 +1303,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             #   trackToQueue = Track(trackSpot[0].id, trackSpot[0].info, requester=ctx.author)
             #   await player.queue.put(trackToQueue)
             #   try:
-            #     length = str(datetime.timedelta(milliseconds=int(trackToQueue.length)))
+            #     length = str(timedelta(milliseconds=int(trackToQueue.length)))
             #   except:
             #     length="LIVE"
             #   embed=discord.Embed(description=f'**Queued [{formatTitle(trackToQueue.title[:30])}...]({trackToQueue.uri}) ` {length} ` | Requestor: {trackToQueue.requester.mention}**', color = discord.Color.green())
@@ -1382,7 +1383,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             track = Track(tracks[0].id, tracks[0].info, requester=ctx.author)
             
             try:
-              length = str(datetime.timedelta(seconds=int(track.length/1000)))
+              length = str(timedelta(seconds=int(track.length/1000)))
             except:
               length="LIVE"
             embed=discord.Embed(description=f'**Queued [{formatTitle(track.title[:30])}...]({track.uri}) ` {length} ` | Requestor: {track.requester.mention}**', color = discord.Color.green())
@@ -1708,7 +1709,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           except:
             length2=1
           try:
-            length=str(datetime.timedelta(seconds=int(track.length/1000)))
+            length=str(timedelta(seconds=int(track.length/1000)))
     
           except:
             length="LIVE"
@@ -1730,7 +1731,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         for i in range(len(player.queue._queue)):
           try:
-            trackLength=str(datetime.timedelta(seconds=int(player.queue._queue[i].length/1000)))
+            trackLength=str(timedelta(seconds=int(player.queue._queue[i].length/1000)))
           except:
             trackLength="🔴 LIVE"
           
@@ -7465,7 +7466,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
