@@ -2883,11 +2883,14 @@ client.remove_command("help")
 @client.command(aliases=["info"])
 async def about(ctx):
   prefix='.'
-
+  members=0
+  for s in client.guilds:
+    members += len(s.members)
   embed = discord.Embed( colour=discord.Color.orange())
   embed.set_author(name=f"aoztanir#2396", url="https://teamastro.ml/commands", icon_url=f"https://images-ext-2.discordapp.net/external/jnmcZizHr0cIApoGG3FssnEtM3dy8fS9_OXryxgYqWU/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/608778878835621900/76e69643d799ee584dd46afa91127105.webp?width=300&height=300")
   # embed.add_field(name="**Develeper**", value=f"{aryah.mention}", inline=True)
   embed.add_field(name="**Server Count**", value=f"` {len(client.guilds)} `", inline=True)
+  embed.add_field(name="**Users**", value=f"` {members} `", inline=True)
   embed.add_field(name="**Shards**", value=f"` {len(client.shards)} `", inline=True)
   embed.add_field(name="**Latency**", value=f"` {round(client.latency*100)}ms `", inline=True)
   if ctx.author.id == 608778878835621900:
