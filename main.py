@@ -2203,7 +2203,7 @@ async def on_message(msg):
     #   json.dump(prefixes, f, indent=4) #the indent is to
   if msg.author.bot:
 
-    await check(msg)
+    # await check(msg)
     return
   # await check(msg)
   
@@ -4934,9 +4934,10 @@ async def _unban(ctx, *, member):
     for ban_entry in banned_users:
         user = ban_entry.user
 
-        if (user.name, user.discriminator) == (member_name, member_discriminator):
+        if (user.name.lower(), user.discriminator) == (member_name.lower(), member_discriminator):
             await ctx.guild.unban(user)
-            await ctx.send(f'{user.mention} Has Been Unbanned By '+ctx.author.mention)
+            embed=discord.Embed(description=f"**✅ {user} Has Been Unbanned**", color = discord.Color.blue())
+            await ctx.send(embed=embed)
 
 # @client.event
 # async def on_member_join(ctx, member):
@@ -4950,7 +4951,7 @@ async def _unban(ctx, *, member):
 
 @client.command(aliases=["latency"])
 async def ping(ctx):
-    embed=discord.Embed(title=f"**🏓 Pong! {round(client.latency*100)}ms Latency!**", color = discord.Color.blue())
+    embed=discord.Embed(description=f"**🏓 Pong! {round(client.latency*100)}ms Latency!**", color = discord.Color.blue())
     await ctx.send(embed=embed)
 
 
@@ -5147,7 +5148,7 @@ async def _clear(ctx, amount):
       # await ctx.send("> Please Type A Number Representing The Seconds.")
       embed=discord.Embed(description="**Please Type A Number**".title(), color = discord.Color.red())
       return await ctx.send(embed=embed)
-    
+    amount=int(amount)
     if int(amount)>100:
       embed=discord.Embed(description=f"**❌ Oops!\nYou can only purge 100 messages at a time**", color = discord.Color.green())
       return await ctx.send()
@@ -7530,7 +7531,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
