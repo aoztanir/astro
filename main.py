@@ -2915,7 +2915,7 @@ async def about(ctx):
   embed.add_field(name="**Latency**", value=f"` {round(client.latency*100)}ms `", inline=True)
   if ctx.author.id == 608778878835621900:
     embed.add_field(name="**CPU**", value=f"` {round(psutil.cpu_percent(1))}% `", inline=True)
-    embed.add_field(name="**RAM**", value=f"` {round( psutil.virtual_memory()[1])}% `", inline=True)
+    embed.add_field(name="**RAM**", value=f"` {round( psutil.virtual_memory()[2])}% `", inline=True)
   embed.add_field(name="**Website**", value=f"[Click Here]({website})", inline=True)
   
   # embed.add_field(name="**Fun**", value=f"` {prefix}help fun `", inline=True)
