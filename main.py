@@ -594,7 +594,7 @@ class Player(wavelink.Player):
         posNum=int(30*positionPercent)+1
         position = position[:posNum] + status + position[posNum+1:]
         if track.is_stream:
-          position = "🔴 LIVE"
+          position = ""
         channel = self.bot.get_channel(int(self.channel_id))
         qsize = self.queue.qsize()
 
@@ -2663,15 +2663,15 @@ async def update_db():
 
 
 @client.command()
-@commands.has_permissions(administrator=True)
+@commands.has_permissions(manage_guild=True)
 async def unmute(ctx, memb: discord.Member,*, reason:str =None):
   if reason == None:
     reason="Unspecified"
-  if memb.guild_permissions.administrator:
-    await ctx.send("> Mods Cannot Mute/Unmute or Unmute Mods/Admins.")
+  if memb.guild_permissions.manage_guild:
+    await ctx.send("**Mods Cannot Mute/Unmute a Mod**")
     return
   if (ctx.guild.owner == memb):
-    await ctx.send("> You Cannot Mute/Unmute A Mod/Admin Or An Owner.")
+    await ctx.send("**You Cannot Mute/Unmute a Mod**")
     return
   role = discord.utils.get(ctx.guild.roles, name='astroMuted')
   await memb.remove_roles(role)
@@ -2715,16 +2715,16 @@ async def unmute(ctx, memb: discord.Member,*, reason:str =None):
 
 
 @client.command()
-@commands.has_permissions(administrator=True)
+@commands.has_permissions(manage_guild=True)
 async def mute(ctx, memb: discord.Member,*, reason :str =None):
   member=memb
   if reason==None:
     reason="Unspecified"
   if (ctx.guild.owner == memb):
-    await ctx.send("> You Cannot Mute/Unmute A Mod/Admin Or An Owner.")
+    await ctx.send("**You Cannot Mute/Unmute a Mod**")
     return
-  if memb.guild_permissions.administrator:
-    await ctx.send("> "+"Mods Cannot Mute Mods/Admins.")
+  if memb.guild_permissions.manage_guild:
+    await ctx.send("**You Cannot Mute/Unmute a Mod")
     return
   role = discord.utils.get(ctx.guild.roles, name='astroMuted')
   # try:
@@ -4813,6 +4813,9 @@ async def kick(ctx, member : discord.Member, *, reason="Unspecified" ):
   # except:
   #   pass
   memb=member
+  if memb.guild_permissions.kick_members:
+    await ctx.send("**Mods Cannot Kick Other Mods**")
+    return
   await member.kick(reason=reason)
   embed=discord.Embed(title=f"Reason: ` {reason} `", color=discord.Color.orange())
   embed.set_author(name=memb.name+" Has Been Kicked!", icon_url=memb.avatar_url)
@@ -4829,6 +4832,9 @@ async def _ban(ctx, member : discord.Member, *, reason="Unspecified" ):
   #   pass
   await ctx.guild.ban(member, reason=reason)
   memb=member
+  if memb.guild_permissions.ban_members:
+    await ctx.send("**Mods Cannot Ban Other Mods**")
+    return
   embed=discord.Embed(title=f"Reason: ` {reason} `", color=discord.Color.orange())
   embed.set_author(name=memb.name+" Has Been Banned!", icon_url=memb.avatar_url)
   await ctx.send(embed=embed)
@@ -5030,11 +5036,11 @@ async def on_command_error(ctx, error):
       return await ctx.send(embed=embed, delete_after=10)
       # return await ctx.send('')
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-      await ctx.send("> **Please include all required parts of a command!**")
+      return await ctx.send("> **Please include all required parts of a command!**")
     elif isinstance(error, discord.ext.commands.MissingPermissions):
-      await ctx.send("> **Sorry "+ctx.author.mention+" It Looks Like You Dont Have The Permissions To Run This Command!**")
+      return await ctx.send("> **Sorry "+ctx.author.mention+" It Looks Like You Dont Have The Permissions To Run This Command!**")
     elif isinstance(error, discord.ext.commands.BotMissingPermissions):
-      await ctx.send("> **Sorry "+ctx.author.mention+" Astro Does Not Have The Permissions To Complete This Action!**")
+      return await ctx.send("> **Sorry "+ctx.author.mention+" Astro Does Not Have The Permissions To Complete This Action!**")
     # elif "too many requests" in str(error).lower():
     #   await ctx.send("> **Hi "+ctx.author.mention+", youtube is having some momentary troubles, please rerun the command!**".title())
     # elif "clientexception" in str(error).lower():
@@ -5145,9 +5151,9 @@ async def _google(ctx, *, searchstr: str):
 #   await ctx.send("> KEYWORDS/COMMAND PREFIXES:   '.',  'pls', 'astro', '', ' '. ")
 
 
-@client.command(aliases = ["purge", "Clear"])
+@client.command(aliases = ["purge"])
 # @commands.has_permissions( manage_messages=True)
-async def _clear(ctx, amount):
+async def clear(ctx, amount):
   try:
     if str(amount).lower()=="queue":
       command = client.get_command('clearqueue')
@@ -5155,7 +5161,7 @@ async def _clear(ctx, amount):
       return await client.invoke(ctx)
   except:
     pass 
-  if ctx.message.author.guild_permissions.administrator:
+  if ctx.message.author.guild_permissions.manage_messages:
     if not isinstance(int(amount), int):
       # await ctx.send("> Please Type A Number Representing The Seconds.")
       embed=discord.Embed(description="**Please Type A Number**".title(), color = discord.Color.red())
@@ -5553,7 +5559,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
 
 @client.command(aliases=['Nameserver'])
-@commands.has_permissions(administrator=True)
+@commands.has_permissions(manage_guild=True)
 async def serverName(ctx,*, newname: str=None):
   if newname == None:
     await ctx.send("**Please Provide A Name**")
@@ -7544,7 +7550,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
