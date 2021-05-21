@@ -263,6 +263,7 @@ async def on_ready():
     print(str(client.shards))
     print(str(client.latencies))
     await update_db.start()
+    await change_status.start()
     # await update_db()
 
 
@@ -345,7 +346,6 @@ async def checkAmounts():
 #     exp = users[str(member)]["exp"]
 #     lvl = users[str(member)]["lvl"]
 #   return exp, lvl
-
 
 
 
@@ -1133,7 +1133,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       for player in self.bot.wavelink.players.values():
         # embed = # add your embed code here
         try:
-          await player.invoke_controller()
+          if player.current != None:
+            await player.invoke_controller()
         except:
           pass
 
@@ -1151,7 +1152,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         # ctx=commands.context(ctx)
         return await help(ctx)
 
-    @commands.command(aliases = [ 'sing'])
+    @commands.command()
     @commands.cooldown(1,3,commands.BucketType.user)
     async def lyrics(self, ctx,*, song : str=None):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
@@ -1185,7 +1186,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         return
     
     @commands.command(aliases=['p'])
-    @commands.cooldown(1,2,commands.BucketType.user)
+    # @commands.cooldown(1,2,commands.BucketType.user)
     async def play(self, ctx: commands.Context, *, query: str=None):
         """Play or queue a song with the given query."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
@@ -2473,6 +2474,15 @@ async def listmute(ctx):
   #   pass
   await ctx.send(embed=embed)
 
+
+
+
+
+@tasks.loop(hours=24)
+async def change_status():
+  for element in client.shards:
+    await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = f'@Astro | .help | {len(client.guilds)} Servers ➡ Shard {element+1}'), shard_id=client.shards[element].id)
+    print(element)
 
 # cluster = MongoClient("mongodb+srv://astro:astro@cluster0.alu7p.mongodb.net/test")
 # mongodb = cluster["AstroData"]
@@ -5138,7 +5148,7 @@ async def _clear(ctx, amount):
       embed=discord.Embed(description="**Please Type A Number**".title(), color = discord.Color.red())
       return await ctx.send(embed=embed)
     
-    if amount>100:
+    if int(amount)>100:
       embed=discord.Embed(description=f"**❌ Oops!\nYou can only purge 100 messages at a time**", color = discord.Color.green())
       return await ctx.send()
     await ctx.channel.purge(limit = int(amount)+1)
@@ -7520,7 +7530,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
