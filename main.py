@@ -2714,7 +2714,7 @@ async def unmute(ctx, memb: discord.Member,*, reason:str =None):
 
 
 
-@client.command(aliases=['silence'])
+@client.command()
 @commands.has_permissions(administrator=True)
 async def mute(ctx, memb: discord.Member,*, reason :str =None):
   member=memb
@@ -2954,10 +2954,12 @@ async def help(ctx, *, commandType :str =None):
     embed.set_author(name="Astro's Command Categories", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
     embed.add_field(name="**Music**", value=f"` {prefix}help music `", inline=True)
     embed.add_field(name="**Moderator**", value=f"` {prefix}help moderator `", inline=True)
-    embed.add_field(name="**Dungeon**", value=f"` {prefix}help dungeon `", inline=True)
+    # embed.add_field(name="**Dungeon**", value=f"` {prefix}help dungeon `", inline=True)
     embed.add_field(name="**Utility**", value=f"` {prefix}help utility `", inline=True)
-    embed.add_field(name="**Data**", value=f"` {prefix}help data `", inline=True)
-    embed.add_field(name="**Fun**", value=f"` {prefix}help fun `", inline=True)
+    # embed.add_field(name="**Data**", value=f"` {prefix}help data `", inline=True)
+    # embed.add_field(name="**Fun**", value=f"` {prefix}help fun `", inline=True)
+    embed.add_field(name="**Website**", value=f" [Click Here]( {website} )", inline=True)
+    embed.add_field(name="**Support**", value=f" [Click Here]( {website}/discord )", inline=True)
     embed.add_field(name="**Other**", value=f" [Dashboard]( {website}/guild/{ctx.guild.id} )", inline=True)
     # embed.add_field(name="**CPU**", value=f"` {psutil.cpu_percent(0)}% `", inline=True)
     # embed.add_field(name="**RAM**", value=f"` {psutil.virtual_memory()[2]}% `", inline=True)
@@ -2984,7 +2986,7 @@ async def help(ctx, *, commandType :str =None):
       embed.add_field(name="**Lyrics**", value=f"` {prefix}lyrics <song> | Lyrics For The Currently Playing Song, Or Any Song If Specified `", inline=False)
       embed.add_field(name="**Playing**", value=f"` {prefix}playing | Displays What Is Playing `", inline=False)
       embed.add_field(name="**Volume**", value=f"` {prefix}volume <amount> | Changes Astro's Volume `", inline=False)
-      embed.add_field(name="**Previous**", value=f"` {prefix}previous | Goes Back A Song `", inline=False)
+      # embed.add_field(name="**Previous**", value=f"` {prefix}previous | Goes Back A Song `", inline=False)
       await ctx.send(embed=embed)
     if commandType == "moderator":
       embed = discord.Embed(title="Moderator", colour=discord.Color.orange())
@@ -3021,12 +3023,12 @@ async def help(ctx, *, commandType :str =None):
     if commandType == "utility":
       embed = discord.Embed(title="Utility", colour=discord.Color.orange())
       # embed.set_author(name="Music", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
-      embed.add_field(name="**Reminder**", value=f"` {prefix}reminder <time> <reminder text> | Reminds You About Something In A Specified Amount Of Time `", inline=False)
+      # embed.add_field(name="**Reminder**", value=f"` {prefix}reminder <time> <reminder text> | Reminds You About Something In A Specified Amount Of Time `", inline=False)
       embed.add_field(name="**Timer**", value=f"` {prefix}Timer <time> | Sets A Timer For A Certain Amount Of Time `", inline=False)
       embed.add_field(name="**News**", value=f"` {prefix}news <amount> | Gives You A Specified Amount Of Headlines `", inline=False)
       embed.add_field(name="**Wiki**", value=f"` {prefix}wiki <query> | Searches Wikipedia For Something `", inline=False)
-      embed.add_field(name="**Google Links**", value=f"` {prefix}googlelinks <query> | Gives You Link Results From Your Query `", inline=False)
-      embed.add_field(name="**Google**", value=f"` {prefix}google <query> | Gets A Google Result For Your Query `", inline=False)
+      # embed.add_field(name="**Google Links**", value=f"` {prefix}googlelinks <query> | Gives You Link Results From Your Query `", inline=False)
+      # embed.add_field(name="**Google**", value=f"` {prefix}google <query> | Gets A Google Result For Your Query `", inline=False)
       embed.add_field(name="**poll**", value=f"` {prefix}poll <time> <question> | Creates A Poll For Your Discord Server `", inline=False)
       # embed.add_field(name="**Seek**", value=f"` {prefix}seek <position> | Moves The Currently Playing Song To A New Position `", inline=False)
 
@@ -3044,7 +3046,7 @@ async def help(ctx, *, commandType :str =None):
       embed.add_field(name="**Google**", value=f"` {prefix}google <query> | Gets A Google Result For Your Query `", inline=False)
       embed.add_field(name="**Userinfo**", value=f"` {prefix}userinfo <user> | Gives You User Info For Any User In The Server `", inline=False)
       embed.add_field(name="**Serverinfo**", value=f"` {prefix}serverinfo | Gives You Server Info For This Server `", inline=False)
-      await ctx.send(embed=embed)
+      # await ctx.send(embed=embed)
     if commandType == "fun":
       embed = discord.Embed(title="Fun", colour=discord.Color.orange())
       # embed.set_author(name="Music", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
@@ -3080,7 +3082,7 @@ async def help(ctx, *, commandType :str =None):
 
 
 
-@client.command(aliases=['quickstart','beginSetup'])
+# @client.command(aliases=['quickstart','beginSetup'])
 async def setup(ctx):
   await on_guild_join(ctx.guild)
 
@@ -3099,11 +3101,12 @@ async def on_guild_remove(guild): #when the bot is removed from the guild
 
 @client.event
 async def on_guild_join(guild):
+  pass
   # with open('prefixes.json', 'r') as f: #read the prefix.json file
   #   prefixes = json.load(f) #load the json file
-  prefixes=db["prefixes"]
-  prefixes[str(guild.id)]='.'
-  db["prefixes"]=prefixes
+  # prefixes=db["prefixes"]
+  # prefixes[str(guild.id)]='.'
+  # db["prefixes"]=prefixes
 
   #   prefixes[str(guild.id)] = '.'#default prefix
 
@@ -3278,7 +3281,7 @@ mainshop = [
 import json
 import os
 
-@client.command()
+# @client.command()
 async def sell(ctx,amount = 1,*, item):
     await open_account(ctx.author)
 
@@ -3513,7 +3516,7 @@ async def use_item(user, item_name):
     return [True,"Worked",dmg, armor]
 
 
-@client.command(aliases=['heal', 'Utilize'])
+# @client.command(aliases=['heal', 'Utilize'])
 async def use(ctx, *, item):
   users = await get_bank_data()
   await open_account(ctx.author)
@@ -3572,7 +3575,7 @@ async def use(ctx, *, item):
 
 
 
-async def attack_person(user,victim,item_name):
+# async def attack_person(user,victim,item_name):
     item_name = item_name.lower()
     name_ = None
     dmg = None
@@ -3625,7 +3628,7 @@ async def attack_person(user,victim,item_name):
     return [True,"Worked",dmg]
 
 
-@client.command(aliases=['Fight'])
+# @client.command(aliases=['Fight'])
 async def attack(ctx, member: discord.Member=None, *, item):
 
   await open_account(ctx.author)
@@ -3719,7 +3722,7 @@ async def attack(ctx, member: discord.Member=None, *, item):
 
 
 
-@client.command(aliases=['stats','gameinfo','bal'])
+# @client.command(aliases=['stats','gameinfo','bal'])
 async def balance(ctx, member: discord.Member=None):
   if member != None:
     pass
@@ -3753,7 +3756,7 @@ async def balance(ctx, member: discord.Member=None):
   return
 
 
-@client.command()
+# @client.command()
 async def beg(ctx):
   user=ctx.author
   await open_account(ctx.author)
@@ -3781,7 +3784,7 @@ async def update_bank(user,change=0,mode="wallet"):
   bal=[users[str(user.id)]["wallet"],users[str(user.id)]["bank"]]
   return bal
 
-@client.command()
+# @client.command()
 async def deposit(ctx, amount: str):
   try:
     if int(amount)<0:
@@ -3821,7 +3824,7 @@ jobsincome = [15,20,40,50,80,100,500,1000]
 
 
 
-@client.command(aliases=['alljobs','listjobs','work'])
+# @client.command(aliases=['alljobs','listjobs','work'])
 async def jobs(ctx):
   em = discord.Embed(title = f"All Jobs" , description = "Use The Earn Command And One of These Jobs, And If You Meet The Requirements, You Will Work A Day In That Job",color = discord.Color.gold(),timestamp=datetime.utcnow()) 
   em.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
@@ -3834,7 +3837,7 @@ async def jobs(ctx):
 
 
 
-@client.command()
+# @client.command()
 async def earn(ctx, *, job: str=None):
   await open_account(ctx.author)
   users = await get_bank_data()
@@ -3882,7 +3885,7 @@ async def earn(ctx, *, job: str=None):
 
   
 
-@client.command()
+# @client.command()
 async def gamble(ctx, amount: str):
   try:
     if int(amount)<0:
@@ -3913,7 +3916,7 @@ async def gamble(ctx, amount: str):
     await update_bank(ctx.author,-1*amount)
 
 
-@client.command()
+# @client.command()
 async def slots(ctx, amount: str):
   try:
     if int(amount)<0:
@@ -3949,7 +3952,7 @@ async def slots(ctx, amount: str):
     await ctx.send("You Lost Your Money, Tough Luck.")
     await update_bank(ctx.author,-1*amount)
   
-@client.command()
+# @client.command()
 async def rob(ctx, member:discord.Member):
   await open_account(ctx.author)
   await open_account(member)
@@ -3990,7 +3993,7 @@ async def rob(ctx, member:discord.Member):
     json.dump(users,f)
   
 
-@client.command()
+# @client.command()
 async def send(ctx,member:discord.Member, amount: str):
   await open_account(ctx.author)
   await open_account(member)
@@ -4022,7 +4025,7 @@ async def send(ctx,member:discord.Member, amount: str):
   await update_bank(member,amount,"bank")
 
 
-@client.command()
+# @client.command()
 async def withdraw(ctx, amount: str):
   user=ctx.author
 
@@ -4054,7 +4057,7 @@ async def withdraw(ctx, amount: str):
   with open("mainbank.json","w") as f:
     json.dump(users,f)
 
-@client.command(aliases = ["lb", "ranks","levels"])
+# @client.command(aliases = ["lb", "ranks","levels"])
 async def leaderboard(ctx,x = 10):
   server = ctx.guild.id
   with open("userJson.json","r") as f:
@@ -4094,7 +4097,7 @@ async def leaderboard(ctx,x = 10):
 
 
 
-@client.command(aliases = ["gamelb"])
+# @client.command(aliases = ["gamelb"])
 async def gameleaderboard(ctx,x = 10):
     users = await get_bank_data()
     leader_board = {}
@@ -4148,7 +4151,7 @@ async def gameleaderboard(ctx,x = 10):
 
 
 
-@client.command()
+# @client.command()
 async def buy(ctx,amount = 1,*,item):
     await open_account(ctx.author)
 
@@ -4164,7 +4167,7 @@ async def buy(ctx,amount = 1,*,item):
     await ctx.send("> "+f"You just bought {amount} {item}!")
 
 
-@client.command(aliases = ['items','objects'])
+# @client.command(aliases = ['items','objects'])
 async def bag(ctx, member: discord.Member = None):
     if member != None:
       user = member
@@ -4253,7 +4256,7 @@ async def buy_this(user,item_name,amount):
 
 
 
-@client.command()
+# @client.command()
 async def shop(ctx):
     em = discord.Embed(title = "Shop",color=discord.Color.gold(),timestamp=datetime.utcnow())
     
@@ -4310,7 +4313,7 @@ async def get_bank_data():
 
 
 
-@client.command()
+# @client.command()
 async def _emojiconvert(ctx,*, words : str):
   emo = Translator(exact_match_only=False, randomize=True)
   await ctx.send(emo.emojify(words))
@@ -4344,7 +4347,7 @@ def downloadImages(query):
   soup_page=soup(xml_page,"lxml")
   news_list=soup_page.find_all("a", class_="rg_i Q4LuWd")
 
-@client.command(aliases = ['nicknamemember','Nickname','Nick'])
+# @client.command(aliases = ['nicknamemember','Nickname','Nick'])
 @commands.has_permissions(administrator=True)
 async def nickmember(ctx, target: discord.Member=None, *, nickname: str):
     # target = ctx.message.author
@@ -4453,7 +4456,7 @@ async def nickmember(ctx, target: discord.Member=None, *, nickname: str):
 #         await ctx.send(f'Not enough permissions')
 
 
-@client.command(aliases=['level','rank','exp', 'position'])
+# @client.command(aliases=['level','rank','exp', 'position'])
 async def userinfo(ctx, target: discord.Member=None):
     if target==None:
       target=ctx.author
@@ -4492,7 +4495,7 @@ async def userinfo(ctx, target: discord.Member=None):
 
 
 
-@client.command(aliases = ['reactletters'])
+# @client.command(aliases = ['reactletters'])
 async def react(ctx,*, words : str):
   finalWord = ""
   letterArr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -4509,7 +4512,7 @@ async def react(ctx,*, words : str):
   
 
 
-@client.command(aliases = [ 'Emojify'])
+# @client.command(aliases = [ 'Emojify'])
 async def _emojify(ctx,*, words : str):
   finalWord = ""
   letterArr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -4571,7 +4574,7 @@ async def _emojify(ctx,*, words : str):
 
   
 
-@client.command(aliases = [ 'status'])
+# @client.command(aliases = [ 'status'])
 async def setstatus(ctx,*, status: str):
     # if skip == True:
     #     skip = False
@@ -4581,7 +4584,7 @@ async def setstatus(ctx,*, status: str):
     else:
       await ctx.send("Sorry, You Cannot Change The Status If You Are Not Part Of Team Astro's Adminstrative Team.")
 
-@client.command()
+# @client.command()
 async def playrps(ctx, userrps):
   arr = ["Rock", "Paper", "Scissors"]
   choice = rando.choice(arr)
@@ -4614,7 +4617,7 @@ async def playrps(ctx, userrps):
 
 import asyncio
 
-@client.command(case_insensitive = True, aliases = ["setagenda", "angendaset", "meetingagenda", 'agendameeting'])
+# @client.command(case_insensitive = True, aliases = ["setagenda", "angendaset", "meetingagenda", 'agendameeting'])
 # @commands.bot_has_permissions(attach_files = True, embed_links = True)
 async def agenda(ctx,*, question):
   author = ctx.message.author
@@ -4654,7 +4657,7 @@ async def agenda(ctx,*, question):
 
   await ctx.send(embed = embed)
 
-@client.command(case_insensitive = True, aliases = ["meeting", "summary", "meetingSummary", 'summarizeMeeting'])
+# @client.command(case_insensitive = True, aliases = ["meeting", "summary", "meetingSummary", 'summarizeMeeting'])
 # @commands.bot_has_permissions(attach_files = True, embed_links = True)
 async def _meetingSummary(ctx,*, question):
   author = ctx.message.author
@@ -4699,16 +4702,16 @@ async def _meetingSummary(ctx,*, question):
 
 
 
-@client.command(case_insensitive = True, aliases = ["timer", "timeit"])
+@client.command()
 # @commands.bot_has_permissions(attach_files = True, embed_links = True)
-async def _timer(ctx, time):
+async def timer(ctx, time):
     reminder = ""
     print(time)
     print(reminder)
     user = ctx.message.author
     embed = discord.Embed(color=0x55a7f7, timestamp=datetime.utcnow())
-    embed.set_footer(text="Team Astro | https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
-    embed.set_footer(text="Team Astro", icon_url=f"{client.user.avatar_url}")
+    # embed.set_footer(text="Team Astro | https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    # embed.set_footer(text="Team Astro", icon_url=f"{client.user.avatar_url}")
     seconds = 0
     if reminder is None:
         embed.add_field(name='Warning', value='Please specify what do you want me to remind you about.') # Error message
@@ -4734,7 +4737,7 @@ async def _timer(ctx, time):
         embed.add_field(name='Too Long Duration', value='You have specified a too long duration!\nMaximum duration is 90 days.')
     else:
         rem = str(f"Timer for {counter} set!")
-        embed.add_field(name='Timer Set', value=rem)
+        embed.add_field(name='New Timer', value=rem)
         await ctx.send(embed=embed)
         await asyncio.sleep(seconds)
         desc = str(f"Your timer for {counter} has finished.")
@@ -4752,7 +4755,7 @@ async def _timer(ctx, time):
 
 
 
-@client.command(case_insensitive = True, aliases = ["remind", "remindme", "remind_me"])
+# @client.command(case_insensitive = True, aliases = ["remind", "remindme", "remind_me"])
 # @commands.bot_has_permissions(attach_files = True, embed_links = True)
 async def reminder(ctx, time, *, reminder):
     print(time)
@@ -4832,7 +4835,7 @@ async def _ban(ctx, member : discord.Member, *, reason="Unspecified" ):
   # await ctx.send(f'> {member.mention} Has Been Banned By '+ctx.author.mention)
 
 
-@client.command()
+# @client.command()
 async def joke(ctx):
   await ctx.send(pyjokes.get_joke() + " 😂😂😂")
 
@@ -5054,8 +5057,8 @@ async def bye(ctx):
   await ctx.send("Bye!")
 
 
-# @client.command(aliases = ["news", "headlines", 'headline'])
-async def _news(ctx, amount):
+@client.command(aliases = [ "headlines", 'headline'])
+async def news(ctx, amount):
     # await ctx.send("How many headlines?")
     # msg = await client.wait_for('message')
     hNum = int(amount)
@@ -5074,7 +5077,7 @@ async def _news(ctx, amount):
     except TypeError:
         hNum=6
 
-    embed=discord.Embed(title="Your "+str(hNum)+ " Headlines Are Ready!",colour=discord.Color.gold(), url="https://news.google.com", description="Here are your headlines:", timestamp=datetime.utcnow())
+    embed=discord.Embed(title=str(hNum)+ " Headlines Are Ready!",colour=discord.Color.green(), url="https://news.google.com", description="Here are your headlines:", timestamp=datetime.utcnow())
 
     # Add author, thumbnail, fields, and footer to the embed
     embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
@@ -5240,8 +5243,8 @@ async def _weather(ctx, *, city):
     else:
         await ctx.send(" City Not Found ")
 
-# @client.command(aliases = ['Wiki'])
-async def _wiki(ctx, *, topic):
+@client.command()
+async def wiki(ctx, *, topic):
     ny = wikipedia.page(topic)
     
     
@@ -5401,57 +5404,58 @@ async def polltimes(ctx, *, question):
 
 
 @client.command()
-async def poll(ctx,time,*, question):
-  seconds=0
-  if time.lower().endswith("d"):
-      seconds += int(time[:-1]) * 60 * 60 * 24
-      counter = f"{seconds // 60 // 60 // 24} days"
-  if time.lower().endswith("h"):
-      seconds += int(time[:-1]) * 60 * 60
-      counter = f"{seconds // 60 // 60} hours"
-  elif time.lower().endswith("m"):
-      seconds += int(time[:-1]) * 60
-      counter = f"{seconds // 60} minutes"
-  elif time.lower().endswith("s"):
-      seconds += int(time[:-1])
-      counter = f"{seconds} seconds"
-  if seconds==0:
-    await ctx.send("> Improper Time. Please Specify A Time Ending In s, m, or d.")
-    return
-  author = ctx.message.author
-  author_name = author.name
-  if "?" not in question:
-    question = question +"?"
+async def poll(ctx, *, question):
+  # seconds=0
+  # if time.lower().endswith("d"):
+  #     seconds += int(time[:-1]) * 60 * 60 * 24
+  #     counter = f"{seconds // 60 // 60 // 24} days"
+  # if time.lower().endswith("h"):
+  #     seconds += int(time[:-1]) * 60 * 60
+  #     counter = f"{seconds // 60 // 60} hours"
+  # elif time.lower().endswith("m"):
+  #     seconds += int(time[:-1]) * 60
+  #     counter = f"{seconds // 60} minutes"
+  # elif time.lower().endswith("s"):
+  #     seconds += int(time[:-1])
+  #     counter = f"{seconds} seconds"
+  # if seconds==0:
+  #   await ctx.send("> Improper Time. Please Specify A Time Ending In s, m, or d.")
+  #   return
+  # author = ctx.message.author
+  # author_name = author.name
+  # if "?" not in question:
+  #   question = question +"?"
   # await ctx.send(question.title())
-  embed=discord.Embed(title="Poll: " + question.title(), description= "Asked By: "+str(author_name).title(), color=0xFF5733, timestamp=datetime.utcnow())
+  embed=discord.Embed(title="📈 " + question.title(), description= "👍 Yes | 🤷‍♂️ Unsure | 👎 No", color=discord.Colors.green(), timestamp=datetime.utcnow())
 
     # Add rs/608778878835621900/76e69643d799ee584dd46afa91127105.webp")
 
-  embed.set_thumbnail(url="https://image.flaticon.com/icons/png/512/1946/1946385.png")
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  # embed.set_thumbnail(url="https://image.flaticon.com/icons/png/512/1946/1946385.png")
+  embed.set_author(name=f"{ctx.author.name}", icon_url=f"{ctx.author.avatar_url}")
 
-  embed.add_field(name="Question:", value= question.title() , inline=False)
-  embed.add_field(name="Remember:", value= "Polling amounts must be subtracted by one for each, since it was reacted to once already by Astro." , inline=False)
+  # embed.add_field(name="Question:", value= question.title() , inline=False)
+  # embed.add_field(name="Remember:", value= "Polling amounts must be subtracted by one for each, since it was reacted to once already by Astro." , inline=False)
   # embed.add_field(name="URL:", value = final_url , inline=False) 
 
   messageSent = await ctx.send(embed = embed)
-  await messageSent.add_reaction("✅")
-  await messageSent.add_reaction("❌")
-  await asyncio.sleep(seconds)
-  msg = await ctx.channel.fetch_message(messageSent.id)
+  await messageSent.add_reaction("👍")
+  await messageSent.add_reaction("🤷‍♂️")
+  await messageSent.add_reaction("👎")
+  # await asyncio.sleep(seconds)
+  # msg = await ctx.channel.fetch_message(messageSent.id)
 
-  check_marks = len(await msg.reactions[0].users().flatten())
-  x_marks = len(await msg.reactions[1].users().flatten())
-  embed=discord.Embed(title="Results For: " + question.title(), description= "Asked By: "+str(author_name).title(), color=0xFF5733, timestamp=datetime.utcnow())
+  # check_marks = len(await msg.reactions[0].users().flatten())
+  # x_marks = len(await msg.reactions[1].users().flatten())
+  # embed=discord.Embed(title="Results For: " + question.title(), description= "Asked By: "+str(author_name).title(), color=0xFF5733, timestamp=datetime.utcnow())
 
-    # Add rs/608778878835621900/76e69643d799ee584dd46afa91127105.webp")
+  #   # Add rs/608778878835621900/76e69643d799ee584dd46afa91127105.webp")
 
-  embed.set_thumbnail(url="https://image.flaticon.com/icons/png/512/1946/1946385.png")
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  # embed.set_thumbnail(url="https://image.flaticon.com/icons/png/512/1946/1946385.png")
+  # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
 
-  embed.add_field(name="✅", value= str(check_marks) , inline=False)
-  embed.add_field(name="❌", value= str(x_marks) , inline=False)
-  await ctx.send(embed=embed)
+  # embed.add_field(name="✅", value= str(check_marks) , inline=False)
+  # embed.add_field(name="❌", value= str(x_marks) , inline=False)
+  # await ctx.send(embed=embed)
   # embed.add_field(name="URL:", value = final_url , inline=False) 
 
 
@@ -7540,7 +7544,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
