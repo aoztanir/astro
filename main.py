@@ -4926,18 +4926,27 @@ async def _meme( ctx, *, sub="dankmemes"):
 
 @client.command(aliases= ['unban'])
 @commands.has_permissions(ban_members = True)
-@commands.has_permissions(ban_members = True)
-async def _unban(ctx, *, member):
+async def _unban(ctx, *, member: str):
     banned_users = await ctx.guild.bans()
     member_name, member_discriminator = member.split('#')
+    try:
+      if not isinstance(int(member_discriminator), int):
+        embed=discord.Embed(description=f"**Please Specify The User's Discriminator Like So: ` aoztanir#2396 `**", color = discord.Color.red())
+        await ctx.send(embed=embed)
+    except:
+      embed=discord.Embed(description=f"**Please Specify The User's Discriminator Like So: ` aoztanir#2396 `**", color = discord.Color.red())
+      await ctx.send(embed=embed)
 
     for ban_entry in banned_users:
         user = ban_entry.user
 
-        if (user.name.lower(), user.discriminator) == (member_name.lower(), member_discriminator):
+        if (user.name.lower(), int(user.discriminator)) == (member_name.lower(), int(member_discriminator)):
             await ctx.guild.unban(user)
-            embed=discord.Embed(description=f"**✅ {user} Has Been Unbanned**", color = discord.Color.blue())
+            embed=discord.Embed(description=f"**✅ {user} Has Been Unbanned**", color = discord.Color.green())
             await ctx.send(embed=embed)
+        else:
+          embed=discord.Embed(description=f"**Couldn't Find That User. Make Sure to Seperate Users By Their Discriminator Like So: ` aoztanir#2396 `**", color = discord.Color.red())
+          await ctx.send(embed=embed)
 
 # @client.event
 # async def on_member_join(ctx, member):
