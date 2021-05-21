@@ -5151,7 +5151,7 @@ async def _clear(ctx, amount):
     amount=int(amount)
     if int(amount)>100:
       embed=discord.Embed(description=f"**You can only purge 100 messages at a time**".title(), color = discord.Color.green())
-      return await ctx.send()
+      return await ctx.send(embed=embed, delete_after=3)
     await ctx.channel.purge(limit = int(amount)+1)
     embed=discord.Embed(description=f"**❎ {ctx.author.mention} Successfully Cleared {amount} Message(s)**", color = discord.Color.green())
     await ctx.send(embed=embed, delete_after=3)
