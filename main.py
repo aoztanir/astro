@@ -205,6 +205,7 @@ async def on_ready():
     process = subprocess.Popen("java -jar Lavalink.jar", shell=True)
     client.db = client.mongo["astro"]
     client.prefixes= Document(client.db, 'prefixes')
+    client.announcement= Document(client.db, 'announcement')
     client.mod_words = Document(client.db, 'mod_words')
     if client.user.id == 809609861456723988:
       await asyncio.sleep(120)
@@ -261,6 +262,7 @@ async def on_ready():
     print('ASTRO IS READY')
     print(str(client.shards))
     print(str(client.latencies))
+    await update_db.start()
     # await update_db()
 
 
@@ -2474,112 +2476,130 @@ async def listmute(ctx):
 
 # cluster = MongoClient("mongodb+srv://astro:astro@cluster0.alu7p.mongodb.net/test")
 # mongodb = cluster["AstroData"]
-
-async def update_db(server=None):
+@tasks.loop(seconds=2)
+async def update_db():
   # mongoQueue=mongodb["queue"]
   # db["reaction_roles"]={}
-  while True:
-    for i in  range(len(db["announcement"])):
-      try:
-        # print(str(db["announcement"][i]))
-        announcement=dict(db["announcement"][i])
-        server=announcement['server']
-        title=announcement['title']
-        description=announcement['description']
-        pic=announcement['pic']
-        name=announcement['name']
-        channel=announcement['channel']
-        role=announcement['role']
-        fields=announcement['fields']
-        color=announcement['color']
-        sixteenIntegerHex = int(color, 16)
-        readableHex = int(hex(sixteenIntegerHex), 0)
-        if str(title.strip(" "))=="":
-          title="~"
-        if str(description.strip(" "))=="":
-          description="~"
-        for serverText in client.guilds:
-          if serverText.id == int(server):
-            for channelText in serverText.channels:
-              if channelText.name.lower()==channel.lower() and channelText.type == discord.ChannelType.text:
-                print("SENDING")
-                embed=discord.Embed(title=str(title),description=str(description), color=readableHex)
-                embed.set_author(name=name, icon_url=pic)
-                for element in fields:
-                  if str(element['title'].strip(" "))=="":
-                    element['title']="~"
-                  if str(element['value'].strip(" "))=="":
-                    element['value']="~"
-                  embed.add_field(name=str(element['title']), value=str(element['value']), inline=False)
-                if (role!="None"):
-                  rolePing=discord.utils.get(serverText.roles,name=str(role))
-                  if (role=="@everyone"):
-                    await channelText.send("@everyone")
-                  else:
-                    await channelText.send(rolePing.mention)
-                await channelText.send(embed=embed)
-                db["announcement"].pop(i)
-                break
-      except Exception as e:
-        print(e)
-        db["announcement"].pop(i)
+  # while True:
+  # await client.announcement.upsert({"_id":2, "announcements":[]})
+  jsonDATA = await client.announcement.find(2)#original insert for announcements
+  announcements=jsonDATA["announcements"]
+
+
+
+  for i in  range(len(announcements)):
+    try:
+      # print(str(db["announcement"][i]))
+      announcement=dict(announcements[i])
+      server=announcement['server']
+      title=announcement['title']
+      description=announcement['description']
+      pic=announcement['pic']
+      name=announcement['name']
+      channel=announcement['channel']
+      role=announcement['role']
+      fields=announcement['fields']
+      color=announcement['color']
+      sixteenIntegerHex = int(color, 16)
+      readableHex = int(hex(sixteenIntegerHex), 0)
+      if str(title.strip(" "))=="":
+        title="~"
+      if str(description.strip(" "))=="":
+        description="~"
+      for serverText in client.guilds:
+        if serverText.id == int(server):
+          for channelText in serverText.channels:
+            if channelText.name.lower()==channel.lower() and channelText.type == discord.ChannelType.text:
+              print("SENDING")
+              embed=discord.Embed(title=str(title),description=str(description), color=readableHex)
+              embed.set_author(name=name, icon_url=pic)
+              for element in fields:
+                if str(element['title'].strip(" "))=="":
+                  element['title']="~"
+                if str(element['value'].strip(" "))=="":
+                  element['value']="~"
+                embed.add_field(name=str(element['title']), value=str(element['value']), inline=False)
+              if (role!="None"):
+                rolePing=discord.utils.get(serverText.roles,name=str(role))
+                if (role=="@everyone"):
+                  await channelText.send("@everyone")
+                else:
+                  await channelText.send(rolePing.mention)
+              await channelText.send(embed=embed)
+              announcements.pop(i)
+              await client.announcement.upsert({"_id":2, "announcements": announcements})
+              break
+    except Exception as e:
+      print(e)
+      announcements.pop(i)
+      await client.announcement.upsert({"_id":2, "announcements": announcements})
 
 
 
 
 
+  ###UNCOMMENT BELOW
 
 
-    for globServer in db["reaction_roles"]:
-      for i in range(len(db["reaction_roles"][str(globServer)])):
-        REACTION_OBJ = db["reaction_roles"][str(globServer)]
-        if REACTION_OBJ[i]["sent"]==False:
-          try:
-            # print(str(db["announcement"][i]))
-            announcement=dict(db["reaction_roles"][str(globServer)][i])
-            server=announcement['server']
-            title=announcement['title']
-            description=announcement['description']
-            pic=announcement['pic']
-            name=announcement['name']
-            channel=announcement['channel']
-            role=announcement['role']
-            fields=announcement['fields']
-            roleAdds=announcement['roleAdds']
-            color=announcement['color']
-            sixteenIntegerHex = int(color, 16)
-            readableHex = int(hex(sixteenIntegerHex), 0)
-            if str(title.strip(" "))=="":
-              title="~"
-            if str(description.strip(" "))=="":
-              description="~"
-            for serverText in client.guilds:
-              if serverText.id == int(server):
-                for channelText in serverText.channels:
-                  if channelText.name.lower()==channel.lower() and channelText.type == discord.ChannelType.text:
-                    print("SENDING")
-                    embed=discord.Embed(title=str(title),description=str(description), color=readableHex)
-                    embed.set_author(name=name, icon_url=pic)
-                    for element in fields:
-                      if str(element['title'].strip(" "))=="":
-                        element['title']="~"
-                      if str(element['value'].strip(" "))=="":
-                        element['value']="~"
-                      embed.add_field(name=str(element['title']), value=str(element['value']), inline=False)
-                    if (role!="None"):
-                      rolePing=discord.utils.get(serverText.roles,name=str(role))
-                      if (role=="@everyone"):
-                        await channelText.send("@everyone")
-                      else:
-                        await channelText.send(rolePing.mention)
-                    msgSent =await channelText.send(embed=embed)
-                    for element in roleAdds:
-                      await msgSent.add_reaction(element["emoji"])
-                    db["reaction_roles"][str(globServer)][i]["sent"]=True
-                    db["reaction_roles"][str(globServer)][i]["id"]=msgSent.id
-                    break
-          except Exception as e:
-            print(e)
+
+  # for globServer in db["reaction_roles"]:
+  #   for i in range(len(db["reaction_roles"][str(globServer)])):
+  #     REACTION_OBJ = db["reaction_roles"][str(globServer)]
+  #     if REACTION_OBJ[i]["sent"]==False:
+  #       try:
+  #         # print(str(db["announcement"][i]))
+  #         announcement=dict(db["reaction_roles"][str(globServer)][i])
+  #         server=announcement['server']
+  #         title=announcement['title']
+  #         description=announcement['description']
+  #         pic=announcement['pic']
+  #         name=announcement['name']
+  #         channel=announcement['channel']
+  #         role=announcement['role']
+  #         fields=announcement['fields']
+  #         roleAdds=announcement['roleAdds']
+  #         color=announcement['color']
+  #         sixteenIntegerHex = int(color, 16)
+  #         readableHex = int(hex(sixteenIntegerHex), 0)
+  #         if str(title.strip(" "))=="":
+  #           title="~"
+  #         if str(description.strip(" "))=="":
+  #           description="~"
+  #         for serverText in client.guilds:
+  #           if serverText.id == int(server):
+  #             for channelText in serverText.channels:
+  #               if channelText.name.lower()==channel.lower() and channelText.type == discord.ChannelType.text:
+  #                 print("SENDING")
+  #                 embed=discord.Embed(title=str(title),description=str(description), color=readableHex)
+  #                 embed.set_author(name=name, icon_url=pic)
+  #                 for element in fields:
+  #                   if str(element['title'].strip(" "))=="":
+  #                     element['title']="~"
+  #                   if str(element['value'].strip(" "))=="":
+  #                     element['value']="~"
+  #                   embed.add_field(name=str(element['title']), value=str(element['value']), inline=False)
+  #                 if (role!="None"):
+  #                   rolePing=discord.utils.get(serverText.roles,name=str(role))
+  #                   if (role=="@everyone"):
+  #                     await channelText.send("@everyone")
+  #                   else:
+  #                     await channelText.send(rolePing.mention)
+  #                 msgSent =await channelText.send(embed=embed)
+  #                 for element in roleAdds:
+  #                   await msgSent.add_reaction(element["emoji"])
+  #                 db["reaction_roles"][str(globServer)][i]["sent"]=True
+  #                 db["reaction_roles"][str(globServer)][i]["id"]=msgSent.id
+  #                 break
+  #       except Exception as e:
+  #         print(e)
+
+
+
+  ###UNCOMMENT ABOVE
+
+
+
+
           # db["reaction_roles"][str(globServer)].pop(i)
         
     # for server in client.guilds: 
@@ -2594,38 +2614,38 @@ async def update_db(server=None):
     #         pass
     #       else:
     #         break
-    try:
-      ###QUEUE
-      with open("queue.json","r") as f:
-        users = json.load(f)
-      # for i in range(len(users[str(server)]["duration"])):
-      #   users[str(server)]["duration"][i]=int(users[str(server)]["duration"][i])
-      db["queue"]=users
-      mongoQueue.replace_one(users, users)
-      # print(db["queue"][str(server)]["queue"][0])
+    # try:
+    #   ###QUEUE
+    #   with open("queue.json","r") as f:
+    #     users = json.load(f)
+    #   # for i in range(len(users[str(server)]["duration"])):
+    #   #   users[str(server)]["duration"][i]=int(users[str(server)]["duration"][i])
+    #   db["queue"]=users
+    #   mongoQueue.replace_one(users, users)
+    #   # print(db["queue"][str(server)]["queue"][0])
 
 
-      ###CURRENTLY PLAYING
-      with open("playing.json","r") as f:
-        users = json.load(f)
-      db["playing"]=users
-      # print(db["playing"][str(server)]["song"])
+    #   ###CURRENTLY PLAYING
+    #   with open("playing.json","r") as f:
+    #     users = json.load(f)
+    #   db["playing"]=users
+    #   # print(db["playing"][str(server)]["song"])
 
 
-      ###PREVIOUSLY PLAYING
-      with open("previous.json","r") as f:
-        users = json.load(f)
-      db["previous"]=users
+    #   ###PREVIOUSLY PLAYING
+    #   with open("previous.json","r") as f:
+    #     users = json.load(f)
+    #   db["previous"]=users
 
-      ###VOLUMES
-      with open("volumes.json","r") as f:
-        users = json.load(f)
-      db["volumes"]=users
-      # print(db["volumes"][str(server)]["volume"])
-    except Exception  as e:
-      print(e)
-    # print("UPDATED DB SUCCESFULLY")
-    await asyncio.sleep(2)
+    #   ###VOLUMES
+    #   with open("volumes.json","r") as f:
+    #     users = json.load(f)
+    #   db["volumes"]=users
+    #   # print(db["volumes"][str(server)]["volume"])
+    # except Exception  as e:
+    #   print(e)
+    # # print("UPDATED DB SUCCESFULLY")
+    # await asyncio.sleep(2)
 
   # print(str(a[str(server)]["queue"]))
 
@@ -2895,7 +2915,7 @@ async def about(ctx):
   embed.add_field(name="**Latency**", value=f"` {round(client.latency*100)}ms `", inline=True)
   if ctx.author.id == 608778878835621900:
     embed.add_field(name="**CPU**", value=f"` {round(psutil.cpu_percent(1))}% `", inline=True)
-    embed.add_field(name="**RAM**", value=f"` {round( psutil.virtual_memory()[2])}% `", inline=True)
+    embed.add_field(name="**RAM**", value=f"` {round( psutil.virtual_memory()[1])}% `", inline=True)
   embed.add_field(name="**Website**", value=f"[Click Here]({website})", inline=True)
   
   # embed.add_field(name="**Fun**", value=f"` {prefix}help fun `", inline=True)
@@ -7500,7 +7520,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
