@@ -7555,7 +7555,7 @@ import subprocess
 
 
 #ASTRO REGULAR
-client.run('ODA5NjA5ODYxNDU2NzIzOTg4.YCXl8A.FlNO0N79eN0dbsiKlWPnDQTMV2s')
+client.run('ODA5NjA5ODYxNDU2NzIzOTg4.YCXl8A.4hPL-8LiaKUySIkcQH2SYXTN7Iw')
 
 
 
