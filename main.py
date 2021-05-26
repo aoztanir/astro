@@ -367,6 +367,18 @@ async def checkAmounts():
 URL_REG = re.compile(r'https?://(?:www\.)?.+')
 SPOTIFY_URL_REG = re.compile(r'https?://open.spotify.com/(?P<type>album|playlist|track|artist)/(?P<id>[a-zA-Z0-9]+)')
 
+class ActionOnMod(commands.CommandError):
+    """Error raised when someone tries to kick/mute a mod"""
+    pass
+
+class NotFound(commands.CommandError):
+    """Error raised when no suitable voice channel was supplied."""
+    pass
+
+class NotNSFW(commands.CommandError):
+    """Error raised when no suitable voice channel was supplied."""
+    pass
+
 class NoChannelProvided(commands.CommandError):
     """Error raised when no suitable voice channel was supplied."""
     pass
@@ -1171,7 +1183,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         """Check whether the user is an Admin or DJ."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
-        return player.dj == ctx.author or ctx.author.guild_permissions.kick_members
+        return player.dj == ctx.author or ctx.author.guild_permissions.manage_channels
 
     @commands.command(aliases=['join'])
     async def connect(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
@@ -1637,8 +1649,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             # await ctx.send(f'{ctx.author.mention} has voted to stop the player.', delete_after=15)
 
     @commands.command(aliases=['v', 'vol'])
-    async def volume(self, ctx: commands.Context, *, vol: int):
+    async def volume(self, ctx: commands.Context, *, amount: int):
         """Change the players volume, between 1 and 100"""
+        vol=amount
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
         if not player.is_connected:
@@ -1832,8 +1845,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     @commands.command(aliases=['q', 'que'])
  
-    async def queue(self, ctx: commands.Context,*, song=None):
+    async def queue(self, ctx: commands.Context,*, query=None):
         """Displays all the queued songs"""
+        song=query
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
         if song!=None:
           return await self.play(ctx, query=song)
@@ -1896,8 +1910,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     async def question_controller(self, ctx: commands.Context):
       embed=discord.Embed(description=f"**⏯ -> ` Pause/Play `\n\n⏪ -> ` Back 15 Seconds `\n\n⏩ -> ` Forward 15 Seconds `\n\n⏭ -> ` Skip To Next Song `\n\n⏺ -> ` Rewind Song `\n\n🔀 -> ` Shuffle Queue `\n\n🔊 -> ` Sound Up `\n\n🔉 -> ` Sound Down `\n\n🎸 -> ` Shows Queue `\n\n🛑 -> ` Stops Player `\n\n🔃 -> ` Updates Controller `\n\n🔂 -> ` Loops The Current Song `\n\n❓ -> ` Shows This Message `**", color = discord.Color.orange())
       return await ctx.send(embed=embed, delete_after=10)
-    @commands.command(aliases=['np', 'now_playing', 'current', 'playing'])
-    async def nowplaying(self, ctx: commands.Context):
+    @commands.command(aliases=['np', 'now_playing', 'current', 'nowplaying'])
+    async def playing(self, ctx: commands.Context):
         """Shows/updates the currently playing songs"""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
         if not player.is_playing:
@@ -1923,9 +1937,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
 
     @commands.command(aliases=['skipto', 'st'])
-    async def jump(self, ctx: commands.Context, number: int=None):
+    async def jump(self, ctx: commands.Context, song_number: int=None):
       """Jumps through the queue"""
-      index=number
+      index=song_number
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
       if not player.is_connected:
@@ -2572,7 +2586,8 @@ class Settings(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_guild=True)
-    async def prefix(self, ctx, *, prefixNew:str=None):
+    async def prefix(self, ctx, *, new_prefix:str=None):
+      prefixNew=new_prefix
       """Sets Astro's prefix in this server"""
       # with open('prefixes.json', 'r') as f: #read the prefix.json file
       #   prefixes = json.load(f) #load the json file
@@ -2602,7 +2617,7 @@ class Settings(commands.Cog):
       await ctx.send(embed=embed)
 
     @commands.command(aliases=['dash'])
-    async def dashboard(self, ctx, *, prefixNew:str=None):
+    async def dashboard(self, ctx):
       """Sends the link to Astros Web Dashboard"""
       embed=discord.Embed(description=f"**🚀 Check Out This Server's [Dashboard]( {website}/guild/{ctx.guild.id} )**", color = discord.Color.orange())
       await ctx.send(embed=embed)
@@ -2855,10 +2870,13 @@ class Moderation(commands.Cog):
       except:
         pass 
       if ctx.message.author.guild_permissions.manage_messages:
+        if isinstance(str(amount), str):
+          raise discord.ext.commands.BadArgument('str not number')
         if not isinstance(int(amount), int):
           # await ctx.send("> Please Type A Number Representing The Seconds.")
-          embed=discord.Embed(description="**Please Type A Number**".title(), color = discord.Color.red())
-          return await ctx.send(embed=embed)
+          raise discord.ext.commands.BadArgument('str not number')
+          # embed=discord.Embed(description="**Please Type A Number**".title(), color = discord.Color.red())
+          # return await ctx.send(embed=embed)
         amount=int(amount)
         if int(amount)>100:
           embed=discord.Embed(description=f"**You can only purge 100 messages at a time**".title(), color = discord.Color.green())
@@ -2877,10 +2895,11 @@ class Moderation(commands.Cog):
       if reason == None:
         reason="Unspecified"
       if memb.guild_permissions.manage_guild:
-        await ctx.send("**Mods Cannot Mute/Unmute a Mod**")
+        raise ActionOnMod
         return
       if (ctx.guild.owner == memb):
-        await ctx.send("**You Cannot Mute/Unmute a Mod**")
+        # await ctx.send("**You Cannot Mute/Unmute a Mod**")
+        raise ActionOnMod
         return
       role = discord.utils.get(ctx.guild.roles, name='astroMuted')
       await memb.remove_roles(role)
@@ -2922,11 +2941,13 @@ class Moderation(commands.Cog):
       if reason==None:
         reason="Unspecified"
       if (ctx.guild.owner == memb):
-        await ctx.send("**You Cannot Mute/Unmute a Mod**")
-        return
+         raise ActionOnMod
+        # await ctx.send("**You Cannot Mute/Unmute a Mod**")
+        # return
       if memb.guild_permissions.manage_guild:
-        await ctx.send("**You Cannot Mute/Unmute a Mod")
-        return
+        raise ActionOnMod
+        # await ctx.send("**You Cannot Mute/Unmute a Mod**")
+        # return
       role = discord.utils.get(ctx.guild.roles, name='astroMuted')
       # try:
       if not role:
@@ -2954,7 +2975,8 @@ class Moderation(commands.Cog):
       #   pass
       memb=member
       if memb.guild_permissions.kick_members:
-        await ctx.send("**Mods Cannot Kick Other Mods**")
+        raise ActionOnMod
+        # await ctx.send("**Mods Cannot Kick Other Mods**")
         return
       await member.kick(reason=reason)
       embed=discord.Embed(title=f"Reason: ` {reason} `", color=discord.Color.orange())
@@ -2974,7 +2996,8 @@ class Moderation(commands.Cog):
       await ctx.guild.ban(member, reason=reason)
       memb=member
       if memb.guild_permissions.ban_members:
-        await ctx.send("**Mods Cannot Ban Other Mods**")
+        raise ActionOnMod
+        # await ctx.send("**Mods Cannot Ban Other Mods**")
         return
       embed=discord.Embed(title=f"Reason: ` {reason} `", color=discord.Color.orange())
       embed.set_author(name=memb.name+" Has Been Banned!", icon_url=memb.avatar_url)
@@ -3176,7 +3199,7 @@ class astroHelp(commands.HelpCommand):
         return '%s%s %s' % (self.clean_prefix, command.qualified_name, command.signature)
     async def send_error_message(self, error):
       if "No command called" in str(error):
-        error=str("**❌ Nothing Found**")
+        error=str("**✋ Nothing Found**")
       embed = discord.Embed(description=f"**{error}**" ,colour=discord.Color.orange())
       channel = self.get_destination()
       
@@ -5282,23 +5305,27 @@ class Data(commands.Cog):
       # print(sub) 
       # posts = subreddit.hot(limit=10)
       
-      try:
+      # try:
 
         # loop = asyncio.get_event_loop()
 
         # meme= await loop.run_in_executor(None, lambda:reddit.subreddit(sub.replace(" ", '')).random()) 
         # subreddit = await reddit.subreddit("redditdev", fetch=True)
-        subreddit = await reddit.subreddit(sub.replace(" ", ' '))
+      try:
+        sub_reddit = await reddit.subreddit(sub.replace(" ", ''))
+      
         # await reddit.close()
         # subreddit = await reddit.subreddit("learnpython")
         # meme = await subreddit.hot(limit=1000)
         # async for element in meme:
         #   meme=element
         arr=[]
-        async for submission in subreddit.hot(limit=30):
+        async for submission in sub_reddit.hot(limit=30):
           arr.append(submission)
         meme= random.choice(arr)
-        await reddit.close()
+      except:
+        raise NotFound
+      # await reddit.close()
         # for element in meme:
         #   meme=element
         #   break
@@ -5307,29 +5334,28 @@ class Data(commands.Cog):
         # for element in reddit.subreddit(sub.replace(" ", '')).random_rising(limit=1):
         #   meme = element
         #   # break
-      except Exception as e:
-        print(e)
-        await ctx.send("**Subreddit/images on subreddit not found...**")
-
+      # except Exception as e:
+      #   print(e)
+      #   await ctx.send("**Subreddit/images on subreddit not found...**")
+      sub = sub.replace(" ", '')
       if meme.over_18:
         # channel_nsfw = await self.is_nsfw(ctx.message.channel)
         if ctx.channel.is_nsfw():
           pass
         else:
-          await ctx.send("> You are not in an NSFW channel.")
-          return
+          raise NotNSFW
       # print(meme.url)
-      embed=discord.Embed(title=str(meme.title).title()+" From r/"+sub+" By: "+str(meme.author).title(),colour=discord.Color.gold(), url="https://reddit.com", description="Here is your image:", timestamp=datetime.utcnow())
+      embed=discord.Embed( description = f"**r/{sub}**",colour=discord.Color.orange())
 
       # Add author, thumbnail, fields, and footer to the embed
-      embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+      # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
 
-      embed.set_thumbnail(url="https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?auto=webp&s=38648ef0dc2c3fce76d5e1d8639234d8da0152b2")
+      # embed.set_thumbnail(url="https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?auto=webp&s=38648ef0dc2c3fce76d5e1d8639234d8da0152b2")
       embed.set_image(url=meme.url)
 
-      embed.add_field(name="Image Link:" , value=str(meme.url), inline=False) 
+      # embed.add_field(name="Image Link:" , value=str(meme.url), inline=False) 
 
-      embed.add_field(name="Image Stats:", value="🚀 "+ str(meme.upvote_ratio*100)+"% | 👍 "+str(meme.score)+" | 💭 "+str(meme.num_comments), inline=False)
+      embed.add_field(name="Statistics:", value="**⬆️ "+ str(meme.upvote_ratio*100)+"% | 👍 "+str(meme.score)+" | 💭 "+str(meme.num_comments)+"**", inline=True)
       await ctx.send(embed=embed)
       # except:
       #   pass
@@ -5351,8 +5377,8 @@ class Data(commands.Cog):
         embed.add_field(name="Wikipedia Result:", value=ny.content[:500]+"...", inline=False) 
 
         await ctx.send(embed=embed)
-    @commands.command(aliases = [ "headlines"])
-    async def news(self, ctx, amount=5):
+    @commands.command(aliases = [ "news"])
+    async def headlines(self, ctx, amount=5):
         """Retrieves 5 or the given amount of headlines"""
         # await ctx.send("How many headlines?")
         # msg = await client.wait_for('message')
@@ -5390,8 +5416,9 @@ class Data(commands.Cog):
         #     await ctx.send(news.title.text)
 
     @commands.command(aliases=["user"])
-    async def userinfo(self, ctx, target: discord.Member=None):
+    async def userinfo(self, ctx, member: discord.Member=None):
       """Retrieves useful data about any user in this server"""
+      target=member
       if target==None:
         target=ctx.author
       exp,lvl = await level(ctx.guild.id,target.id)
@@ -5447,12 +5474,12 @@ class Data(commands.Cog):
 
       await ctx.send(embed=embed)
     @commands.command()
-    async def pfp(self, ctx, memb : discord.Member=None):
+    async def pfp(self, ctx, member : discord.Member=None):
       """Retreives the profile picture of any user in this server"""
-      if memb==None:
+      if member==None:
         pfp=ctx.author.avatar_url
       else:
-        pfp = memb.avatar_url
+        pfp = member.avatar_url
       await ctx.send(pfp)
     # @commands.Cog.listener()
     # async def on_member_join(self, member):
@@ -5500,6 +5527,10 @@ async def on_command_error(ctx, error):
     if "Bad Request" in str(error):
       embed=discord.Embed(description=f'**Invalid URL**', color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
+
+    if isinstance(error, NotFound):
+      embed=discord.Embed(description=f'**✋ Nothing Found**', color = discord.Color.orange())
+      return await ctx.send(embed=embed, delete_after=10)
     # if "not connected to voice" in str(error).lower():
     #   await ctx.send(f"> Sorry {ctx.author.mention} Astro Doesnt Have Permissions To Connect To The Voice Channel You Are In.")
     #   return
@@ -5537,6 +5568,12 @@ async def on_command_error(ctx, error):
     template = "An exception of type {0} occurred. Arguments:\n{1!r}"
     message = template.format(type(error).__name__, error.args)
     print (message)
+    if isinstance(error, NotNSFW):
+      embed=discord.Embed(description="**✋ Oops! You Aren't In A NSFW Channel**", color = discord.Color.red())
+      return await ctx.send(embed=embed, delete_after=10)
+    if isinstance(error, ActionOnMod):
+      embed=discord.Embed(description="**✋ Oops! You Can't Do This Action On A Moderator**", color = discord.Color.red())
+      return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, commands.CommandOnCooldown):
       embed=discord.Embed(description="**⏰ Woah! This Command Is On Cooldown! Try Again In {:.2f}s!**".format(error.retry_after), color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=5)
@@ -5557,14 +5594,16 @@ async def on_command_error(ctx, error):
       return await ctx.send(embed=embed, delete_after=10)
       # return await ctx.send('')
     if isinstance(error, discord.ext.commands.MissingRequiredArgument) or isinstance(error, discord.ext.commands.BadArgument) :
-      embed=discord.Embed(description=f"**❌ Oops thats the incorrect usage, use {ctx.command.name} this way:**".title(), color = discord.Color.red())
+      embed=discord.Embed(description=f"**✋ Oops! thats the incorrect usage, use {ctx.command.name} this way:**".title(), color = discord.Color.red())
       await ctx.send(embed=embed)
       return await ctx.send_help( ctx.command)
       # return await ctx.send("> **Please include all required parts of a command!**")
     elif isinstance(error, discord.ext.commands.MissingPermissions):
-      return await ctx.send("> **Sorry "+ctx.author.mention+" It Looks Like You Dont Have The Permissions To Run This Command!**")
+      embed=discord.Embed(description=f"**✋ Oops! {ctx.author.mention} Is Missing The Permissions To Use {ctx.command.name.title()}**", color = discord.Color.red())
+      return await ctx.send(embed=embed, delete_after=10)
     elif isinstance(error, discord.ext.commands.BotMissingPermissions):
-      return await ctx.send("> **Sorry "+ctx.author.mention+" Astro Does Not Have The Permissions To Complete This Action!**")
+      embed=discord.Embed(description=f"**✋ Oops! Astro Is Missing The Required Permissions To Use {ctx.command.name.title()}**", color = discord.Color.red())
+      return await ctx.send(embed=embed, delete_after=10)
     # elif "too many requests" in str(error).lower():
     #   await ctx.send("> **Hi "+ctx.author.mention+", youtube is having some momentary troubles, please rerun the command!**".title())
     # elif "clientexception" in str(error).lower():
@@ -5573,12 +5612,12 @@ async def on_command_error(ctx, error):
       pass
       # await ctx.send("> Sorry "+ctx.author.mention+" That Command Does Not Exist.")
     else:
-      if 'missing permissions' in str(error).lower():
-        await ctx.send("> **Sorry "+ctx.author.mention+" Astro Does Not Have The Permissions To Complete This Action!**")
-        return
+      # if 'missing permissions' in str(error).lower():
+      #   await ctx.send("> **Sorry "+ctx.author.mention+" Astro Does Not Have The Permissions To Complete This Action!**")
+      #   return
       # await ctx.send("> Sorry "+ctx.author.mention+" It Looks Like This Command Is Not Working As Of Now. Go To "+astroSite+" For More Info Or To Report This Problem.\n\nThe Error Incurred Is Below: \n\n`"+str(error)+"`")
       print(str(error))
-      embed=discord.Embed(title="An Error Occured.".title(), color = discord.Color.red())
+      embed=discord.Embed(title="✋ Oops! Something Went Wrong".title(), color = discord.Color.red())
       await ctx.send(embed=embed, delete_after=5)
       # await ctx.send("> An Error Occured")
   
@@ -7923,7 +7962,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
