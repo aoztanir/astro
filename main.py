@@ -5297,66 +5297,67 @@ class Data(commands.Cog):
     @commands.command(aliases = ['reddit'])
     async def meme(self, ctx, *, subreddit="dankmemes"):
       """Retrieves a meme from any subreddit(defaults to r/dankmemes)"""
-      sub=subreddit
-      meme=""
-      
-      # print(sub) 
-      # subreddit = self.reddit.subreddit(sub.replace(' ', ''))
-      # print(sub) 
-      # posts = subreddit.hot(limit=10)
-      
-      # try:
+      async with ctx.typing():
+        sub=subreddit
+        meme=""
+        
+        # print(sub) 
+        # subreddit = self.reddit.subreddit(sub.replace(' ', ''))
+        # print(sub) 
+        # posts = subreddit.hot(limit=10)
+        
+        # try:
 
-        # loop = asyncio.get_event_loop()
+          # loop = asyncio.get_event_loop()
 
-        # meme= await loop.run_in_executor(None, lambda:reddit.subreddit(sub.replace(" ", '')).random()) 
-        # subreddit = await reddit.subreddit("redditdev", fetch=True)
-      try:
-        sub_reddit = await reddit.subreddit(sub.replace(" ", ''))
-      
+          # meme= await loop.run_in_executor(None, lambda:reddit.subreddit(sub.replace(" ", '')).random()) 
+          # subreddit = await reddit.subreddit("redditdev", fetch=True)
+        try:
+          sub_reddit = await reddit.subreddit(sub.replace(" ", ''))
+        
+          # await reddit.close()
+          # subreddit = await reddit.subreddit("learnpython")
+          # meme = await subreddit.hot(limit=1000)
+          # async for element in meme:
+          #   meme=element
+          arr=[]
+          async for submission in sub_reddit.hot(limit=30):
+            arr.append(submission)
+          meme= random.choice(arr)
+        except:
+          raise NotFound
         # await reddit.close()
-        # subreddit = await reddit.subreddit("learnpython")
-        # meme = await subreddit.hot(limit=1000)
-        # async for element in meme:
-        #   meme=element
-        arr=[]
-        async for submission in sub_reddit.hot(limit=30):
-          arr.append(submission)
-        meme= random.choice(arr)
-      except:
-        raise NotFound
-      # await reddit.close()
-        # for element in meme:
-        #   meme=element
-        #   break
+          # for element in meme:
+          #   meme=element
+          #   break
 
-        # meme=None
-        # for element in reddit.subreddit(sub.replace(" ", '')).random_rising(limit=1):
-        #   meme = element
-        #   # break
-      # except Exception as e:
-      #   print(e)
-      #   await ctx.send("**Subreddit/images on subreddit not found...**")
-      sub = sub.replace(" ", '')
-      if meme.over_18:
-        # channel_nsfw = await self.is_nsfw(ctx.message.channel)
-        if ctx.channel.is_nsfw():
-          pass
-        else:
-          raise NotNSFW
-      # print(meme.url)
-      embed=discord.Embed( description = f"**r/{sub}**",colour=discord.Color.orange())
+          # meme=None
+          # for element in reddit.subreddit(sub.replace(" ", '')).random_rising(limit=1):
+          #   meme = element
+          #   # break
+        # except Exception as e:
+        #   print(e)
+        #   await ctx.send("**Subreddit/images on subreddit not found...**")
+        sub = sub.replace(" ", '')
+        if meme.over_18:
+          # channel_nsfw = await self.is_nsfw(ctx.message.channel)
+          if ctx.channel.is_nsfw():
+            pass
+          else:
+            raise NotNSFW
+        # print(meme.url)
+        embed=discord.Embed( description = f"**r/{sub}**",colour=discord.Color.orange())
 
-      # Add author, thumbnail, fields, and footer to the embed
-      # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+        # Add author, thumbnail, fields, and footer to the embed
+        # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
 
-      # embed.set_thumbnail(url="https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?auto=webp&s=38648ef0dc2c3fce76d5e1d8639234d8da0152b2")
-      embed.set_image(url=meme.url)
+        # embed.set_thumbnail(url="https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?auto=webp&s=38648ef0dc2c3fce76d5e1d8639234d8da0152b2")
+        embed.set_image(url=meme.url)
 
-      # embed.add_field(name="Image Link:" , value=str(meme.url), inline=False) 
+        # embed.add_field(name="Image Link:" , value=str(meme.url), inline=False) 
 
-      embed.add_field(name="Statistics:", value="**⬆️ "+ str(meme.upvote_ratio*100)+"% | 👍 "+str(meme.score)+" | 💭 "+str(meme.num_comments)+"**", inline=True)
-      await ctx.send(embed=embed)
+        embed.add_field(name="Statistics:", value="**⬆️ "+ str(meme.upvote_ratio*100)+"% | 👍 "+str(meme.score)+" | 💭 "+str(meme.num_comments)+"**", inline=True)
+        await ctx.send(embed=embed)
       # except:
       #   pass
     @commands.command()
