@@ -1511,7 +1511,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           for i in range(len(player.queue)):
             ratio= fuzz.ratio(query, player.queue[i].title)
             print(ratio)
-            if ratio>50:
+            ratio2 = fuzz.ratio(track.title, player.queue[i].title)
+            if ratio>50 or ratio2>50:
               player.queue.pop(i)
               embed=discord.Embed(description=f'**❎ Removed ` {formatTitle(track.title)} ` From The Queue**', color = discord.Color.red())
               return await ctx.send(embed=embed, delete_after=10)
