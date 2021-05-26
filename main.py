@@ -1990,8 +1990,11 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       player.loopSong = not player.loopSong
       if player.loopSong==True:
         if player.current!=None :
-          ratio= fuzz.ratio(player.current.title, player.queue[0].title)
-          if ratio<90:
+          if len(player.queue)>0:
+            ratio= fuzz.ratio(player.current.title, player.queue[0].title)
+            if ratio<90:
+              
+          else:
             player.queue.insert(0,player.current)
       else:
         if player.current!=None and len(player.queue)>=1 :
