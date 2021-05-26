@@ -121,6 +121,8 @@ def formatTitle(title: str):
   title=title.replace("]","")
   title=title.replace("Official Video","")
   title=title.replace("official video","")
+  title=title.replace("Official Music Video","")
+  title=title.replace("official music video","")
   # title=title.replace("Official Video","")
   return title
 
@@ -1516,7 +1518,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
               player.queue.pop(i)
               embed=discord.Embed(description=f'**❎ Removed ` {formatTitle(track.title)} ` From The Queue**', color = discord.Color.red())
               return await ctx.send(embed=embed, delete_after=10)
-          embed=discord.Embed(description=f'**` {formatTitle(track.title)} ` Is Not In The Queue**', color = discord.Color.red())
+          embed=discord.Embed(description=f'** A Song Matching ` {item} ` Is Not In The Queue**', color = discord.Color.red())
           return await ctx.send(embed=embed, delete_after=10)
 
     @commands.command(aliases=["stop"])
