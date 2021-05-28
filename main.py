@@ -23,6 +23,7 @@ from discord_slash.utils.manage_commands import *
 # from covid19_data import JHU
 # from bottle import route, template, run
 # from recommender.api import Recommender
+import lyricsgenius as lg
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import praw
@@ -95,6 +96,8 @@ import threading
 QueList = []
 TaskList = []
 website="https://teamastro.ml/"
+
+genius = lg.Genius('8-KsLC1FjqamiUh3xlSIS6SgXmqpjTCsySJPHNiupl-uJ-OPm-Z6uRW_yrZy_-Yi')
 # filtered_words = ["word1","word2"]
 # astroSite="https://teamastro.ml/"
 # threader = threading.Thread(target=os.system("java -jar Lavalink.jar"))
@@ -123,8 +126,12 @@ def formatTitle(title: str):
   title=title.replace("official video","")
   title=title.replace("Official Music Video","")
   title=title.replace("official music video","")
+
+  if len(title)>30:
+    return title[0:30]+"..."
+  else:
+    return title
   # title=title.replace("Official Video","")
-  return title
 
 
 
@@ -198,6 +205,7 @@ SET_UPTIME=datetime.now()
 
 @client.event
 async def on_ready():
+    
     # SET_UPTIME=datetime.now()
     #COG ADDING
     client.add_cog(Data(client))
@@ -277,7 +285,7 @@ async def on_ready():
     print(str(client.shards))
     print(str(client.latencies))
     await update_db.start()
-    await change_status.start()
+    
     # await update_db()
 
 
@@ -371,6 +379,10 @@ class ActionOnMod(commands.CommandError):
     """Error raised when someone tries to kick/mute a mod"""
     pass
 
+class CannotLoop(commands.CommandError):
+    """Error raised when no suitable voice channel was supplied."""
+    pass
+
 class NotFound(commands.CommandError):
     """Error raised when no suitable voice channel was supplied."""
     pass
@@ -428,9 +440,11 @@ class Player(wavelink.Player):
         # self.queue = asyncio.Queue()
         self.queue=[]
         self.controller = None
-
+        self.loopQueueNum=0
+        self.loopQueue=False
         self.waiting = False
         self.updating = False
+        self.previous=[]
         self.loopTrack=None
         self.pause_votes = set()
         self.resume_votes = set()
@@ -493,6 +507,11 @@ class Player(wavelink.Player):
         if self.is_playing or self.waiting:
           if jumping==False:
             return
+        if self.loopQueueNum>=len(self.queue):
+          self.loopQueueNum=0
+        # if self.loopQueue:
+        #   if len(self.queue)==0:
+        #     self.queue=self.queue_for_loop
         # print(self.current.title)
         # Clear the votes for a new song...
         self.pause_votes.clear()
@@ -534,8 +553,19 @@ class Player(wavelink.Player):
         #   print("DISCONNECTING")
         #   return await self.teardown()
         track = self.queue[0]
-        if self.loopSong==False:
+        if self.loopSong==False and self.loopQueue==False:
           self.queue.pop(0)
+          self.previous.insert(0, track)
+
+        if self.loopQueue:
+          track = self.queue[self.loopQueueNum]
+          self.loopQueueNum+=1
+        
+        
+
+        # if self.loopQueue:
+        #   if len(self.queue)==0:
+        #     self.queue=self.queue_for_loop
         await self.play(track)
         self.waiting = False
 
@@ -652,7 +682,7 @@ class Player(wavelink.Player):
         qsize = len(self.queue)
 
         embed = discord.Embed(colour=discord.Color.green())
-        embed.description = f'**Now Playing:**\n**[{formatTitle(track.title[:30])}...]({track.uri})**\n\n`{position}`\n\n'
+        embed.description = f'**Now Playing:**\n**[{formatTitle(track.title)}]({track.uri})**\n\n`{position}`\n\n'
         try:
           embed.set_thumbnail(url=track.thumb)
           if track.thumb==None:
@@ -665,7 +695,8 @@ class Player(wavelink.Player):
         embed.add_field(name='Volume', value=f'**` {self.volume}% `**')
         embed.add_field(name='Requested By', value=track.requester.mention)
         embed.add_field(name='DJ', value=self.dj.mention)
-        embed.add_field(name='Looping', value=f'**{self.loopSong}**')
+        embed.add_field(name='Looping', value=f'** Song ➜ `{self.loopSong}`\nQueue ➜ `{self.loopQueue}`**')
+
         # embed.add_field(name="Show's This Command", value=f'` np `')
 
         return embed
@@ -1214,6 +1245,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       for player in self.bot.wavelink.players.values():
         # embed = # add your embed code here
         try:
+          # if player.loopQueue:
+          #   player.queue_for_loop=player.queue
           if player.current != None:
             await player.invoke_controller()
             # if player.loopSong==True:
@@ -1224,54 +1257,54 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         except:
           pass
 
-    @cog_ext.cog_slash(name="play",
-             description="Plays Music Through Any Voice Channel",
-             options=[
-               create_option(
-                 name="song",
-                 description="Song Name / Playlist URL",
-                 option_type=3,
-                 required=False
-               )
-             ])
-    async def helpSLASH(self, ctx: SlashContext, song: str):
-        # ctx=commands.context(ctx)
-        return await help(ctx)
+    # @cog_ext.cog_slash(name="play",
+    #          description="Plays Music Through Any Voice Channel",
+    #          options=[
+    #            create_option(
+    #              name="song",
+    #              description="Song Name / Playlist URL",
+    #              option_type=3,
+    #              required=False
+    #            )
+    #          ])
+    # async def helpSLASH(self, ctx: SlashContext, song: str):
+    #     # ctx=commands.context(ctx)
+    #     return await help(ctx)
 
-    @commands.command()
-    @commands.cooldown(1,3,commands.BucketType.user)
-    async def lyrics(self, ctx,*, query : str=None):
-      """Retrieves the lyrics for what is playing or by query"""
-      song=query
-      player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
-      if song==None:
-        if player.current==None:
-          embed=discord.Embed(description=f'**Currently Nothing Is Playing**', color = discord.Color.red())
-          return await ctx.send(embed=embed, delete_after=10)
+    
+        # embed=discord.Embed(description="**Couldn't Find That Song**", color = discord.Color.red())
+        # await ctx.send(embed=embed)
+      
+      # song=query
+      # player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+      # if song==None:
+      #   if player.current==None:
+      #     embed=discord.Embed(description=f'**Currently Nothing Is Playing**', color = discord.Color.red())
+      #     return await ctx.send(embed=embed, delete_after=10)
         
-        song=player.current.title
-        print(song)
-      try:
+      #   song=player.current.title
+      #   print(song)
+      # try:
 
-        extract_lyrics = SongLyrics("AIzaSyBRcquo71lWc8_jaTOF-bhaEeT-fgfjI6M", "72f842b0aaf3270be")
-        loop = asyncio.get_event_loop()
-        test_dict = await loop.run_in_executor(None, lambda:extract_lyrics.get_lyrics(song))
-        # test_dict = extract_lyrics.get_lyrics(song)
-        res = {key: test_dict[key] for key in test_dict.keys() 
-                                    & {'lyrics'}}
-        for key, value in test_dict.items(): 
-          if key == "lyrics":
-            valSave = str(value)
-        embed=discord.Embed(title="Lyrics For "+song.title(), color = discord.Color.green())
-        # await ctx.send("Here are the lyrics! \n")
-        valArr = valSave.split("\n\n")
-        for element in valArr:
-          embed.add_field(name="`~"+"`", value="`"+element+"`", inline=False)
-        await ctx.send(embed=embed)
-      except:
-        embed=discord.Embed(description="**Couldn't Find That Song**", color = discord.Color.red())
-        await ctx.send(embed=embed)
-        return
+      #   extract_lyrics = SongLyrics("AIzaSyBRcquo71lWc8_jaTOF-bhaEeT-fgfjI6M", "72f842b0aaf3270be")
+      #   loop = asyncio.get_event_loop()
+      #   test_dict = await loop.run_in_executor(None, lambda:extract_lyrics.get_lyrics(song))
+      #   # test_dict = extract_lyrics.get_lyrics(song)
+      #   res = {key: test_dict[key] for key in test_dict.keys() 
+      #                               & {'lyrics'}}
+      #   for key, value in test_dict.items(): 
+      #     if key == "lyrics":
+      #       valSave = str(value)
+      #   embed=discord.Embed(title="Lyrics For "+song.title(), color = discord.Color.green())
+      #   # await ctx.send("Here are the lyrics! \n")
+      #   valArr = valSave.split("\n\n")
+      #   for element in valArr:
+      #     embed.add_field(name="`~"+"`", value="`"+element+"`", inline=False)
+      #   await ctx.send(embed=embed)
+      # except:
+      #   embed=discord.Embed(description="**Couldn't Find That Song**", color = discord.Color.red())
+      #   await ctx.send(embed=embed)
+      #   return
     
     @commands.command(aliases=['p'])
     # @commands.cooldown(1,2,commands.BucketType.user)
@@ -1480,13 +1513,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
               length = str(timedelta(seconds=int(track.length/1000)))
             except:
               length="🔴 LIVE"
-            embed=discord.Embed(description=f'**Queued [{formatTitle(track.title[:30])}...]({track.uri}) ` {length} ` | Requestor: {track.requester.mention}**', color = discord.Color.green())
-            try:
-              embed.set_thumbnail(url=track.thumb)
-              if track.thumb==None:
-                embed.set_thumbnail(url=f"{client.user.avatar_url}")
-            except:
-              embed.set_thumbnail(url=f"{client.user.avatar_url}")
+            embed=discord.Embed(description=f'**Queued [{formatTitle(track.title)}]({track.uri}) ` {length} ` | {track.requester.mention}**', color = discord.Color.green())
+            # try:
+            #   embed.set_thumbnail(url=track.thumb)
+            #   if track.thumb==None:
+            #     embed.set_thumbnail(url=f"{client.user.avatar_url}")
+            # except:
+            #   embed.set_thumbnail(url=f"{client.user.avatar_url}")
             await ctx.send(embed=embed, delete_after=10)
             # await ctx.send(f'```ini\nAdded {track.title} to the Queue\n```', delete_after=15)
             try:
@@ -1858,6 +1891,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             embed=discord.Embed(description=f"**✋ Add More Songs Before Using The Queue Command**", color = discord.Color.orange())
             return await ctx.send(embed=embed, delete_after=10)
         entries=[]
+        if player.loopQueue==True:
+          entries.append("**🔂 Looping The Queue\n\n**")
         if player.current!=None:
           track=player.current
           try:
@@ -1883,7 +1918,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             position = "🔴 LIVE"
           if player.loopSong:
             position +=" 🔂"
-          val = f" ▶️    **[{formatTitle(player.current.title[:30])}...]({player.current.uri}) | {player.current.requester.mention}**\n\n`{position}`\n"
+          val = f" ▶️    **[{formatTitle(player.current.title)}]({player.current.uri}) | {player.current.requester.mention}**\n\n`{position}`\n"
           
           entries.append(val)
 
@@ -1899,7 +1934,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           except:
             pass
           if player.loopSong==False:
-            entries.append(f" `{i+1}.`**   [{formatTitle(player.queue[i].title[:30])}...]({player.queue[i].uri}) | `{str(trackLength)}` | {player.queue[i].requester.mention}**")
+            entries.append(f" `{i+1}.`**   [{formatTitle(player.queue[i].title)}]({player.queue[i].uri}) | `{str(trackLength)}` | {player.queue[i].requester.mention}**")
         # entries = [track.title for track in player.queue._queue]
         pages = PaginatorSource(entries=entries)
         paginator = menus.MenuPages(source=pages, timeout=None, delete_message_after=True)
@@ -1908,7 +1943,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @commands.command(hidden=True)
     # @commands.cooldown(1,8,commands.BucketType.user)
     async def question_controller(self, ctx: commands.Context):
-      embed=discord.Embed(description=f"**⏯ -> ` Pause/Play `\n\n⏪ -> ` Back 15 Seconds `\n\n⏩ -> ` Forward 15 Seconds `\n\n⏭ -> ` Skip To Next Song `\n\n⏺ -> ` Rewind Song `\n\n🔀 -> ` Shuffle Queue `\n\n🔊 -> ` Sound Up `\n\n🔉 -> ` Sound Down `\n\n🎸 -> ` Shows Queue `\n\n🛑 -> ` Stops Player `\n\n🔃 -> ` Updates Controller `\n\n🔂 -> ` Loops The Current Song `\n\n❓ -> ` Shows This Message `**", color = discord.Color.orange())
+      embed=discord.Embed(description=f"**⏯ ➜ ` Pause/Play `\n\n⏪ ➜ ` Back 15 Seconds `\n\n⏩ ➜ ` Forward 15 Seconds `\n\n⏭ ➜ ` Skip To Next Song `\n\n⏺ ➜ ` Rewind Song `\n\n🔀 ➜ ` Shuffle Queue `\n\n🔊 ➜ ` Sound Up `\n\n🔉 ➜ ` Sound Down `\n\n🎸 ➜ ` Shows Queue `\n\n🔃 ➜ ` Updates Controller `\n\n🔂 ➜ ` Loops The Current Song `\n\n👋 ➜ ` Stops Player `\n\n❓ ➜ ` Shows This Message `**", color = discord.Color.orange())
       return await ctx.send(embed=embed, delete_after=10)
     @commands.command(aliases=['np', 'now_playing', 'current', 'nowplaying'])
     async def playing(self, ctx: commands.Context):
@@ -1957,7 +1992,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         embed=discord.Embed(description="**Please Type A Number**".title(), color = discord.Color.red())
         return await ctx.send(embed=embed, delete_after=10)
       try:
-        if int(index)+1>len(player.queue) or int(index)-1<0:
+        if int(index)>len(player.queue) or int(index)-1<0:
           embed=discord.Embed(description="**That Track Number Is Not In The Queue**".title(), color = discord.Color.red())
           return await ctx.send(embed=embed, delete_after=10)
       except:
@@ -1974,6 +2009,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       #   player.queue.get_nowait()
       #   i=i+1
       # await self.queue(ctx)
+      title_track = player.queue[i].title
       await player.stop()
       await player.do_next()
       # for i in range(int(index)):
@@ -1986,11 +2022,53 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       #     break
       #   else:
       #     player.queue._queue.remove(i)
-      embed=discord.Embed(description=f"**⏭ Skipped To Track ` {index} `**".title(), color = discord.Color.teal())
+      embed=discord.Embed(description=f"**⏭ Skipped To Track ` {formatTitle(title_track)} `**".title(), color = discord.Color.teal())
       # await player.stop()
       return await ctx.send(embed=embed, delete_after=10)
 
 
+    @commands.command(aliases=['lq'])
+    async def loopqueue(self, ctx: commands.Context):
+      """Loops the current queue"""
+      player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+      
+      if not player.is_connected:
+          return
+      if not self.is_privileged(ctx):
+          embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
+          return await ctx.send(embed=embed, delete_after=10)
+      if not player.loopQueue and player.loopSong:
+        raise CannotLoop
+      
+      player.loopQueue = not player.loopQueue
+      if player.loopQueue:
+        if player.current!=None:
+          player.queue.insert(0, player.current)
+          player.loopQueueNum=player.loopQueueNum+1
+
+      # if player.loopQueue:
+      #   player.queue_for_loop=player.queue
+      #   if player.current!=None:
+      #     player.queue_for_loop.insert(0, player.current)
+
+      embed=discord.Embed(description=f"**🔂 Looping Queue Set To **"+str(player.loopQueue).title(), color = discord.Color.teal())
+      return await ctx.send(embed=embed, delete_after=10)
+    
+
+    # @commands.command(aliases=['prev','back'])
+    # async def previous(self, ctx: commands.Context):
+    #   """Goes back a song"""
+    #   player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+      
+    #   if not player.is_connected:
+    #       return
+    #   if not self.is_privileged(ctx):
+    #       embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
+    #       return await ctx.send(embed=embed, delete_after=10)
+    #   track  = player.previous[0]
+    #   player.queue.insert(0, track)
+    #   embed=discord.Embed(description=f"**⏮ Going Back**", color = discord.Color.teal())
+    #   return await ctx.send(embed=embed, delete_after=10)
 
     @commands.command(aliases=['loopsong','ls'])
     async def loop(self, ctx: commands.Context):
@@ -2003,7 +2081,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
           return await ctx.send(embed=embed, delete_after=10)
 
-      
+      if not player.loopSong and player.loopQueue:
+        raise CannotLoop
       player.loopSong = not player.loopSong
       if player.loopSong==True:
         if player.current!=None :
@@ -2019,7 +2098,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           print(ratio)
           if ratio>=90:
             player.queue.pop(0)
-      embed=discord.Embed(description=f"**🔂 Looping Set To **"+str(player.loopSong).title(), color = discord.Color.teal())
+      embed=discord.Embed(description=f"**🔂 Looping Song Set To **"+str(player.loopSong).title(), color = discord.Color.teal())
       return await ctx.send(embed=embed, delete_after=10)
 
 
@@ -2629,11 +2708,10 @@ class Settings(commands.Cog):
 
 
 
-@tasks.loop(hours=24)
+# @tasks.loop(seconds=1)
 async def change_status():
-  for element in client.shards:
-    await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = f'@Astro | .help | {len(client.guilds)} Servers ➡ Shard {element+1}'), shard_id=client.shards[element].id)
-    print(element)
+  pass
+  
 
 # cluster = MongoClient("mongodb+srv://astro:astro@cluster0.alu7p.mongodb.net/test")
 # mongodb = cluster["AstroData"]
@@ -2643,6 +2721,9 @@ async def update_db():
   # db["reaction_roles"]={}
   # while True:
   # await client.announcement.upsert({"_id":2, "announcements":[]})
+  # for element in client.shards:
+  #   await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = f'@Astro | .help | {len(client.guilds)} Servers ➡ Shard {element+1}'), shard_id=client.shards[element].id)
+  #   print(element)
   jsonDATA = await client.announcement.find(2)#original insert for announcements
   announcements=jsonDATA["announcements"]
 
@@ -5201,13 +5282,12 @@ class Utility(commands.Cog):
       # if "?" not in question:
       #   question = question +"?"
       # await ctx.send(question.title())
-      embed=discord.Embed(title="📈 " + question, description= "👍 Yes | 🤷‍♂️ Unsure | 👎 No", color=discord.Color.green(), timestamp=datetime.utcnow())
+      embed=discord.Embed( description= "👍 Yes | 🤷‍♂️ Unsure | 👎 No", color=discord.Color.green(), timestamp=datetime.utcnow())
 
         # Add rs/608778878835621900/76e69643d799ee584dd46afa91127105.webp")
 
       # embed.set_thumbnail(url="https://image.flaticon.com/icons/png/512/1946/1946385.png")
-      embed.set_author(name=f"{ctx.author.name}", icon_url=f"{ctx.author.avatar_url}")
-
+      embed.set_author(name=f"📈  {ctx.author.name}" + question, icon_url=f"{ctx.author.avatar_url}")
       # embed.add_field(name="Question:", value= question.title() , inline=False)
       # embed.add_field(name="Remember:", value= "Polling amounts must be subtracted by one for each, since it was reacted to once already by Astro." , inline=False)
       # embed.add_field(name="URL:", value = final_url , inline=False) 
@@ -5293,7 +5373,34 @@ class Info(commands.Cog):
 class Data(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
+    @commands.command()
+    @commands.cooldown(1,3,commands.BucketType.user)
+    async def lyrics(self, ctx,*, query : str=None):
+      """Retrieves the lyrics for what is playing or by query"""
+      async with ctx.typing():
+        player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+        if query==None:
+          if player.current==None:
+            embed=discord.Embed(description=f'**Currently Nothing Is Playing**', color = discord.Color.red())
+            return await ctx.send(embed=embed, delete_after=10)
+          else:
+            query=player.current.title
+        try:
+          song = genius.search_song(query)
+
+          embed=discord.Embed(title="Lyrics For "+song.title, color = discord.Color.green())
+          # print(song.lyrics)
+          # print("TITLE "+ song.title)
+          valArr = song.lyrics.split("\n\n")
+          for element in valArr:
+            try:
+              embed.add_field(name="`~`", value="`"+element+"`", inline=False)
+            except:
+              pass
+          return await ctx.send(embed=embed)
+        except:
+          raise NotFound
+
     @commands.command(aliases = ['reddit'])
     async def meme(self, ctx, *, subreddit="dankmemes"):
       """Retrieves a meme from any subreddit(defaults to r/dankmemes)"""
@@ -5360,24 +5467,30 @@ class Data(commands.Cog):
         await ctx.send(embed=embed)
       # except:
       #   pass
-    @commands.command()
-    async def wiki(self, ctx, *, query):
+    @commands.command(aliases=["wiki"])
+    async def google(self, ctx, *, query):
         """Retrives wikipedia information for any query"""
-        topic=query
+        # topic=query
         
-        ny = wikipedia.page(topic)
-        
-        
-        embed=discord.Embed(title="Wikipedia Results For "+topic.title(), url="https://wikipedia.com", description="This is the result of your query.", color=discord.Color.gold(), timestamp=datetime.utcnow())
+        # ny = wikipedia.page(topic)
+        async with ctx.typing():
+          try:
+            summary= "**Short Summary:\n\n**" +wikipedia.summary(query)
+            
+          except wikipedia.exceptions.PageError:
+            raise NotFound
+          embed=discord.Embed( description=summary[:500]+"...", color=discord.Color.orange())
+      
+          # embed.add_field(name = "Long Description:", value= wikipedia.page(query).content.split("\n\n")[1][:500]+"...")
 
-      # Add author, thumbnail, fields, and footer to the embed
-        embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+        # Add author, thumbnail, fields, and footer to the embed
+          # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
 
-        embed.set_thumbnail(url="http://pngimg.com/uploads/wikipedia/wikipedia_PNG12.png")
+          # embed.set_thumbnail(url="http://pngimg.com/uploads/wikipedia/wikipedia_PNG12.png")
 
-        embed.add_field(name="Wikipedia Result:", value=ny.content[:500]+"...", inline=False) 
+          # embed.add_field(name="Wikipedia Result:", value=ny.content[:500]+"...", inline=False) 
 
-        await ctx.send(embed=embed)
+          await ctx.send(embed=embed)
     @commands.command(aliases = [ "news"])
     async def headlines(self, ctx, amount=5):
         """Retrieves 5 or the given amount of headlines"""
@@ -5525,10 +5638,16 @@ async def didyouknow(ctx):
 
 @client.event
 async def on_command_error(ctx, error):
-    if "Bad Request" in str(error):
-      embed=discord.Embed(description=f'**Invalid URL**', color = discord.Color.red())
+    template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+    message = template.format(type(error).__name__, error.args)
+    print (message)
+    if "Bad Request" in str(error) or "invalid" in str(error).lower():
+      embed=discord.Embed(description=f'**✋ Invalid URL**', color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
 
+    if isinstance(error, CannotLoop):
+      embed=discord.Embed(description=f"**✋ Oops! You Can't Loop Both The Queue And A Song**", color = discord.Color.orange())
+      return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, NotFound):
       embed=discord.Embed(description=f'**✋ Nothing Found**', color = discord.Color.orange())
       return await ctx.send(embed=embed, delete_after=10)
@@ -5566,9 +5685,7 @@ async def on_command_error(ctx, error):
       
     # if "Unable To Download" in str(error):
     #   await play(ctx)
-    template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-    message = template.format(type(error).__name__, error.args)
-    print (message)
+    
     if isinstance(error, NotNSFW):
       embed=discord.Embed(description="**✋ Oops! You Aren't In A NSFW Channel**", color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
@@ -5580,7 +5697,7 @@ async def on_command_error(ctx, error):
       return await ctx.send(embed=embed, delete_after=5)
     if isinstance(error, IncorrectChannelError):
       return
-    if "ZeroConnectedNodes" in str(error) or "UnboundLocalError" in str(error):
+    if "ZeroConnectedNodes" in str(error):
       # pass
       await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = '@Astro | .help'))
       client.add_cog(Music(client))
@@ -7963,7 +8080,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
