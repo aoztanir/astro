@@ -126,9 +126,10 @@ def formatTitle(title: str):
   title=title.replace("official video","")
   title=title.replace("Official Music Video","")
   title=title.replace("official music video","")
+  title=title.strip(" ")
 
   if len(title)>30:
-    return title[0:30]+"..."
+    return title[0:30].strip(" ")+"..."
   else:
     return title
   # title=title.replace("Official Video","")
@@ -444,13 +445,44 @@ class Player(wavelink.Player):
         self.loopQueue=False
         self.waiting = False
         self.updating = False
-        self.previous=[]
+        self.queueNum=0
         self.loopTrack=None
         self.pause_votes = set()
         self.resume_votes = set()
         self.skip_votes = set()
         self.shuffle_votes = set()
         self.stop_votes = set()
+    async def find(self,ctx, query):
+      query = query.strip('<>')
+      try:
+        if isinstance(int(query), int):
+          if int(query)<0:
+            return -1
+          if int(query)>len(self.queue):
+            return -1
+          if int(query)==0:
+            query=1
+          return int(query)-1
+      except:
+        pass
+      if not URL_REG.match(query):
+        query = f'ytsearch:{query}'
+      # if "open.spotify.com" not in query:
+      tracks = await self.bot.wavelink.get_tracks(query, retry_on_failure=True)
+      if isinstance(tracks, wavelink.TrackPlaylist):
+          return -1
+      else:
+    
+          track = Track(tracks[0].id, tracks[0].info, requester=ctx.author)
+          print(track.title)
+          print("ENTERED")
+          for i in range(len(self.queue)):
+            ratio= fuzz.ratio(query, self.queue[i].title)
+            print(ratio)
+            ratio2 = fuzz.ratio(track.title, self.queue[i].title)
+            if ratio>50 or ratio2>50:
+              return i
+          return -1
 
     async def play(self, track):
       if track==None:
@@ -464,7 +496,11 @@ class Player(wavelink.Player):
             if spotify_track==None:
               await self.stop()
               return await self.do_next()
+
             trackToQueue = Track(spotify_track[0].id, spotify_track[0].info, requester=track.requester)
+            trackToQueue.title=track.title
+            # if track.thumb!=None:
+            #   trackToQueue.thumb=track.thumb
             if trackToQueue==None:
               await self.stop()
               return await self.do_next()
@@ -507,8 +543,10 @@ class Player(wavelink.Player):
         if self.is_playing or self.waiting:
           if jumping==False:
             return
-        if self.loopQueueNum>=len(self.queue):
-          self.loopQueueNum=0
+        if self.queueNum>=len(self.queue) and self.loopQueue:
+          self.queueNum=0
+        if self.queueNum>=len(self.queue)and not self.loopQueue:
+          return
         # if self.loopQueue:
         #   if len(self.queue)==0:
         #     self.queue=self.queue_for_loop
@@ -533,7 +571,7 @@ class Player(wavelink.Player):
         try:
             self.waiting = True
             with async_timeout.timeout(300):
-                track = self.queue[0]
+                track = self.queue[self.queueNum]
         except asyncio.TimeoutError:
             # No music has been played for 5 minutes, cleanup and disconnect...
             embed=discord.Embed(description="**👋 I Left The Voice Channel Because I was Inactive For Too Long**", color = discord.Color.green())
@@ -552,14 +590,14 @@ class Player(wavelink.Player):
         # if member_count<1:
         #   print("DISCONNECTING")
         #   return await self.teardown()
-        track = self.queue[0]
-        if self.loopSong==False and self.loopQueue==False:
-          self.queue.pop(0)
-          self.previous.insert(0, track)
+        track = self.queue[self.queueNum]
+        if self.loopSong==False:
+          self.queueNum+=1
+          # self.previous.insert(0, track)
 
-        if self.loopQueue:
-          track = self.queue[self.loopQueueNum]
-          self.loopQueueNum+=1
+        # if self.loopQueue:
+        #   track = self.queue[self.loopQueueNum]
+        #   self.loopQueueNum+=1
         
         
 
@@ -571,7 +609,8 @@ class Player(wavelink.Player):
 
         # Invoke our players controller...
         await self.invoke_controller()
-      except:
+      except Exception as e:
+        print(e)
         await self.stop()
         return await self.do_next()
 
@@ -691,7 +730,8 @@ class Player(wavelink.Player):
           embed.set_thumbnail(url=f"{client.user.avatar_url}")
 
         embed.add_field(name='Duration', value=f"**` {length} `**")
-        embed.add_field(name='Queue Length', value=f'` {str(qsize)} `')
+        embed.add_field(name='Song Number', value=f'` {str(self.queueNum)} `')
+        # embed.add_field(name='Volume', value=f'**` {self.volume}% `**')
         embed.add_field(name='Volume', value=f'**` {self.volume}% `**')
         embed.add_field(name='Requested By', value=track.requester.mention)
         embed.add_field(name='DJ', value=self.dj.mention)
@@ -789,7 +829,21 @@ class InteractiveController(menus.Menu):
     #     ctx.command = command
 
     #     await self.bot.invoke(ctx)
-    
+    @menus.button(emoji='⏮')
+    async def previous_command(self, payload: discord.RawReactionActionEvent):
+        """Skip button."""
+        ctx = self.update_context(payload)
+        msg = await ctx.fetch_message(payload.message_id)
+        try:
+          await msg.remove_reaction(payload.emoji, payload.member)
+        except:
+          pass
+
+        command = self.bot.get_command('previous')
+        ctx.command = command
+
+        await self.bot.invoke(ctx)
+
     @menus.button(emoji='⏪')
     async def ff_command(self, payload: discord.RawReactionActionEvent):
         """Volume up button"""
@@ -1318,8 +1372,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           if player.is_paused:
             return await self.resume(ctx)
           else:
-            embed=discord.Embed(description=f'**Specify A Song To Play**', color = discord.Color.red())
-            await ctx.send(embed=embed)
+            # embed=discord.Embed(description=f'**Specify A Song To Play**', color = discord.Color.red())
+            raise discord.ext.commands.BadArgument('str not number')
+            # await ctx.send(embed=embed)
 
           return
 
@@ -1533,38 +1588,53 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @commands.command()
     async def remove(self, ctx: commands.Context, *, item):
       """Removes a song or number from the queue"""
-      query=item
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
-      query = query.strip('<>')
-      try:
-        if isinstance(int(query), int):
-          title_save= player.queue[int(query)-1]
-          player.queue.pop(int(query)-1)
-          embed=discord.Embed(description=f'**Removed ` {title_save} ` From The Queue**', color = discord.Color.red())
+      if not player.is_connected:
+            return
+
+      if not self.is_privileged(ctx):
+          embed=discord.Embed(description=f"**Only A DJ Or Admin Can Can Change EQ**", color = discord.Color.red())
           return await ctx.send(embed=embed, delete_after=10)
-      except:
-        pass
-      if not URL_REG.match(query):
-            query = f'ytsearch:{query}'
-      # if "open.spotify.com" not in query:
-      tracks = await self.bot.wavelink.get_tracks(query, retry_on_failure=True)
-      if isinstance(tracks, wavelink.TrackPlaylist):
-          embed=discord.Embed(description=f'**Playlists Cannot Be Removed, Try Removing Individual Songs Or Clearing The Queue**', color = discord.Color.red())
-          return await ctx.send(embed=embed, delete_after=10)
-      else:
+      # query=item
+      number = await player.find(ctx, item)
+
+      if number<0:
+        raise NotFound
+      title= player.queue[number].title
+      player.queue.pop(number)
+      embed=discord.Embed(description=f'**❎ Removed ` {formatTitle(title)} ` From The Queue**', color = discord.Color.red())
+      return await ctx.send(embed=embed, delete_after=10)
+     
+      # query = query.strip('<>')
+      # try:
+      #   if isinstance(int(query), int):
+      #     title_save= player.queue[int(query)-1]
+      #     player.queue.pop(int(query)-1)
+      #     embed=discord.Embed(description=f'**Removed ` {title_save} ` From The Queue**', color = discord.Color.red())
+      #     return await ctx.send(embed=embed, delete_after=10)
+      # except:
+      #   pass
+      # if not URL_REG.match(query):
+      #       query = f'ytsearch:{query}'
+      # # if "open.spotify.com" not in query:
+      # tracks = await self.bot.wavelink.get_tracks(query, retry_on_failure=True)
+      # if isinstance(tracks, wavelink.TrackPlaylist):
+      #     embed=discord.Embed(description=f'**Playlists Cannot Be Removed, Try Removing Individual Songs Or Clearing The Queue**', color = discord.Color.red())
+      #     return await ctx.send(embed=embed, delete_after=10)
+      # else:
     
-          track = Track(tracks[0].id, tracks[0].info, requester=ctx.author)
-          print(track.title)
-          for i in range(len(player.queue)):
-            ratio= fuzz.ratio(query, player.queue[i].title)
-            print(ratio)
-            ratio2 = fuzz.ratio(track.title, player.queue[i].title)
-            if ratio>50 or ratio2>50:
-              player.queue.pop(i)
-              embed=discord.Embed(description=f'**❎ Removed ` {formatTitle(track.title)} ` From The Queue**', color = discord.Color.red())
-              return await ctx.send(embed=embed, delete_after=10)
-          embed=discord.Embed(description=f'** A Song Matching ` {item} ` Is Not In The Queue**', color = discord.Color.red())
-          return await ctx.send(embed=embed, delete_after=10)
+      #     track = Track(tracks[0].id, tracks[0].info, requester=ctx.author)
+      #     print(track.title)
+      #     for i in range(len(player.queue)):
+      #       ratio= fuzz.ratio(query, player.queue[i].title)
+      #       print(ratio)
+      #       ratio2 = fuzz.ratio(track.title, player.queue[i].title)
+      #       if ratio>50 or ratio2>50:
+      #         player.queue.pop(i)
+      #         embed=discord.Embed(description=f'**❎ Removed ` {formatTitle(track.title)} ` From The Queue**', color = discord.Color.red())
+      #         return await ctx.send(embed=embed, delete_after=10)
+      #     embed=discord.Embed(description=f'** A Song Matching ` {item} ` Is Not In The Queue**', color = discord.Color.red())
+      #     return await ctx.send(embed=embed, delete_after=10)
 
     @commands.command(aliases=["stop"])
     async def pause(self, ctx: commands.Context):
@@ -1718,7 +1788,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             embed=discord.Embed(description="**🔀 Shuffled**", color = discord.Color.teal())
             await ctx.send(embed=embed, delete_after=10)
             player.shuffle_votes.clear()
-            return random.shuffle(player.queue)
+            copy = player.queue[player.queueNum:]
+            random.shuffle(copy)
+            player.queue[player.queueNum:] = copy
+            return
 
         required = self.required(ctx)
         player.shuffle_votes.add(ctx.author)
@@ -1727,7 +1800,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             embed=discord.Embed(description="**🔀 Vote Passed | Shuffled**", color = discord.Color.teal())
             await ctx.send(embed=embed, delete_after=10)
             player.shuffle_votes.clear()
-            random.shuffle(player.queue)
+            copy = player.queue[player.queueNum:]
+            random.shuffle(copy)
+            player.queue[player.queueNum:] = copy
+            return
         else:
             embed=discord.Embed(description=f"**{ctx.author.mention} Has Voted To Shuffle**", color = discord.Color.teal())
             await ctx.send(embed=embed, delete_after=10)
@@ -1893,6 +1969,22 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         entries=[]
         if player.loopQueue==True:
           entries.append("**🔂 Looping The Queue\n\n**")
+        
+        if player.loopSong==False:
+          if player.queueNum-2>=0:
+            for i in range(player.queueNum-3, player.queueNum-1):
+              try:
+                trackLength=str(timedelta(seconds=int(player.queue[i].length/1000)))
+              except:
+                trackLength="🔴 LIVE"
+              try:
+                if player.queue[i].is_stream:
+                  trackLength="🔴 LIVE"
+              except:
+                pass
+              entries.append(f" `{i+1}.`**   [{formatTitle(player.queue[i].title)}]({player.queue[i].uri}) | `{str(trackLength)}` | {player.queue[i].requester.mention}**")
+            entries[len(entries)-1]+="\n"
+
         if player.current!=None:
           track=player.current
           try:
@@ -1901,7 +1993,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             length2=1
           try:
             length=str(timedelta(seconds=int(track.length/1000)))
-    
+
           except:
             length="LIVE"
           status='🔘'
@@ -1918,12 +2010,12 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             position = "🔴 LIVE"
           if player.loopSong:
             position +=" 🔂"
-          val = f" ▶️    **[{formatTitle(player.current.title)}]({player.current.uri}) | {player.current.requester.mention}**\n\n`{position}`\n"
+          val = f"`{player.queueNum}.`  ▶️    **[{formatTitle(player.current.title)}]({player.current.uri}) | {player.current.requester.mention}**\n\n`{position}`\n"
           
           entries.append(val)
 
 
-        for i in range(len(player.queue)):
+        for i in range(player.queueNum, len(player.queue)):
           try:
             trackLength=str(timedelta(seconds=int(player.queue[i].length/1000)))
           except:
@@ -1943,7 +2035,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @commands.command(hidden=True)
     # @commands.cooldown(1,8,commands.BucketType.user)
     async def question_controller(self, ctx: commands.Context):
-      embed=discord.Embed(description=f"**⏯ ➜ ` Pause/Play `\n\n⏪ ➜ ` Back 15 Seconds `\n\n⏩ ➜ ` Forward 15 Seconds `\n\n⏭ ➜ ` Skip To Next Song `\n\n⏺ ➜ ` Rewind Song `\n\n🔀 ➜ ` Shuffle Queue `\n\n🔊 ➜ ` Sound Up `\n\n🔉 ➜ ` Sound Down `\n\n🎸 ➜ ` Shows Queue `\n\n🔃 ➜ ` Updates Controller `\n\n🔂 ➜ ` Loops The Current Song `\n\n👋 ➜ ` Stops Player `\n\n❓ ➜ ` Shows This Message `**", color = discord.Color.orange())
+      embed=discord.Embed(description=f"**⏮ ➜ ` Previous song `\n\n⏯ ➜ ` Pause/Play `\n\n⏪ ➜ ` Back 15 Seconds `\n\n⏩ ➜ ` Forward 15 Seconds `\n\n⏭ ➜ ` Skip To Next Song `\n\n⏺ ➜ ` Rewind Song `\n\n🔀 ➜ ` Shuffle Queue `\n\n🔊 ➜ ` Sound Up `\n\n🔉 ➜ ` Sound Down `\n\n🎸 ➜ ` Shows Queue `\n\n🔃 ➜ ` Updates Controller `\n\n🔂 ➜ ` Loops The Current Song `\n\n👋 ➜ ` Stops Player `\n\n❓ ➜ ` Shows This Message `**", color = discord.Color.orange())
       return await ctx.send(embed=embed, delete_after=10)
     @commands.command(aliases=['np', 'now_playing', 'current', 'nowplaying'])
     async def playing(self, ctx: commands.Context):
@@ -1972,7 +2064,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
 
     @commands.command(aliases=['skipto', 'st'])
-    async def jump(self, ctx: commands.Context, song_number: int=None):
+    async def jump(self, ctx: commands.Context,*, song_number=None):
       """Jumps through the queue"""
       index=song_number
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
@@ -1986,30 +2078,33 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
  
       #   embed=discord.Embed(description=f"**Type A Track Number To Skip To**".title(), color = discord.Color.teal())
       #   return await ctx.send(embed=embed, delete_after=10)
-        
-      if not isinstance(int(index), int):
+      # try:
+      #   if int(index)==0:
+      #     index=1
+      #   if int(index)>len(player.queue) or int(index)-1<0:
+      #     raise NotFound
+      #     # embed=discord.Embed(description="**That Track Number Is Not In The Queue**".title(), color = discord.Color.red())
+      #     # return await ctx.send(embed=embed, delete_after=10)
+      # except:
+      indexToSet= await player.find(ctx, str(index))
+      if int(indexToSet)<0:
+        raise NotFound
 
-        embed=discord.Embed(description="**Please Type A Number**".title(), color = discord.Color.red())
-        return await ctx.send(embed=embed, delete_after=10)
-      try:
-        if int(index)>len(player.queue) or int(index)-1<0:
-          embed=discord.Embed(description="**That Track Number Is Not In The Queue**".title(), color = discord.Color.red())
-          return await ctx.send(embed=embed, delete_after=10)
-      except:
-        return
+
       # queueSave=player.queue._queue
       # queueSave=queueSave[0:int(index)]
       # player.queue._queue=queueSave
       # await player.stop()
-      for i in range(int(index)-1):
-        player.queue.pop(0)
+      # for i in range(int(index)-1):
+      #   player.queue.pop(0)
     
       # i=1
       # while i<(int(index)):
       #   player.queue.get_nowait()
       #   i=i+1
       # await self.queue(ctx)
-      title_track = player.queue[i].title
+      player.queueNum=int(indexToSet)
+      title_track = player.queue[player.queueNum].title
       await player.stop()
       await player.do_next()
       # for i in range(int(index)):
@@ -2022,7 +2117,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       #     break
       #   else:
       #     player.queue._queue.remove(i)
-      embed=discord.Embed(description=f"**⏭ Skipped To Track ` {formatTitle(title_track)} `**".title(), color = discord.Color.teal())
+      embed=discord.Embed(description=f"**⏭ Skipped To ` {formatTitle(title_track)} `**", color = discord.Color.teal())
       # await player.stop()
       return await ctx.send(embed=embed, delete_after=10)
 
@@ -2041,10 +2136,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         raise CannotLoop
       
       player.loopQueue = not player.loopQueue
-      if player.loopQueue:
-        if player.current!=None:
-          player.queue.insert(0, player.current)
-          player.loopQueueNum=player.loopQueueNum+1
+      # if player.loopQueue:
+      #   if player.current!=None:
+      #     player.queue.insert(0, player.current)
+      #     player.loopQueueNum=player.loopQueueNum+1
 
       # if player.loopQueue:
       #   player.queue_for_loop=player.queue
@@ -2055,20 +2150,23 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       return await ctx.send(embed=embed, delete_after=10)
     
 
-    # @commands.command(aliases=['prev','back'])
-    # async def previous(self, ctx: commands.Context):
-    #   """Goes back a song"""
-    #   player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+    @commands.command(aliases=['prev','back'])
+    async def previous(self, ctx: commands.Context):
+      """Goes back a song"""
+      player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
-    #   if not player.is_connected:
-    #       return
-    #   if not self.is_privileged(ctx):
-    #       embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
-    #       return await ctx.send(embed=embed, delete_after=10)
-    #   track  = player.previous[0]
-    #   player.queue.insert(0, track)
-    #   embed=discord.Embed(description=f"**⏮ Going Back**", color = discord.Color.teal())
-    #   return await ctx.send(embed=embed, delete_after=10)
+      if not player.is_connected:
+          return
+      if not self.is_privileged(ctx):
+          embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
+          return await ctx.send(embed=embed, delete_after=10)
+      player.queueNum-=2
+      if player.queueNum<0:
+        player.queueNum==0
+      await player.stop()
+      await player.do_next()
+      embed=discord.Embed(description=f"**⏮ Going Back**", color = discord.Color.teal())
+      return await ctx.send(embed=embed, delete_after=10)
 
     @commands.command(aliases=['loopsong','ls'])
     async def loop(self, ctx: commands.Context):
@@ -2085,19 +2183,23 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         raise CannotLoop
       player.loopSong = not player.loopSong
       if player.loopSong==True:
-        if player.current!=None :
-          if len(player.queue)>0:
-            ratio= fuzz.ratio(player.current.title, player.queue[0].title)
-            if ratio<90:
-              player.queue.insert(0,player.current)
-          else:
-            player.queue.insert(0,player.current)
+        player.queueNum=player.queueNum-1
+        if player.queueNum<0:
+          player.queueNum==0
+        # if player.current!=None :
+        #   if len(player.queue)>0:
+        #     ratio= fuzz.ratio(player.current.title, player.queue[0].title)
+        #     if ratio<90:
+        #       player.queue.insert(0,player.current)
+        #   else:
+        #     player.queue.insert(0,player.current)
       else:
-        if player.current!=None and len(player.queue)>=1 :
-          ratio= fuzz.ratio(player.current.title, player.queue[0].title)
-          print(ratio)
-          if ratio>=90:
-            player.queue.pop(0)
+        pass
+        # if player.current!=None and len(player.queue)>=1 :
+        #   ratio= fuzz.ratio(player.current.title, player.queue[0].title)
+        #   print(ratio)
+        #   if ratio>=90:
+        #     player.queue.pop(0)
       embed=discord.Embed(description=f"**🔂 Looping Song Set To **"+str(player.loopSong).title(), color = discord.Color.teal())
       return await ctx.send(embed=embed, delete_after=10)
 
@@ -5407,7 +5509,7 @@ class Data(commands.Cog):
             embed=discord.Embed(description=f'**Currently Nothing Is Playing**', color = discord.Color.red())
             return await ctx.send(embed=embed, delete_after=10)
           else:
-            query=player.current.title
+            query=formatTitle(player.current.title)
         try:
           song = genius.search_song(query)
 
@@ -8106,7 +8208,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
