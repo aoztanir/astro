@@ -534,7 +534,8 @@ class Player(wavelink.Player):
         # self.loopTrack=track
         # TRACKO = track
         await super().play( track)
-      except:
+      except Exception as e:
+        print(e)
         await self.stop()
         return await self.do_next()
 
@@ -1971,7 +1972,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           entries.append("**🔂 Looping The Queue\n\n**")
         
         if player.loopSong==False:
-          if player.queueNum-2>=0:
+          if player.queueNum-3>=0:
             for i in range(player.queueNum-3, player.queueNum-1):
               try:
                 trackLength=str(timedelta(seconds=int(player.queue[i].length/1000)))
