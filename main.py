@@ -1937,7 +1937,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             entries.append(f" `{i+1}.`**   [{formatTitle(player.queue[i].title)}]({player.queue[i].uri}) | `{str(trackLength)}` | {player.queue[i].requester.mention}**")
         # entries = [track.title for track in player.queue._queue]
         pages = PaginatorSource(entries=entries)
-        paginator = menus.MenuPages(source=pages, timeout=None, delete_message_after=True)
+        paginator = menus.MenuPages(source=pages, timeout=500, delete_message_after=True)
 
         await paginator.start(ctx)
     @commands.command(hidden=True)
@@ -3280,7 +3280,7 @@ class astroHelp(commands.HelpCommand):
         return '%s%s %s' % (self.clean_prefix, command.qualified_name, command.signature)
     async def send_error_message(self, error):
       if "No command called" in str(error):
-        error=str("**✋ Nothing Found**")
+        raise NotFound
       embed = discord.Embed(description=f"**{error}**" ,colour=discord.Color.orange())
       channel = self.get_destination()
       
@@ -3329,7 +3329,7 @@ class astroHelp(commands.HelpCommand):
           commands.append({'name':"➜ "+command.qualified_name.title(), 'signature' : f"` {self.get_command_signature(command)} | {command.help} `" })
 
       pages = CogPaginator(entries=commands, name2=cog_name, prefix2=self.clean_prefix)
-      paginator = menus.MenuPages(source=pages, timeout=None, delete_message_after=True)
+      paginator = menus.MenuPages(source=pages, timeout=120, delete_message_after=True)
 
       await paginator.start(self.context)
       
@@ -3377,6 +3377,27 @@ class astroHelp(commands.HelpCommand):
 
 def check_if_it_is_me(ctx):
     return ctx.message.author.id == 608778878835621900
+
+
+
+class LyricsPaginator(menus.ListPageSource):
+    """Player queue paginator class."""
+    # name=""
+    # prefix=""
+    title=""
+    def __init__(self, entries, title, *, per_page=1):
+        super().__init__(entries, per_page=per_page)
+        self.title=title
+        # self.name=name2
+        # self.prefix=prefix2
+
+    async def format_page(self, menu: menus.Menu, page):
+      embed = discord.Embed( 
+      title =self.title,
+      colour=discord.Color.orange())
+      # print(page)
+      embed.description='`'+str(page)+'`'
+      return embed
 
 class CogPaginator(menus.ListPageSource):
     """Player queue paginator class."""
@@ -5373,6 +5394,8 @@ class Info(commands.Cog):
 class Data(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    ##FIX LYRICS
     @commands.command()
     @commands.cooldown(1,3,commands.BucketType.user)
     async def lyrics(self, ctx,*, query : str=None):
@@ -5388,18 +5411,25 @@ class Data(commands.Cog):
         try:
           song = genius.search_song(query)
 
-          embed=discord.Embed(title="Lyrics For "+song.title, color = discord.Color.green())
-          # print(song.lyrics)
-          # print("TITLE "+ song.title)
+          # embed=discord.Embed(title="Lyrics For "+song.title, color = discord.Color.green())
+          # # print(song.lyrics)
+          # # print("TITLE "+ song.title)
           valArr = song.lyrics.split("\n\n")
-          for element in valArr:
-            try:
-              embed.add_field(name="`~`", value="`"+element+"`", inline=False)
-            except:
-              pass
-          return await ctx.send(embed=embed)
+          # print(valArr)
+          # for i in range(len(valArr)):
+          #   try:
+          #     embed.add_field(name="`-`", value="`"+valArr[i]+"`", inline=False)
+          #   except:
+          #     pass
         except:
           raise NotFound
+      pages = LyricsPaginator(entries=valArr, title="Lyrics For "+song.title)
+      paginator = menus.MenuPages(source=pages, timeout=500, delete_message_after=True)
+      try:
+        await paginator.start(ctx)
+      except:
+        raise NotFound
+      # return await ctx.send(embed=embed)
 
     @commands.command(aliases = ['reddit'])
     async def meme(self, ctx, *, subreddit="dankmemes"):
@@ -5469,18 +5499,15 @@ class Data(commands.Cog):
       #   pass
     @commands.command(aliases=["wiki"])
     async def google(self, ctx, *, query):
-        """Retrives wikipedia information for any query"""
-        # topic=query
-        
-        # ny = wikipedia.page(topic)
-        async with ctx.typing():
-          try:
-            summary= "**Short Summary:\n\n**" +wikipedia.summary(query)
-            
-          except wikipedia.exceptions.PageError:
-            raise NotFound
-          embed=discord.Embed( description=summary[:500]+"...", color=discord.Color.orange())
-      
+      """Retrives wikipedia information for any query"""
+      async with ctx.typing():
+        try:
+          summary= "**Short Summary:\n\n**" +wikipedia.summary(query)
+          
+        except wikipedia.exceptions.PageError:
+          raise NotFound
+        embed=discord.Embed( description=summary[:500]+"...", color=discord.Color.orange())
+    
           # embed.add_field(name = "Long Description:", value= wikipedia.page(query).content.split("\n\n")[1][:500]+"...")
 
         # Add author, thumbnail, fields, and footer to the embed
@@ -5489,8 +5516,7 @@ class Data(commands.Cog):
           # embed.set_thumbnail(url="http://pngimg.com/uploads/wikipedia/wikipedia_PNG12.png")
 
           # embed.add_field(name="Wikipedia Result:", value=ny.content[:500]+"...", inline=False) 
-
-          await ctx.send(embed=embed)
+      await ctx.send(embed=embed)
     @commands.command(aliases = [ "news"])
     async def headlines(self, ctx, amount=5):
         """Retrieves 5 or the given amount of headlines"""
