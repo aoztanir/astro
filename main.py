@@ -486,13 +486,16 @@ class Player(wavelink.Player):
 
     async def play(self, track):
       if track==None:
+        print("TRACK IS NONE")
         await self.stop()
         return await self.do_next()
       try:
         try:
           print(track.id)
           if track.id == "spotify": 
-            spotify_track = await self.node.get_tracks(f"ytsearch:{track.title} - {track.author} audio", retry_on_failure=True)
+            # search= ,
+            # search=search.strip("<>")
+            spotify_track = await self.node.get_tracks(f"ytsearch:{track.title} - {track.author} audio",  retry_on_failure=True)
             if spotify_track==None:
               await self.stop()
               return await self.do_next()
@@ -520,6 +523,7 @@ class Player(wavelink.Player):
           #   return await super().play(trackToQueue)
         except Exception as e:
           print(e)
+          print("THERE WAS ERROR IN FIRST")
           await self.stop()
           return await self.do_next()
     
@@ -533,9 +537,10 @@ class Player(wavelink.Player):
         #   print(e)
         # self.loopTrack=track
         # TRACKO = track
-        await super().play( track)
+        return await super().play( track)
       except Exception as e:
         print(e)
+        print("THERE WAS ERROR IN SECOND")
         await self.stop()
         return await self.do_next()
 
@@ -544,6 +549,9 @@ class Player(wavelink.Player):
         if self.is_playing or self.waiting:
           if jumping==False:
             return
+        # if self.queueNum<0:
+        #   self.queueNum+=1
+        #   return
         if self.queueNum>=len(self.queue) and self.loopQueue:
           self.queueNum=0
         if self.queueNum>=len(self.queue)and not self.loopQueue:
@@ -605,7 +613,10 @@ class Player(wavelink.Player):
         # if self.loopQueue:
         #   if len(self.queue)==0:
         #     self.queue=self.queue_for_loop
+        print("NUM "+str(self.queueNum))
+        print(track.title)
         await self.play(track)
+        # self.current=track
         self.waiting = False
 
         # Invoke our players controller...
@@ -1281,7 +1292,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         channel = getattr(ctx.author.voice, 'channel', channel)
         if channel is None:
-            raise NoChannelProvided
+            raise NotFound
 
         await player.connect(channel.id)
         await ctx.guild.change_voice_state(channel=ctx.author.voice.channel, self_deaf=True)
@@ -1547,9 +1558,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             #   if not player.is_playing:
             #     return await player.do_next()
             #   return
-              
-            embed=discord.Embed(description=f'**✋ Nothing Found**'.title(), color = discord.Color.orange())
-            return await ctx.send(embed=embed, delete_after=10)
+              raise NotFound
+            # embed=discord.Embed(description=f'**✋ Nothing Found**'.title(), color = discord.Color.orange())
+            # return await ctx.send(embed=embed, delete_after=10)
             # return await ctx.send('No songs were found with that query. Please try again.', delete_after=15)
 
         if isinstance(tracks, wavelink.TrackPlaylist):
@@ -2161,9 +2172,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       if not self.is_privileged(ctx):
           embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
           return await ctx.send(embed=embed, delete_after=10)
-      player.queueNum-=2
-      if player.queueNum<0:
-        player.queueNum==0
+      if player.queueNum>1:
+        player.queueNum-=2
+      # if num<0:
+      #   num=0
+      
+      # if player.queueNum<0:
+      #   player.queueNum==0
       await player.stop()
       await player.do_next()
       embed=discord.Embed(description=f"**⏮ Going Back**", color = discord.Color.teal())
@@ -5499,6 +5514,61 @@ class Data(commands.Cog):
         self.bot = bot
 
     ##FIX LYRICS
+
+    @commands.command()
+    @commands.cooldown(1, 3, commands.BucketType.user)
+    async def youtube(self, ctx, *, query: str):
+        """Retrieves Information about any song from youtube"""
+        player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+
+        query = query.strip('<>')
+
+        if not URL_REG.match(query):
+            query = f'ytsearch:{query}'
+        tracks = await self.bot.wavelink.get_tracks(query, retry_on_failure=True)
+        if not tracks:
+          raise NotFound
+
+        if isinstance(tracks, wavelink.TrackPlaylist):
+            # for track in tracks.tracks:
+            #     track = Track(track.id, track.info, requester=ctx.author)
+            #     player.queue.append(track)
+
+            # await ctx.send(f'```ini\nAdded the playlist {tracks.data["playlistInfo"]["name"]}'
+            #                f' with {len(tracks.tracks)} songs to the queue.\n```', delete_after=15)
+            embed=discord.Embed(title=f'**`{len(tracks.tracks)}` Videos**', color = discord.Color.green())
+            i=1
+            sum=""
+            for track in tracks.tracks:
+              track= Track(track.id, track.info, requester=ctx.author)
+              try:
+                length = str(timedelta(seconds=int(track.length/1000)))
+              except:
+                length="🔴 LIVE"
+              sum+=f'`{i}.`[{formatTitle(track.title)}]({track.uri}) | ` {length} `\n'
+              i+=1
+              if i==11:
+                break
+            embed.description=sum
+            await ctx.send(embed=embed, delete_after=10)
+        else:
+            
+            track = Track(tracks[0].id, tracks[0].info, requester=ctx.author)
+            
+            try:
+              length = str(timedelta(seconds=int(track.length/1000)))
+            except:
+              length="🔴 LIVE"
+            embed=discord.Embed(title=f'[{formatTitle(track.title)}]({track.uri}) | ` {length} `', color = discord.Color.green())
+            try:
+              embed.set_thumbnail(url=track.thumb)
+              if track.thumb==None:
+                embed.set_thumbnail(url=f"{client.user.avatar_url}")
+            except:
+              embed.set_thumbnail(url=f"{client.user.avatar_url}")
+            await ctx.send(embed=embed)
+            print(track.info)
+
     @commands.command()
     @commands.cooldown(1,3,commands.BucketType.user)
     async def lyrics(self, ctx,*, query : str=None):
@@ -8209,7 +8279,7 @@ import subprocess
 # client.add_cog(Music(client))
 #DEV BOT
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
