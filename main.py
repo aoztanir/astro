@@ -5783,7 +5783,7 @@ class Data(commands.Cog):
         target=ctx.author
       # exp,lvl = await level(ctx.guild.id,target.id)
       # if True:
-      #     x = ctx.guild.members
+      x = ctx.guild.members
       if target in x:
           roles = [role for role in target.roles]
           embed = discord.Embed( colour=discord.Color.orange())
@@ -5806,6 +5806,8 @@ class Data(commands.Cog):
           for name, value, inline in fields:
             embed.add_field(name=name, value=value, inline=inline)
           await ctx.reply(embed=embed, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
+      else:
+        raise NotFound
 
 
     @commands.command(aliases=['server', 'serverinfo'])
@@ -8332,7 +8334,7 @@ client.add_cog(Settings(client))
 client.add_cog(Utility(client))
 client.help_command = astroHelp()
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
