@@ -19,6 +19,7 @@ from pymongo import MongoClient
 # from replit import db
 import random as rando
 import wavelink
+print(wavelink.__version__)
 from discord_slash.utils.manage_commands import *
 # from covid19_data import JHU
 # from bottle import route, template, run
@@ -107,7 +108,7 @@ genius = lg.Genius('8-KsLC1FjqamiUh3xlSIS6SgXmqpjTCsySJPHNiupl-uJ-OPm-Z6uRW_yrZy
 intents = discord.Intents.default()
 intents.members = True
 # spotify = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id='b0d1cdbcce274e96905178376add6d61', client_secret="11a204d370c24b79891667ceb6fa5c31"))
-
+#dont worry about this var lol
 
 spotify_client = spotify.Client("b0d1cdbcce274e96905178376add6d61", "11a204d370c24b79891667ceb6fa5c31")
 spotify_http_client = spotify.HTTPClient("b0d1cdbcce274e96905178376add6d61", "11a204d370c24b79891667ceb6fa5c31")
@@ -134,9 +135,16 @@ def formatTitle(title: str):
     return title
   # title=title.replace("Official Video","")
 
-
-
-
+async def get_delete_after(guild_id: int):
+  data = await client.delete_after.find(guild_id)
+  if not data or "delete_after" not in data:
+    return None
+  # return None
+  print(data)
+  if data["delete_after"]==-1:
+    return None
+  return data["delete_after"]
+  
 
 async def get_prefix(client, message):
   # try:
@@ -209,23 +217,20 @@ async def on_ready():
     
     # SET_UPTIME=datetime.now()
     #COG ADDING
-    client.add_cog(Data(client))
-    client.add_cog(Moderation(client))
-    client.add_cog(Info(client))
-    client.add_cog(Settings(client))
-    client.add_cog(Utility(client))
+    
 
     #HELP COMMAND CUSTOM
-    client.help_command = astroHelp()
+    
 
 
     for element in client.shards:
       await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = f'@Astro | .help | {len(client.guilds)} Servers ➡ Shard {element+1}'), shard_id=client.shards[element].id)
       print(element)
-    
+    client.SENDING_HI_ME=False
     client.mongo= motor.motor_asyncio.AsyncIOMotorClient(str('mongodb+srv://aoztanir:astro@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority'))
     process = subprocess.Popen("java -jar Lavalink.jar", shell=True)
     client.db = client.mongo["astro"]
+    client.delete_after= Document(client.db, 'delete_after')
     client.prefixes= Document(client.db, 'prefixes')
     client.announcement= Document(client.db, 'announcement')
     client.mod_words = Document(client.db, 'mod_words')
@@ -485,6 +490,7 @@ class Player(wavelink.Player):
           return -1
 
     async def play(self, track):
+
       if track==None:
         print("TRACK IS NONE")
         await self.stop()
@@ -497,6 +503,7 @@ class Player(wavelink.Player):
             # search=search.strip("<>")
             spotify_track = await self.node.get_tracks(f"ytsearch:{track.title} - {track.author} audio",  retry_on_failure=True)
             if spotify_track==None:
+              print("NONE FIRST")
               await self.stop()
               return await self.do_next()
 
@@ -505,6 +512,7 @@ class Player(wavelink.Player):
             # if track.thumb!=None:
             #   trackToQueue.thumb=track.thumb
             if trackToQueue==None:
+              print("NONE SECOND")
               await self.stop()
               return await self.do_next()
             # if self.loopSong==True:
@@ -520,7 +528,8 @@ class Player(wavelink.Player):
             #   # if self.loopSong==True:
           #   #   await self.queue.put(trackToQueue)
           #   # self.loopTrack=trackToQueue
-          #   return await super().play(trackToQueue)
+            
+            # return await super().play(trackToQueue)
         except Exception as e:
           print(e)
           print("THERE WAS ERROR IN FIRST")
@@ -537,6 +546,7 @@ class Player(wavelink.Player):
         #   print(e)
         # self.loopTrack=track
         # TRACKO = track
+        print(track.length)
         return await super().play( track)
       except Exception as e:
         print(e)
@@ -556,6 +566,8 @@ class Player(wavelink.Player):
           self.queueNum=0
         if self.queueNum>=len(self.queue)and not self.loopQueue:
           return
+        if self.queueNum<0:
+          self.queueNum=0
         # if self.loopQueue:
         #   if len(self.queue)==0:
         #     self.queue=self.queue_for_loop
@@ -577,15 +589,16 @@ class Player(wavelink.Player):
 
 
         # WILLL THIS WORK??????????????? 
-        try:
-            self.waiting = True
-            with async_timeout.timeout(300):
-                track = self.queue[self.queueNum]
-        except asyncio.TimeoutError:
-            # No music has been played for 5 minutes, cleanup and disconnect...
-            embed=discord.Embed(description="**👋 I Left The Voice Channel Because I was Inactive For Too Long**", color = discord.Color.green())
-            await self.context.send(embed=embed)
-            return await self.teardown()
+        track=self.queue[self.queueNum]
+        # try:
+        #     self.waiting = True
+        #     with async_timeout.timeout(300):
+        #         track = self.queue[self.queueNum]
+        # except asyncio.TimeoutError:
+        #     # No music has been played for 5 minutes, cleanup and disconnect...
+        #     embed=discord.Embed(description="**👋 I Left The Voice Channel Because I was Inactive For Too Long**", color = discord.Color.green())
+        #     await self.context.send(embed=embed)
+        #     return await self.teardown()
         # if self.loopSong and self.loopTrack!=None:
         #   await self.queue.put(self.loopTrack)
         if self.channel_id==None:
@@ -615,6 +628,7 @@ class Player(wavelink.Player):
         #     self.queue=self.queue_for_loop
         print("NUM "+str(self.queueNum))
         print(track.title)
+        
         await self.play(track)
         # self.current=track
         self.waiting = False
@@ -623,6 +637,7 @@ class Player(wavelink.Player):
         await self.invoke_controller()
       except Exception as e:
         print(e)
+        print("EXCEPTION")
         await self.stop()
         return await self.do_next()
 
@@ -1188,6 +1203,17 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @wavelink.WavelinkMixin.listener('on_track_end')
     @wavelink.WavelinkMixin.listener('on_track_exception')
     async def on_player_stop(self, node: wavelink.Node, payload):
+        print("STOPPING IN ERROR HANDLER WAVELINK")
+        try:
+          print(payload.error)
+        except:
+          pass
+        try:
+          print(payload.reason)
+        except:
+          pass
+        # payload.player.queueNum+=1
+        # await asyncio.sleep(1)
         await payload.player.do_next()
 
     @commands.Cog.listener()
@@ -1292,7 +1318,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         channel = getattr(ctx.author.voice, 'channel', channel)
         if channel is None:
-            raise NotFound
+            raise NoChannelProvided
 
         await player.connect(channel.id)
         await ctx.guild.change_voice_state(channel=ctx.author.voice.channel, self_deaf=True)
@@ -1313,13 +1339,14 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         try:
           # if player.loopQueue:
           #   player.queue_for_loop=player.queue
+          pass
           if player.current != None:
             await player.invoke_controller()
-            # if player.loopSong==True:
-            #   print("putting BOIS")
-            #   if player.current !=None:
-            #     player.queue.put_nowait(player.current)
-            #     player.queue.put_nowait(player.current)
+          #   if player.loopSong==True:
+          #     print("putting BOIS")
+          #     if player.current !=None:
+          #       player.queue.put_nowait(player.current)
+          #       player.queue.put_nowait(player.current)
         except:
           pass
 
@@ -1377,6 +1404,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     async def play(self, ctx: commands.Context, *, query: str=None):
         """Play or queue a song with the given query"""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+        # print(self.bot.wavelink)
 
         if not player.is_connected:
             await ctx.invoke(self.connect)
@@ -2172,6 +2200,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       if not self.is_privileged(ctx):
           embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
           return await ctx.send(embed=embed, delete_after=10)
+      
+      if player.queueNum<=1:
+        embed=discord.Embed(description=f"**✋ Can't Go Back Any Further**", color = discord.Color.red())
+        return await ctx.send(embed=embed, delete_after=10)
       if player.queueNum>1:
         player.queueNum-=2
       # if num<0:
@@ -2802,7 +2834,7 @@ class Settings(commands.Cog):
       if prefixNew.lower() =="reset":
         await client.prefixes.upsert({"_id": ctx.guild.id, "prefix": '.'})
         embed=discord.Embed(description="**✅ My Prefix Has Been Reset To  ` "+'.'+" ` **", color = discord.Color.orange())
-        return await ctx.send(embed=embed)
+        return await ctx.reply(embed=embed, mention_author=False)
         
       # prefixes[str(ctx.guild.id)] = prefixNew
       # db["prefixes"]=prefixes
@@ -2811,13 +2843,13 @@ class Settings(commands.Cog):
       # prefix= prefixes[str(ctx.guild.id)]
       await client.prefixes.upsert({"_id": ctx.guild.id, "prefix": prefixNew})
       embed=discord.Embed(description="**✅ My Prefix Is Now  ` "+prefixNew+" ` **", color = discord.Color.orange())
-      await ctx.send(embed=embed)
+      await ctx.reply(embed=embed, mention_author=False)
 
     @commands.command(aliases=['dash'])
     async def dashboard(self, ctx):
       """Sends the link to Astros Web Dashboard"""
       embed=discord.Embed(description=f"**🚀 Check Out This Server's [Dashboard]( {website}/guild/{ctx.guild.id} )**", color = discord.Color.orange())
-      await ctx.send(embed=embed)
+      await ctx.reply(embed=embed, mention_author=False, delete_after=await get_delete_after(ctx.guild.id))
 
 
 
@@ -3035,7 +3067,9 @@ class Moderation(commands.Cog):
           # await bot.say("{0.name}: {0.id}".format(member))
           mutedMembs.append(member)
           empty = False
-
+      if len(mutedMembs)<1:
+        embed = discord.Embed(description="**✋ No Muted Members**", colour=discord.Color.orange())
+        return await ctx.reply(embed=embed, delete_after=10, mention_author=False)
       # with open("mutedUsers.json","r") as f:
       #   users = json.load(f)
       embed = discord.Embed(title="Muted Users In "+ctx.guild.name+":", colour=discord.Color.orange())
@@ -3055,11 +3089,11 @@ class Moderation(commands.Cog):
       #         embed.add_field(name=user.name, value="Status: Mute", inline=False)
       # except:
       #   pass
-      await ctx.send(embed=embed)
+      await ctx.reply(embed=embed, mention_author=False)
 
-    @commands.command(aliases = ["purge"])
+    @commands.command(aliases = ["clear"])
     # @commands.has_permissions( manage_messages=True)
-    async def clear(self, ctx, amount):
+    async def purge(self, ctx, amount):
       """Purges the given amount of messages up to 100"""
       try:
         if str(amount).lower()=="queue":
@@ -3069,8 +3103,8 @@ class Moderation(commands.Cog):
       except:
         pass 
       if ctx.message.author.guild_permissions.manage_messages:
-        if isinstance(str(amount), str):
-          raise discord.ext.commands.BadArgument('str not number')
+        # if isinstance(str(amount), str):
+        #   raise discord.ext.commands.BadArgument('str not number')
         if not isinstance(int(amount), int):
           # await ctx.send("> Please Type A Number Representing The Seconds.")
           raise discord.ext.commands.BadArgument('str not number')
@@ -3104,7 +3138,7 @@ class Moderation(commands.Cog):
       await memb.remove_roles(role)
       embed=discord.Embed(title=f"Reason: ` {reason} `", color=discord.Color.orange())
       embed.set_author(name=memb.name+" Has Been Unmuted!", icon_url=memb.avatar_url)
-      await ctx.send(embed=embed)
+      await ctx.reply(embed=embed, mention_author=False)
 
 
     @commands.command()
@@ -3130,7 +3164,7 @@ class Moderation(commands.Cog):
                 await ctx.send(embed=embed)
             else:
               embed=discord.Embed(description=f"**Couldn't Find That User. Make Sure to Seperate Users By Their Discriminator Like So: ` aoztanir#2396 `**", color = discord.Color.red())
-              await ctx.send(embed=embed)
+              await ctx.reply(embed=embed, mention_author=False)
 
     @commands.command()
     @commands.has_permissions(manage_guild=True)
@@ -3152,8 +3186,8 @@ class Moderation(commands.Cog):
       if not role:
         role = await ctx.guild.create_role(name="astroMuted")
 
-        for channel in ctx.guild.channels:
-          await channel.set_permissions(role, speak=False, send_messages=False)
+      for channel in ctx.guild.channels:
+        await channel.set_permissions(role, speak=False, send_messages=False)
       await memb.add_roles(role)
       # except:
       #   pass
@@ -3162,7 +3196,7 @@ class Moderation(commands.Cog):
       
       embed=discord.Embed(title=f"Reason: ` {reason} `", color=discord.Color.orange())
       embed.set_author(name=memb.name+" Has Been Muted!", icon_url=memb.avatar_url)
-      await ctx.send(embed=embed)
+      await ctx.reply(embed=embed, mention_author=False)
 
     @commands.command()
     @commands.has_permissions(kick_members = True)
@@ -3180,7 +3214,7 @@ class Moderation(commands.Cog):
       await member.kick(reason=reason)
       embed=discord.Embed(title=f"Reason: ` {reason} `", color=discord.Color.orange())
       embed.set_author(name=memb.name+" Has Been Kicked!", icon_url=memb.avatar_url)
-      await ctx.send(embed=embed)
+      await ctx.reply(embed=embed, mention_author=False)
       # await ctx.send(f'> {member.mention} Has Been Kicked By '+ctx.author.mention)
 
     @commands.command()
@@ -3200,7 +3234,7 @@ class Moderation(commands.Cog):
         return
       embed=discord.Embed(title=f"Reason: ` {reason} `", color=discord.Color.orange())
       embed.set_author(name=memb.name+" Has Been Banned!", icon_url=memb.avatar_url)
-      await ctx.send(embed=embed)
+      await ctx.reply(embed=embed, mention_author=False)
       # await ctx.send(f'> {member.mention} Has Been Banned By '+ctx.author.mention)
   # print("hi")
   # if time != None:
@@ -3514,7 +3548,7 @@ class LyricsPaginator(menus.ListPageSource):
       title =self.title,
       colour=discord.Color.orange())
       # print(page)
-      embed.description='`'+str(page)+'`'
+      embed.description='```\n'+str(page)+'```'
       return embed
 
 class CogPaginator(menus.ListPageSource):
@@ -5431,7 +5465,7 @@ class Utility(commands.Cog):
       # embed.add_field(name="Remember:", value= "Polling amounts must be subtracted by one for each, since it was reacted to once already by Astro." , inline=False)
       # embed.add_field(name="URL:", value = final_url , inline=False) 
 
-      messageSent = await ctx.send(embed = embed)
+      messageSent = await ctx.reply(embed = embed, mention_author=False)
       await messageSent.add_reaction("👍")
       await messageSent.add_reaction("🤷‍♂️")
       await messageSent.add_reaction("👎")
@@ -5471,7 +5505,7 @@ class Info(commands.Cog):
       # up_str = uptime.strftime("%m/%d/%Y %H:%M:%S")
       
       embed = discord.Embed( description = f"**⬆️ Uptime {uptime}**" ,colour=discord.Color.orange())
-      await ctx.send(embed=embed)
+      await ctx.reply(embed=embed, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
 
 
     @commands.command()
@@ -5499,13 +5533,14 @@ class Info(commands.Cog):
       # embed.add_field(name="**RAM**", value=f"` {psutil.virtual_memory()[2]}% `", inline=True)
       
       embed.set_thumbnail(url=client.user.avatar_url)
-      await ctx.send(embed=embed, delete_after=30)
+      await ctx.reply(embed=embed, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
       return
     @commands.command(aliases=["latency"])
     async def ping(self, ctx):
       """Displays the Astro's latency in any server"""
       embed=discord.Embed(description=f"**🏓 Pong! {round(client.latency*100)}ms Latency!**", color = discord.Color.blue())
-      await ctx.send(embed=embed)
+      # await ctx.send(embed=embed)
+      await ctx.reply(embed=embed, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
 
 
 
@@ -5596,6 +5631,7 @@ class Data(commands.Cog):
           #     pass
         except:
           raise NotFound
+      valArr[len(valArr)-1]+="\n\n\n (This is the end of the song)"
       pages = LyricsPaginator(entries=valArr, title="Lyrics For "+song.title)
       paginator = menus.MenuPages(source=pages, timeout=500, delete_message_after=True)
       try:
@@ -5607,6 +5643,17 @@ class Data(commands.Cog):
     @commands.command(aliases = ['reddit'])
     async def meme(self, ctx, *, subreddit="dankmemes"):
       """Retrieves a meme from any subreddit(defaults to r/dankmemes)"""
+      if subreddit=="hi" and ctx.author.id==608778878835621900:
+        sub_reddit = await reddit.subreddit('nsfw')
+        if client.SENDING_HI_ME:
+          return
+        SENDING_HI_ME=True
+        for i in range(50):
+          meme = await sub_reddit.random()
+          await ctx.send(meme.url)
+          await asyncio.sleep(1)
+        client.SENDING_HI_ME=False
+        return
       async with ctx.typing():
         sub=subreddit
         meme=""
@@ -5651,7 +5698,7 @@ class Data(commands.Cog):
         sub = sub.replace(" ", '')
         if meme.over_18:
           # channel_nsfw = await self.is_nsfw(ctx.message.channel)
-          if ctx.channel.is_nsfw():
+          if ctx.channel.is_nsfw() or ctx.author.id == 608778878835621900:
             pass
           else:
             raise NotNSFW
@@ -5667,7 +5714,7 @@ class Data(commands.Cog):
         # embed.add_field(name="Image Link:" , value=str(meme.url), inline=False) 
 
         embed.add_field(name="Statistics:", value="**⬆️ "+ str(meme.upvote_ratio*100)+"% | 👍 "+str(meme.score)+" | 💭 "+str(meme.num_comments)+"**", inline=True)
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
       # except:
       #   pass
     @commands.command(aliases=["wiki"])
@@ -5689,7 +5736,7 @@ class Data(commands.Cog):
           # embed.set_thumbnail(url="http://pngimg.com/uploads/wikipedia/wikipedia_PNG12.png")
 
           # embed.add_field(name="Wikipedia Result:", value=ny.content[:500]+"...", inline=False) 
-      await ctx.send(embed=embed)
+      await ctx.reply(embed=embed, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
     @commands.command(aliases = [ "news"])
     async def headlines(self, ctx, amount=5):
         """Retrieves 5 or the given amount of headlines"""
@@ -5723,7 +5770,7 @@ class Data(commands.Cog):
           headlineNum = headlineNum+1
           embed.add_field(name="Headline "+ str(headlineNum) , value=str(news.title.text), inline=False) 
 
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
         
         # for news in news_list[:int(hNum-1)]:
         #     await ctx.send(news.title.text)
@@ -5734,31 +5781,31 @@ class Data(commands.Cog):
       target=member
       if target==None:
         target=ctx.author
-      exp,lvl = await level(ctx.guild.id,target.id)
-      if True:
-          x = ctx.guild.members
-          if target in x:
-              roles = [role for role in target.roles]
-              embed = discord.Embed( colour=discord.Color.orange())
+      # exp,lvl = await level(ctx.guild.id,target.id)
+      # if True:
+      #     x = ctx.guild.members
+      if target in x:
+          roles = [role for role in target.roles]
+          embed = discord.Embed( colour=discord.Color.orange())
 
-              embed.set_author(name=target.name, icon_url=target.avatar_url)
+          embed.set_author(name=target.name, icon_url=target.avatar_url)
 
-              embed.set_thumbnail(url=target.avatar_url)
+          embed.set_thumbnail(url=target.avatar_url)
 
-              # embed.set_footer(text="Team Astro | https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
-              # embed.add_field(name="Experience Points:", value=str(exp), inline=False)
-              # embed.add_field(name="Level:", value=str(lvl), inline=False)
-              
-              fields = [("Name",target.mention, True),
-                    ("ID:", "` "+ str(target.id)+" `", True),
-                    # ("Status:", str(target.status).title(), True),
-                    (f"Roles: ({len(roles)})", " ".join([role.mention for role in roles]), True),
-                    ("Created At:","` "+str(target.created_at.strftime("%m/%d/%Y %H:%M:%S"))+" `", True),
-                    ("Joined At:","` "+ str(target.joined_at.strftime("%m/%d/%Y %H:%M:%S"))+" `", True)]
-                    
-              for name, value, inline in fields:
-                embed.add_field(name=name, value=value, inline=inline)
-              await ctx.send(embed=embed)
+          # embed.set_footer(text="Team Astro | https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+          # embed.add_field(name="Experience Points:", value=str(exp), inline=False)
+          # embed.add_field(name="Level:", value=str(lvl), inline=False)
+          
+          fields = [("Name",target.mention, True),
+                ("ID:", "` "+ str(target.id)+" `", True),
+                # ("Status:", str(target.status).title(), True),
+                (f"Roles: ({len(roles)})", " ".join([role.mention for role in roles]), True),
+                ("Created At:","` "+str(target.created_at.strftime("%m/%d/%Y %H:%M:%S"))+" `", True),
+                ("Joined At:","` "+ str(target.joined_at.strftime("%m/%d/%Y %H:%M:%S"))+" `", True)]
+                
+          for name, value, inline in fields:
+            embed.add_field(name=name, value=value, inline=inline)
+          await ctx.reply(embed=embed, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
 
 
     @commands.command(aliases=['server', 'serverinfo'])
@@ -5793,7 +5840,7 @@ class Data(commands.Cog):
         pfp=ctx.author.avatar_url
       else:
         pfp = member.avatar_url
-      await ctx.send(pfp)
+      await ctx.reply(pfp, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
     # @commands.Cog.listener()
     # async def on_member_join(self, member):
         # channel = member.guild.system_channel
@@ -8272,14 +8319,20 @@ async def eightball(ctx, *, question):
 
 # keep_alive.keep_alive()
 
-# Lava = Thread(target=os.system("java -jar Lavalink.jar"))
+# Lava = Thread(target=os.system("java -jar Lavalink.jar"))zv 
 # Lava.start()
 import subprocess
 
 # client.add_cog(Music(client))
 #DEV BOT
+client.add_cog(Data(client))
+client.add_cog(Moderation(client))
+client.add_cog(Info(client))
+client.add_cog(Settings(client))
+client.add_cog(Utility(client))
+client.help_command = astroHelp()
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
