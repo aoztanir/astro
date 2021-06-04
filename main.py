@@ -466,10 +466,11 @@ class Player(wavelink.Player):
         self.skip_votes = set()
         self.shuffle_votes = set()
         self.stop_votes = set()
-    async def invoke(self, commandStr:str):
+    async def invoke(self, commandStr:str, author):
       ctx = self.context
       command = client.get_command(commandStr)
       ctx.command = command
+      ctx.author=author
 
       await client.invoke(ctx)
     async def customPause(self):
@@ -2943,12 +2944,15 @@ async def update_db():
           operations=[]
         el=0
         for operation in operations:
+          guild = client.get_guild(id=int(player.guild_id))
+          author = guild.get_member(int(operation["id"]))
+          # author = client.get_user(int(operation["id"]))
           el+=1
-          print(operation)
-          if operation=="pause":
+          # print(operation)
+          if operation["command"]=="pause":
             await player.customPause()
           else:
-            await player.invoke(operation)
+            await player.invoke(operation["command"], author=author)
           # if operation=="skip":
           #   player.invoke('skip')
           # if operation=="pause":
@@ -8432,7 +8436,7 @@ client.add_cog(Settings(client))
 client.add_cog(Utility(client))
 client.help_command = astroHelp()
 
-client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
