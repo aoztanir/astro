@@ -136,36 +136,42 @@ def formatTitle(title: str):
   # title=title.replace("Official Video","")
 
 async def get_delete_after(guild_id: int):
-  data = await client.delete_after.find(guild_id)
-  if not data or "delete_after" not in data:
+  try:
+    data = await client.delete_after.find(guild_id)
+    if not data or "delete_after" not in data:
+      return None
+    # return None
+    print(data)
+    if data["delete_after"]==-1:
+      return None
+    return data["delete_after"]
+  except Exception as e:
+    print(e)
     return None
-  # return None
-  print(data)
-  if data["delete_after"]==-1:
-    return None
-  return data["delete_after"]
-  
 
 async def get_prefix(client, message):
   # try:
     # return '.'
     # prefixes = datab['prefixes']
-    if not message.guild:
-      return None
-
     try:
-      data = await client.prefixes.find(message.guild.id)
+      if not message.guild:
+        return None
 
-      if not data or  "prefix" not in data:
+      try:
+        data = await client.prefixes.find(message.guild.id)
+
+        if not data or  "prefix" not in data:
+          await client.prefixes.upsert({"_id": message.guild.id, "prefix": '.'})
+          return commands.when_mentioned_or('.')(client, message)
+
+        return commands.when_mentioned_or(data["prefix"])(client, message) 
+
+      except Exception as e:
+        print(e)
         await client.prefixes.upsert({"_id": message.guild.id, "prefix": '.'})
         return commands.when_mentioned_or('.')(client, message)
-
-      return commands.when_mentioned_or(data["prefix"])(client, message) 
-
-    except Exception as e:
-      print(e)
-      await client.prefixes.upsert({"_id": message.guild.id, "prefix": '.'})
-      return commands.when_mentioned_or('.')(client, message)   
+    except:
+      return commands.when_mentioned_or('.')(client, message)
     # if client.user.id==841760295432880168:
     #   return '!'
     # prefixes=datab['prefixes']
@@ -230,6 +236,8 @@ async def on_ready():
     client.mongo= motor.motor_asyncio.AsyncIOMotorClient(str('mongodb+srv://aoztanir:astro@cluster0.740dq.mongodb.net/astro?retryWrites=true&w=majority'))
     process = subprocess.Popen("java -jar Lavalink.jar", shell=True)
     client.db = client.mongo["astro"]
+    client.operations= Document(client.db, 'operation')
+    client.music= Document(client.db, 'music')
     client.delete_after= Document(client.db, 'delete_after')
     client.prefixes= Document(client.db, 'prefixes')
     client.announcement= Document(client.db, 'announcement')
@@ -290,6 +298,7 @@ async def on_ready():
     
     print(str(client.shards))
     print(str(client.latencies))
+    print("STARTING")
     await update_db.start()
     
     # await update_db()
@@ -457,6 +466,27 @@ class Player(wavelink.Player):
         self.skip_votes = set()
         self.shuffle_votes = set()
         self.stop_votes = set()
+    async def invoke(self, commandStr:str):
+      ctx = self.context
+      command = client.get_command(commandStr)
+      ctx.command = command
+
+      await client.invoke(ctx)
+    async def customPause(self):
+      if self.is_playing and not self.is_paused:
+        ctx = self.context
+        command = client.get_command('pause')
+        ctx.command = command
+
+        return await client.invoke(ctx)
+
+      if self.is_paused:
+        ctx = self.context
+
+        command = client.get_command('resume')
+        ctx.command = command
+
+        return await client.invoke(ctx)
     async def find(self,ctx, query):
       query = query.strip('<>')
       try:
@@ -501,6 +531,7 @@ class Player(wavelink.Player):
           if track.id == "spotify": 
             # search= ,
             # search=search.strip("<>")
+            spot=track
             spotify_track = await self.node.get_tracks(f"ytsearch:{track.title} - {track.author} audio",  retry_on_failure=True)
             if spotify_track==None:
               print("NONE FIRST")
@@ -518,6 +549,7 @@ class Player(wavelink.Player):
             # if self.loopSong==True:
             #   self.queue.put_nowait(trackToQueue)
             # return await super().play(trackToQueue)
+            trackToQueue.uri=spot.uri
             track=trackToQueue
             # try:
             #   spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title, retry_on_failure=True)
@@ -547,7 +579,9 @@ class Player(wavelink.Player):
         # self.loopTrack=track
         # TRACKO = track
         print(track.length)
-        return await super().play( track)
+        queueNumSave=self.queueNum
+        await super().play( track)
+
       except Exception as e:
         print(e)
         print("THERE WAS ERROR IN SECOND")
@@ -769,6 +803,10 @@ class Player(wavelink.Player):
         return embed
       except:
         return discord.Embed(description=f'**✋ Currently Nothing is Playing**', colour=discord.Color.green())
+
+    async def destroy(self):
+      await client.music.delete(self.guild_id)
+      await super().destroy()
     async def is_position_fresh(self) -> bool:
         """Method which checks whether the player controller should be remade or updated."""
         try:
@@ -1213,6 +1251,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         except:
           pass
         # payload.player.queueNum+=1
+        
         # await asyncio.sleep(1)
         await payload.player.do_next()
 
@@ -1331,7 +1370,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     
     
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=5)
     async def update_np(self):
       # await self.bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = '@Astro | .help'))
       for player in self.bot.wavelink.players.values():
@@ -1342,12 +1381,22 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           pass
           if player.current != None:
             await player.invoke_controller()
+          # data=self.bot.music.find(player.guild.id)
+          # queue=[]
+          # for element in player.queue:
+          #   queue.append({"title": element.title, "length": element.length, "thumb": element.thumb, "uri": element.uri})
+          # cur=None
+          # if player.current!=None:
+          #   cur={"title": player.current.title, "length": player.current.length, "thumb": player.current.thumb, "uri": player.current.uri}
+          # await self.bot.music.upsert({"_id": player.guild_id, "queue": queue, "current": cur, "number": player.queueNum})
+          
           #   if player.loopSong==True:
           #     print("putting BOIS")
           #     if player.current !=None:
           #       player.queue.put_nowait(player.current)
           #       player.queue.put_nowait(player.current)
-        except:
+        except Exception as e:
+          print(e)
           pass
 
     # @cog_ext.cog_slash(name="play",
@@ -1465,6 +1514,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             # This part is very important, this is the "fake track" that we'll look for when we queue up the track to play
             tracks=[]
             for track in search_tracks:
+
               tracks.append(Track('spotify', {'title': track.name or 'Unknown', 'author': ', '.join(artist.name for artist in track.artists) or 'Unknown',
                                           'length': track.duration or 0, 'identifier': track.id or 'Unknown', 'uri': track.url or 'https://open.spotify.com/',
                                           'isStream': False, 'isSeekable': False, 'position': 0, 'thumbnail': track.images[0].url if track.images else None}, requester=ctx.author
@@ -2865,7 +2915,7 @@ async def change_status():
 
 # cluster = MongoClient("mongodb+srv://astro:astro@cluster0.alu7p.mongodb.net/test")
 # mongodb = cluster["AstroData"]
-@tasks.loop(seconds=2)
+@tasks.loop(seconds=1)
 async def update_db():
   # mongoQueue=mongodb["queue"]
   # db["reaction_roles"]={}
@@ -2877,6 +2927,54 @@ async def update_db():
   jsonDATA = await client.announcement.find(2)#original insert for announcements
   announcements=jsonDATA["announcements"]
 
+  for player in client.wavelink.players.values():
+    # embed = # add your embed code here
+    try:
+      # data=self.bot.music.find(player.guild.id)
+      # queue=[]
+      # for element in player.queue:
+      #   queue.append({"title": element.title, "length": element.length, "thumb": element.thumb, "uri": element.uri})
+      
+      data = await client.operations.find(int(player.guild_id))
+      # print(data)
+      if data:
+        operations = data["operations"]
+        if operations==None:
+          operations=[]
+        el=0
+        for operation in operations:
+          el+=1
+          print(operation)
+          if operation=="pause":
+            await player.customPause()
+          else:
+            await player.invoke(operation)
+          # if operation=="skip":
+          #   player.invoke('skip')
+          # if operation=="pause":
+          #   await player.customPause()
+          # if operation=="previous":
+          #   player.invoke(')
+
+            
+            
+          
+        if el>0:
+          await client.operations.upsert({"_id": player.guild_id, "operations":[]})
+      cur=None
+      if player.current!=None:
+        cur={"title": formatTitle(player.current.title), "length": player.current.length, "thumb": player.current.thumb, "uri": player.current.uri}
+        await client.music.upsert({"_id": player.guild_id, "current": cur, "number": player.queueNum})
+      
+      # for element in 
+      #   if player.loopSong==True:
+      #     print("putting BOIS")
+      #     if player.current !=None:
+      #       player.queue.put_nowait(player.current)
+      #       player.queue.put_nowait(player.current)
+    except Exception as e:
+      print(e)
+      pass
 
 
   for i in  range(len(announcements)):
@@ -5460,7 +5558,7 @@ class Utility(commands.Cog):
         # Add rs/608778878835621900/76e69643d799ee584dd46afa91127105.webp")
 
       # embed.set_thumbnail(url="https://image.flaticon.com/icons/png/512/1946/1946385.png")
-      embed.set_author(name=f"📈  {ctx.author.name}" + question, icon_url=f"{ctx.author.avatar_url}")
+      embed.set_author(name=f"📈  " + question, icon_url=f"{ctx.author.avatar_url}")
       # embed.add_field(name="Question:", value= question.title() , inline=False)
       # embed.add_field(name="Remember:", value= "Polling amounts must be subtracted by one for each, since it was reacted to once already by Astro." , inline=False)
       # embed.add_field(name="URL:", value = final_url , inline=False) 
@@ -8334,7 +8432,7 @@ client.add_cog(Settings(client))
 client.add_cog(Utility(client))
 client.help_command = astroHelp()
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
