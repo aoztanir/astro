@@ -398,6 +398,9 @@ class CannotLoop(commands.CommandError):
     """Error raised when no suitable voice channel was supplied."""
     pass
 
+class OnlyDJ(commands.CommandError):
+    """Error raised when no suitable voice channel was supplied."""
+    pass
 class NotFound(commands.CommandError):
     """Error raised when no suitable voice channel was supplied."""
     pass
@@ -453,6 +456,7 @@ class Player(wavelink.Player):
             self.dj: discord.Member = self.context.author
         self.loopSong=False
         # self.queue = asyncio.Queue()
+        self.dcWaiting=False
         self.queue=[]
         self.controller = None
         self.loopQueueNum=0
@@ -543,6 +547,7 @@ class Player(wavelink.Player):
             trackToQueue.title=track.title
             # if track.thumb!=None:
             #   trackToQueue.thumb=track.thumb
+
             if trackToQueue==None:
               print("NONE SECOND")
               await self.stop()
@@ -551,6 +556,9 @@ class Player(wavelink.Player):
             #   self.queue.put_nowait(trackToQueue)
             # return await super().play(trackToQueue)
             trackToQueue.uri=spot.uri
+            print(spot.info["thumb"])
+            if spot.info["thumb"]:
+              trackToQueue.thumb=spot.info["thumb"]
             track=trackToQueue
             # try:
             #   spotifyTrack=await self.bot.wavelink.get_tracks(f'ytsearch:'+track.title, retry_on_failure=True)
@@ -777,13 +785,14 @@ class Player(wavelink.Player):
         position+="|"
         posNum=int(30*positionPercent)+1
         position = position[:posNum] + status + position[posNum+1:]
+        position="`"+position+"`"
         if track.is_stream:
           position = ""
         channel = self.bot.get_channel(int(self.channel_id))
         qsize = len(self.queue)
 
         embed = discord.Embed(colour=discord.Color.green())
-        embed.description = f'**Now Playing:**\n**[{formatTitle(track.title)}]({track.uri})**\n\n`{position}`\n\n'
+        embed.description = f'**Now Playing:**\n**[{formatTitle(track.title)}]({track.uri})**\n\n{position}\n\n'
         try:
           embed.set_thumbnail(url=track.thumb)
           if track.thumb==None:
@@ -792,7 +801,7 @@ class Player(wavelink.Player):
           embed.set_thumbnail(url=f"{client.user.avatar_url}")
 
         embed.add_field(name='Duration', value=f"**` {length} `**")
-        embed.add_field(name='Song Number', value=f'` {str(self.queueNum)} `')
+        embed.add_field(name='Did You Know?', value=f"**You can control music using Astro's [dashboard]({website}/guild/{self.context.guild.id})!**")
         # embed.add_field(name='Volume', value=f'**` {self.volume}% `**')
         embed.add_field(name='Volume', value=f'**` {self.volume}% `**')
         embed.add_field(name='Requested By', value=track.requester.mention)
@@ -1154,6 +1163,12 @@ class PaginatorSource(menus.ListPageSource):
         # We always want to embed even on 1 page of results...
         return True
 
+async def checkVcChannel(channel):
+  member_count=0
+  for element in channel.members:
+    if not element.bot:
+      member_count+=1
+  return member_count
 
 
 
@@ -1371,7 +1386,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     
     
 
-    @tasks.loop(seconds=5)
+    @tasks.loop(seconds=10)
     async def update_np(self):
       # await self.bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = '@Astro | .help'))
       for player in self.bot.wavelink.players.values():
@@ -1379,7 +1394,28 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         try:
           # if player.loopQueue:
           #   player.queue_for_loop=player.queue
-          pass
+          # if not player.dcWaiting:
+          #   # member_count=0
+            
+          #   channel = self.bot.get_channel(int(player.channel_id))
+            
+          #   if await checkVcChannel(channel)==0:
+          #     player.dcWaiting=True
+          #     print("SLEEPING FOR LEAVING VC")
+              
+          #     await asyncio.sleep(300)
+          #     print("SLEEPING FOR LEAVING VC 2")
+          #     if await checkVcChannel(channel)==0:
+              
+          #       await player.teardown()
+          #       embed=discord.Embed(description="**👋 I Left The Voice Channel Because I was Inactive For Too Long**", color = discord.Color.green())
+          #       return await player.context.send(embed=embed)
+          #     else:
+          #       player.dcWaiting=False
+          # print(channel.name)
+
+          # pass
+          
           if player.current != None:
             await player.invoke_controller()
           # data=self.bot.music.find(player.guild.id)
@@ -1515,10 +1551,15 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             # This part is very important, this is the "fake track" that we'll look for when we queue up the track to play
             tracks=[]
             for track in search_tracks:
-
-              tracks.append(Track('spotify', {'title': track.name or 'Unknown', 'author': ', '.join(artist.name for artist in track.artists) or 'Unknown',
+              print(track.images[0].url)
+              if len(track.images)>0:
+                url = track.images[0].url
+              else:
+                url=None
+              
+              tracks.append(Track('spotify', {'title': track.name or 'Unknown', 'thumb': url, 'author': ', '.join(artist.name for artist in track.artists) or 'Unknown',
                                           'length': track.duration or 0, 'identifier': track.id or 'Unknown', 'uri': track.url or 'https://open.spotify.com/',
-                                          'isStream': False, 'isSeekable': False, 'position': 0, 'thumbnail': track.images[0].url if track.images else None}, requester=ctx.author
+                                          'isStream': False, 'isSeekable': False, 'position': 0, 'thumb': url}, requester=ctx.author
                       ))
 
             if not tracks:
@@ -1684,8 +1725,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return
 
       if not self.is_privileged(ctx):
-          embed=discord.Embed(description=f"**Only A DJ Or Admin Can Can Change EQ**", color = discord.Color.red())
-          return await ctx.send(embed=embed, delete_after=10)
+          raise OnlyDJ
       # query=item
       number = await player.find(ctx, item)
 
@@ -1736,7 +1776,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return
 
         if self.is_privileged(ctx):
-            embed=discord.Embed(description="**⏸ Paused**", color = discord.Color.blue())
+            embed=discord.Embed(description=f"**⏸ Paused By {ctx.author.mention}**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
             # await ctx.send('.', )
             player.pause_votes.clear()
@@ -1764,7 +1804,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return
 
         if self.is_privileged(ctx):
-            embed=discord.Embed(description=f"**▶️ Resumed**", color = discord.Color.blue())
+            embed=discord.Embed(description=f"**▶️ Resumed By {ctx.author.mention}**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
             player.resume_votes.clear()
 
@@ -1792,7 +1832,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return
 
         if self.is_privileged(ctx):
-            embed=discord.Embed(description="**⏭ Skipped**", color = discord.Color.blue())
+            embed=discord.Embed(description=f"**⏭ Skipped By {ctx.author.mention}**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
             player.skip_votes.clear()
 
@@ -1951,8 +1991,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       if not player.is_connected:
           return
       if not self.is_privileged(ctx):
-          embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
-          return await ctx.send(embed=embed, delete_after=10)
+          raise OnlyDJ
       # if amount==None:
       #   await player.seek(0)
       #   embed=discord.Embed(title=f"⏺ Rewinding".title(), color = discord.Color.teal())
@@ -2001,8 +2040,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return
 
         if not self.is_privileged(ctx):
-            embed=discord.Embed(description=f"**Only A DJ Or Admin Can Can Change EQ**", color = discord.Color.red())
-            return await ctx.send(embed=embed, delete_after=10)
+            raise OnlyDJ
 
         eqs = {'flat': wavelink.Equalizer.flat(),
                'boost': wavelink.Equalizer.boost(),
@@ -2030,8 +2068,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return
 
         if not self.is_privileged(ctx):
-            embed=discord.Embed(description=f"**Only A DJ Or Admin Can Can Change EQ**", color = discord.Color.red())
-            return await ctx.send(embed=embed, delete_after=10)
+            raise OnlyDJ
 
 
         # if not amount:
@@ -2146,8 +2183,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       if not player.is_connected:
           return
       if not self.is_privileged(ctx):
-          embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
-          return await ctx.send(embed=embed, delete_after=10)
+          raise OnlyDJ
       player.queue.clear()
       embed=discord.Embed(description=f"**💣 Cleared**", color = discord.Color.teal())
       return await ctx.send(embed=embed, delete_after=10)
@@ -2163,8 +2199,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       if not player.is_connected:
           return
       if not self.is_privileged(ctx):
-          embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
-          return await ctx.send(embed=embed, delete_after=10)
+          raise OnlyDJ
       # if index==None:
  
       #   embed=discord.Embed(description=f"**Type A Track Number To Skip To**".title(), color = discord.Color.teal())
@@ -2221,8 +2256,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       if not player.is_connected:
           return
       if not self.is_privileged(ctx):
-          embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
-          return await ctx.send(embed=embed, delete_after=10)
+          raise OnlyDJ
       if not player.loopQueue and player.loopSong:
         raise CannotLoop
       
@@ -2249,8 +2283,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       if not player.is_connected:
           return
       if not self.is_privileged(ctx):
-          embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
-          return await ctx.send(embed=embed, delete_after=10)
+          raise OnlyDJ
       
       if player.queueNum<=1:
         embed=discord.Embed(description=f"**✋ Can't Go Back Any Further**", color = discord.Color.red())
@@ -2275,8 +2308,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       if not player.is_connected:
           return
       if not self.is_privileged(ctx):
-          embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
-          return await ctx.send(embed=embed, delete_after=10)
+          raise OnlyDJ
 
       if not player.loopSong and player.loopQueue:
         raise CannotLoop
@@ -2314,8 +2346,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       if not player.is_connected:
           return
       if not self.is_privileged(ctx):
-          embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
-          return await ctx.send(embed=embed, delete_after=10)
+          raise OnlyDJ
       if timestamp==None:
         await player.seek(0)
         embed=discord.Embed(description=f"**⏺ Rewinding**".title(), color = discord.Color.teal())
@@ -2346,8 +2377,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return
 
         if not self.is_privileged(ctx):
-            embed=discord.Embed(description=f"**Only A DJ Or Admin Can Use This Command**", color = discord.Color.red())
-            return await ctx.send(embed=embed, delete_after=10)
+            raise OnlyDJ
 
         members = self.bot.get_channel(int(player.channel_id)).members
 
@@ -2967,7 +2997,7 @@ async def update_db():
           await client.operations.upsert({"_id": player.guild_id, "operations":[]})
       cur=None
       if player.current!=None:
-        cur={"title": formatTitle(player.current.title), "length": player.current.length, "thumb": player.current.thumb, "uri": player.current.uri}
+        cur={"title": formatTitle(player.current.title), "length": int(player.current.length/1000), "position": int(player.position/1000), "thumb": player.current.thumb, "uri": player.current.uri}
         await client.music.upsert({"_id": player.guild_id, "current": cur, "number": player.queueNum})
       
       # for element in 
@@ -3153,7 +3183,35 @@ async def update_db():
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
+        self.dcCheck.start()
+    @tasks.loop(seconds=10)
+    async def dcCheck(self):
+      # await self.bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = '@Astro | .help'))
+      try:
+        for player in self.bot.wavelink.players.values():
+          # embed = # add your embed code here
+          # if player.loopQueue:
+          #   player.queue_for_loop=player.queue
+          if not player.dcWaiting:
+            # member_count=0
+            
+            channel = self.bot.get_channel(int(player.channel_id))
+            
+            if await checkVcChannel(channel)==0:
+              player.dcWaiting=True
+              print("SLEEPING FOR LEAVING VC")
+              
+              await asyncio.sleep(300)
+              print("SLEEPING FOR LEAVING VC 2")
+              if await checkVcChannel(channel)==0:
+              
+                await player.teardown()
+                embed=discord.Embed(description="**👋 I Left The Voice Channel Because I was Inactive For Too Long**", color = discord.Color.green())
+                return await player.context.send(embed=embed)
+              else:
+                player.dcWaiting=False
+      except:
+        pass
 
     @commands.command()
     async def muted(self, ctx):
@@ -5994,7 +6052,9 @@ async def on_command_error(ctx, error):
     if "Bad Request" in str(error) or "invalid" in str(error).lower():
       embed=discord.Embed(description=f'**✋ Invalid URL**', color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
-
+    if isinstance(error, OnlyDJ):
+      embed=discord.Embed(description=f"**✋ {ctx.author.mention} Only A DJ Or Admin Can Can Change EQ**", color = discord.Color.red())
+      return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, CannotLoop):
       embed=discord.Embed(description=f"**✋ Oops! You Can't Loop Both The Queue And A Song**", color = discord.Color.orange())
       return await ctx.send(embed=embed, delete_after=10)
@@ -6058,7 +6118,7 @@ async def on_command_error(ctx, error):
     # if isinstance(error, NoChannelProvided):
     #   return await ctx.send_help
     if isinstance(error, NoChannelProvided):
-      embed=discord.Embed(description="**You must be in a voice channel to use this command**".title(), color = discord.Color.red())
+      embed=discord.Embed(description="**✋ Oops! You must be in a voice channel to use this command**".title(), color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
       # return await ctx.send('')
     if isinstance(error, discord.ext.commands.MissingRequiredArgument) or isinstance(error, discord.ext.commands.BadArgument) :
@@ -8436,7 +8496,7 @@ client.add_cog(Settings(client))
 client.add_cog(Utility(client))
 client.help_command = astroHelp()
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
