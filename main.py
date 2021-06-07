@@ -589,7 +589,9 @@ class Player(wavelink.Player):
         # TRACKO = track
         print(track.length)
         queueNumSave=self.queueNum
-        await super().play( track)
+        # self.current=track
+        await super().play( track, replace=False)
+        # 
 
       except Exception as e:
         print(e)
@@ -1257,7 +1259,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @wavelink.WavelinkMixin.listener('on_track_end')
     @wavelink.WavelinkMixin.listener('on_track_exception')
     async def on_player_stop(self, node: wavelink.Node, payload):
-        print("STOPPING IN ERROR HANDLER WAVELINK")
+        # print("STOPPING IN ERROR HANDLER WAVELINK")
         try:
           print(payload.error)
         except:
@@ -2232,7 +2234,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       player.queueNum=int(indexToSet)
       title_track = player.queue[player.queueNum].title
       await player.stop()
-      await player.do_next()
+      # await player.do_next()
       # for i in range(int(index)):
       #   await player.stop()
       #   await player.do_next()
@@ -2296,7 +2298,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       # if player.queueNum<0:
       #   player.queueNum==0
       await player.stop()
-      await player.do_next()
+      # await player.do_next()
       embed=discord.Embed(description=f"**⏮ Going Back**", color = discord.Color.teal())
       return await ctx.send(embed=embed, delete_after=10)
 
@@ -8496,7 +8498,7 @@ client.add_cog(Settings(client))
 client.add_cog(Utility(client))
 client.help_command = astroHelp()
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
