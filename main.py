@@ -11,7 +11,13 @@
 
 import discord
 # import datetime 
+from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
 # from datetime import *
+from discord.ext import tasks, commands
+from discord.ext import buttons
+import discord
+from discord.ext import commands, tasks
+import random
 import syllables
 import motor.motor_asyncio
 import pymongo
@@ -220,7 +226,7 @@ SET_UPTIME=datetime.now()
 
 @client.event
 async def on_ready():
-    
+    DiscordComponents(client)
     # SET_UPTIME=datetime.now()
     #COG ADDING
     
@@ -467,6 +473,7 @@ class Player(wavelink.Player):
         self.loopTrack=None
         self.pause_votes = set()
         self.resume_votes = set()
+        self.previous_votes = set()
         self.skip_votes = set()
         self.shuffle_votes = set()
         self.stop_votes = set()
@@ -1148,6 +1155,23 @@ class InteractiveController(menus.Menu):
         ctx.command = command
 
         await self.bot.invoke(ctx)
+
+
+
+class MyPaginator(buttons.Paginator):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @buttons.button(emoji='\u23FA')
+    async def record_button(self, ctx, member):
+        await ctx.send('This button sends a silly message! But could be programmed to do much more.')
+
+    @buttons.button(emoji='my_custom_emoji:1234567890')
+    async def silly_button(self, ctx, member):
+        await ctx.send('Beep boop...')
+
+
 class PaginatorSource(menus.ListPageSource):
     """Player queue paginator class."""
 
@@ -1155,9 +1179,12 @@ class PaginatorSource(menus.ListPageSource):
         super().__init__(entries, per_page=per_page)
 
     async def format_page(self, menu: menus.Menu, page):
-        embed = discord.Embed(title='Coming Up...', colour=discord.Color.orange())
+        embed = discord.Embed( colour=discord.Color.orange())
         # print(page)
         embed.description = '\n'.join(f'{title}' for index, title in enumerate(page, 1))
+        if len(self.entries)==0:
+          return discord.Embed(description="✋ The Queue Is Empty" ,colour=discord.Color.orange())
+
 
         return embed
 
@@ -1824,6 +1851,46 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             embed=discord.Embed(description=f"**{ctx.author.mention} Has Voted To Resume**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
 
+
+
+    @commands.command(aliases=['prev','back'])
+    async def previous(self, ctx: commands.Context):
+      """Goes back a song"""
+      player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+      
+      if not player.is_connected:
+          return
+      if player.queueNum<=1:
+          embed=discord.Embed(description=f"**✋ Can't Go Back Any Further**", color = discord.Color.red())
+          return await ctx.send(embed=embed, delete_after=10)
+      if self.is_privileged(ctx):
+        player.queueNum-=2
+        await player.stop()
+        embed=discord.Embed(description=f"**⏮ Previous By {ctx.author.mention}**", color = discord.Color.teal())
+        return await ctx.send(embed=embed, delete_after=10)
+
+      required = self.required(ctx)
+      player.previous_votes.add(ctx.author)
+
+      if len(player.previous_votes) >= required:
+        player.queueNum-=2
+        await player.stop()
+        embed=discord.Embed(description=f"**⏮ Vote Passed | Previous**", color = discord.Color.teal())
+        return await ctx.send(embed=embed, delete_after=10)
+      else:
+        embed=discord.Embed(description=f"**{ctx.author.mention} Has Voted To Skip**", color = discord.Color.blue())
+        await ctx.send(embed=embed, delete_after=10)
+      # if num<0:
+      #   num=0
+      
+      # if player.queueNum<0:
+      #   player.queueNum==0
+      
+      # await player.do_next()
+      
+
+
+
     @commands.command()
     # @commands.cooldown(1,3,commands.BucketType.guild)
     async def skip(self, ctx: commands.Context):
@@ -1876,7 +1943,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player.stop_votes.add(ctx.author)
 
         if len(player.stop_votes) >= required:
-            embed=discord.Embed(description="**👋 Vote Passed | Disconnected****", color = discord.Color.orange())
+            embed=discord.Embed(description="**👋 Vote Passed | Disconnected**", color = discord.Color.orange())
             await ctx.send(embed=embed, delete_after=10)
             await player.teardown()
         else:
@@ -1920,10 +1987,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if self.is_privileged(ctx):
             embed=discord.Embed(description="**🔀 Shuffled**", color = discord.Color.teal())
             await ctx.send(embed=embed, delete_after=10)
-            player.shuffle_votes.clear()
-            copy = player.queue[player.queueNum:]
-            random.shuffle(copy)
-            player.queue[player.queueNum:] = copy
+            song=player.queue[player.queueNum-1]
+            random.shuffle(player.queue)
+            player.queue.insert(player.queueNum-1, song)
             return
 
         required = self.required(ctx)
@@ -1933,9 +1999,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             embed=discord.Embed(description="**🔀 Vote Passed | Shuffled**", color = discord.Color.teal())
             await ctx.send(embed=embed, delete_after=10)
             player.shuffle_votes.clear()
-            copy = player.queue[player.queueNum:]
-            random.shuffle(copy)
-            player.queue[player.queueNum:] = copy
+            song=player.queue[player.queueNum-1]
+            random.shuffle(player.queue)
+            player.queue.insert(player.queueNum-1, song)
             return
         else:
             embed=discord.Embed(description=f"**{ctx.author.mention} Has Voted To Shuffle**", color = discord.Color.teal())
@@ -2033,6 +2099,12 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         # await player.set_volume(vol)
 
+ 
+    async def test(self,ctx):
+        pagey = MyPaginator(title='Silly Paginator', colour=0xc67862, embed=True, timeout=90, use_defaults=True,
+                            entries=[1, 2, 3], length=1, format='**')
+
+        await pagey.start(ctx)
     @commands.command(aliases=['eq'])
     async def equalizer(self, ctx: commands.Context, *, equalizer: str):
         """Change the players equalizer"""
@@ -2093,7 +2165,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if not player.is_connected:
             return
 
-        if len(player.queue) == 0 and player.current==None:
+        if len(player.queue) == 0:
             embed=discord.Embed(description=f"**✋ Add More Songs Before Using The Queue Command**", color = discord.Color.orange())
             return await ctx.send(embed=embed, delete_after=10)
         entries=[]
@@ -2187,6 +2259,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       if not self.is_privileged(ctx):
           raise OnlyDJ
       player.queue.clear()
+      player.queueNum=0
       embed=discord.Embed(description=f"**💣 Cleared**", color = discord.Color.teal())
       return await ctx.send(embed=embed, delete_after=10)
 
@@ -2277,30 +2350,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       return await ctx.send(embed=embed, delete_after=10)
     
 
-    @commands.command(aliases=['prev','back'])
-    async def previous(self, ctx: commands.Context):
-      """Goes back a song"""
-      player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
-      
-      if not player.is_connected:
-          return
-      if not self.is_privileged(ctx):
-          raise OnlyDJ
-      
-      if player.queueNum<=1:
-        embed=discord.Embed(description=f"**✋ Can't Go Back Any Further**", color = discord.Color.red())
-        return await ctx.send(embed=embed, delete_after=10)
-      if player.queueNum>1:
-        player.queueNum-=2
-      # if num<0:
-      #   num=0
-      
-      # if player.queueNum<0:
-      #   player.queueNum==0
-      await player.stop()
-      # await player.do_next()
-      embed=discord.Embed(description=f"**⏮ Going Back**", color = discord.Color.teal())
-      return await ctx.send(embed=embed, delete_after=10)
+    
 
     @commands.command(aliases=['loopsong','ls'])
     async def loop(self, ctx: commands.Context):
@@ -2864,11 +2914,7 @@ async def on_message(msg):
   await client.process_commands(msg)
 
 
-from discord.ext import tasks, commands
 
-import discord
-from discord.ext import commands, tasks
-import random
 
 
 player1 = ""
@@ -8498,7 +8544,7 @@ client.add_cog(Settings(client))
 client.add_cog(Utility(client))
 client.help_command = astroHelp()
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
