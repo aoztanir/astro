@@ -519,17 +519,20 @@ class Player(wavelink.Player):
       if isinstance(tracks, wavelink.TrackPlaylist):
           return -1
       else:
-    
+          largest={"ratio": 0, "num": -1}
           track = Track(tracks[0].id, tracks[0].info, requester=ctx.author)
-          print(track.title)
-          print("ENTERED")
+          # print(track.title)
+          # print("ENTERED")
           for i in range(len(self.queue)):
             ratio= fuzz.ratio(query, self.queue[i].title)
             print(ratio)
             ratio2 = fuzz.ratio(track.title, self.queue[i].title)
             if ratio>50 or ratio2>50:
-              return i
-          return -1
+              if max(ratio, ratio2)> largest["ratio"]:
+                largest={"ratio": max(ratio, ratio2), "num": i}
+          return largest["num"]
+      return -1       
+   
 
     async def play(self, track):
 
@@ -605,6 +608,11 @@ class Player(wavelink.Player):
         print("THERE WAS ERROR IN SECOND")
         await self.stop()
         return await self.do_next()
+    async def next(self):
+      if self.is_playing:
+        await self.stop()
+      else:
+        await self.do_next()
 
     async def do_next(self, jumping=False) -> None:
       try:
@@ -1170,13 +1178,25 @@ class MyPaginator(buttons.Paginator):
     @buttons.button(emoji='my_custom_emoji:1234567890')
     async def silly_button(self, ctx, member):
         await ctx.send('Beep boop...')
+class MySource(menus.ListPageSource):
+    def __init__(self, data):
+        super().__init__(data, per_page=4)
 
+    async def format_page(self, menu, entries):
+        offset = menu.current_page * self.per_page
+        return '\n'.join(f'{i}. {v}' for i, v in enumerate(entries, start=3))
+
+class QueueMenu(menus.MenuPages):
+    def __init__(self, pages, current):
+        super().__init__(source=pages, timeout=500, clear_reactions_after=True)
+        self.current_page=current
 
 class PaginatorSource(menus.ListPageSource):
     """Player queue paginator class."""
 
     def __init__(self, entries, *, per_page=8):
         super().__init__(entries, per_page=per_page)
+        self.current_page=3
 
     async def format_page(self, menu: menus.Menu, page):
         embed = discord.Embed( colour=discord.Color.orange())
@@ -1580,7 +1600,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             # This part is very important, this is the "fake track" that we'll look for when we queue up the track to play
             tracks=[]
             for track in search_tracks:
-              print(track.images[0].url)
+              # print(track.images[0].url)
               if len(track.images)>0:
                 url = track.images[0].url
               else:
@@ -1865,7 +1885,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           return await ctx.send(embed=embed, delete_after=10)
       if self.is_privileged(ctx):
         player.queueNum-=2
-        await player.stop()
+        await player.next()
         embed=discord.Embed(description=f"**⏮ Previous By {ctx.author.mention}**", color = discord.Color.teal())
         return await ctx.send(embed=embed, delete_after=10)
 
@@ -1874,7 +1894,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
       if len(player.previous_votes) >= required:
         player.queueNum-=2
-        await player.stop()
+        await player.next()
         embed=discord.Embed(description=f"**⏮ Vote Passed | Previous**", color = discord.Color.teal())
         return await ctx.send(embed=embed, delete_after=10)
       else:
@@ -1905,14 +1925,14 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await ctx.send(embed=embed, delete_after=10)
             player.skip_votes.clear()
 
-            return await player.stop()
+            return await player.next()
 
         if ctx.author == player.current.requester:
             embed=discord.Embed(description="**⏭ Skipped By Requestor**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
             player.skip_votes.clear()
 
-            return await player.stop()
+            return await player.next()
 
         required = self.required(ctx)
         player.skip_votes.add(ctx.author)
@@ -1921,7 +1941,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             embed=discord.Embed(description="**⏭ Vote Passed | Skipping**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
             player.skip_votes.clear()
-            await player.stop()
+            await player.next()
         else:
             embed=discord.Embed(description=f"**{ctx.author.mention} Has Voted To Skip**", color = discord.Color.blue())
             await ctx.send(embed=embed, delete_after=10)
@@ -2099,12 +2119,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         # await player.set_volume(vol)
 
- 
+    @commands.command()
     async def test(self,ctx):
-        pagey = MyPaginator(title='Silly Paginator', colour=0xc67862, embed=True, timeout=90, use_defaults=True,
-                            entries=[1, 2, 3], length=1, format='**')
-
-        await pagey.start(ctx)
+      pages = menus.MenuPages(source=MySource(range(1, 100)), clear_reactions_after=True)
+      await pages.start(ctx)
     @commands.command(aliases=['eq'])
     async def equalizer(self, ctx: commands.Context, *, equalizer: str):
         """Change the players equalizer"""
@@ -2231,7 +2249,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             entries.append(f" `{i+1}.`**   [{formatTitle(player.queue[i].title)}]({player.queue[i].uri}) | `{str(trackLength)}` | {player.queue[i].requester.mention}**")
         # entries = [track.title for track in player.queue._queue]
         pages = PaginatorSource(entries=entries)
-        paginator = menus.MenuPages(source=pages, timeout=500, delete_message_after=True)
+        paginator = QueueMenu(pages, int(player.queueNum/8) )
 
         await paginator.start(ctx)
     @commands.command(hidden=True)
@@ -2306,7 +2324,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       # await self.queue(ctx)
       player.queueNum=int(indexToSet)
       title_track = player.queue[player.queueNum].title
-      await player.stop()
+      await player.next()
       # await player.do_next()
       # for i in range(int(index)):
       #   await player.stop()
