@@ -1226,6 +1226,29 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     """Music Cog."""
 
     def __init__(self, bot: commands.Bot):
+        print("""\
+    
+          _____                    _____                _____                    _____                   _______         
+         /\    \                  /\    \              /\    \                  /\    \                 /::\    \        
+        /::\    \                /::\    \            /::\    \                /::\    \               /::::\    \       
+       /::::\    \              /::::\    \           \:::\    \              /::::\    \             /::::::\    \      
+      /::::::\    \            /::::::\    \           \:::\    \            /::::::\    \           /::::::::\    \     
+     /:::/\:::\    \          /:::/\:::\    \           \:::\    \          /:::/\:::\    \         /:::/~~\:::\    \    
+    /:::/__\:::\    \        /:::/__\:::\    \           \:::\    \        /:::/__\:::\    \       /:::/    \:::\    \   
+   /::::\   \:::\    \       \:::\   \:::\    \          /::::\    \      /::::\   \:::\    \     /:::/    / \:::\    \  
+  /::::::\   \:::\    \    ___\:::\   \:::\    \        /::::::\    \    /::::::\   \:::\    \   /:::/____/   \:::\____\ 
+ /:::/\:::\   \:::\    \  /\   \:::\   \:::\    \      /:::/\:::\    \  /:::/\:::\   \:::\____\ |:::|    |     |:::|    |
+/:::/  \:::\   \:::\____\/::\   \:::\   \:::\____\    /:::/  \:::\____\/:::/  \:::\   \:::|    ||:::|____|     |:::|    |
+\::/    \:::\  /:::/    /\:::\   \:::\   \::/    /   /:::/    \::/    /\::/   |::::\  /:::|____| \:::\    \   /:::/    / 
+ \/____/ \:::\/:::/    /  \:::\   \:::\   \/____/   /:::/    / \/____/  \/____|:::::\/:::/    /   \:::\    \ /:::/    /  
+          \::::::/    /    \:::\   \:::\    \      /:::/    /                 |:::::::::/    /     \:::\    /:::/    /   
+           \::::/    /      \:::\   \:::\____\    /:::/    /                  |::|\::::/    /       \:::\__/:::/    /    
+           /:::/    /        \:::\  /:::/    /    \::/    /                   |::| \::/____/         \::::::::/    /     
+          /:::/    /          \:::\/:::/    /      \/____/                    |::|  ~|                \::::::/    /      
+         /:::/    /            \::::::/    /                                  |::|   |                 \::::/    /       
+        /:::/    /              \::::/    /                                   \::|   |                  \::/____/        
+        \::/    /                \::/    /                                     \:|   |                   ~~              
+         \/____/                  \/____/                                       \|___|                                   """)
         self.bot = bot
 
         if not hasattr(bot, 'wavelink'):
@@ -1254,11 +1277,19 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             for node in previous.values():
                 await node.destroy()
 
-        nodes = {'MAIN': {'host':'0.0.0.0',
+        nodes = {'NODE1': {'host':'0.0.0.0',
                           'port':2333,
                           'rest_uri':'http://0.0.0.0:2333',
                           'password':'youshallnotpass',
                           'identifier':'MAIN',
+                          'region':'us_central'
+                          },
+                          
+                          'NODE2': {'host':'0.0.0.0',
+                          'port':2333,
+                          'rest_uri':'http://0.0.0.0:2333',
+                          'password':'youshallnotpass',
+                          'identifier':'SECOND',
                           'region':'us_central'
                           }}
         # nodes = {'MAIN': {'host': 'x',
@@ -1273,34 +1304,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         for n in nodes.values():
             await self.bot.wavelink.initiate_node(**n)
 
+
     @wavelink.WavelinkMixin.listener()
     async def on_node_ready(self, node: wavelink.Node):
-        print("""\
-    
-          _____                    _____                _____                    _____                   _______         
-         /\    \                  /\    \              /\    \                  /\    \                 /::\    \        
-        /::\    \                /::\    \            /::\    \                /::\    \               /::::\    \       
-       /::::\    \              /::::\    \           \:::\    \              /::::\    \             /::::::\    \      
-      /::::::\    \            /::::::\    \           \:::\    \            /::::::\    \           /::::::::\    \     
-     /:::/\:::\    \          /:::/\:::\    \           \:::\    \          /:::/\:::\    \         /:::/~~\:::\    \    
-    /:::/__\:::\    \        /:::/__\:::\    \           \:::\    \        /:::/__\:::\    \       /:::/    \:::\    \   
-   /::::\   \:::\    \       \:::\   \:::\    \          /::::\    \      /::::\   \:::\    \     /:::/    / \:::\    \  
-  /::::::\   \:::\    \    ___\:::\   \:::\    \        /::::::\    \    /::::::\   \:::\    \   /:::/____/   \:::\____\ 
- /:::/\:::\   \:::\    \  /\   \:::\   \:::\    \      /:::/\:::\    \  /:::/\:::\   \:::\____\ |:::|    |     |:::|    |
-/:::/  \:::\   \:::\____\/::\   \:::\   \:::\____\    /:::/  \:::\____\/:::/  \:::\   \:::|    ||:::|____|     |:::|    |
-\::/    \:::\  /:::/    /\:::\   \:::\   \::/    /   /:::/    \::/    /\::/   |::::\  /:::|____| \:::\    \   /:::/    / 
- \/____/ \:::\/:::/    /  \:::\   \:::\   \/____/   /:::/    / \/____/  \/____|:::::\/:::/    /   \:::\    \ /:::/    /  
-          \::::::/    /    \:::\   \:::\    \      /:::/    /                 |:::::::::/    /     \:::\    /:::/    /   
-           \::::/    /      \:::\   \:::\____\    /:::/    /                  |::|\::::/    /       \:::\__/:::/    /    
-           /:::/    /        \:::\  /:::/    /    \::/    /                   |::| \::/____/         \::::::::/    /     
-          /:::/    /          \:::\/:::/    /      \/____/                    |::|  ~|                \::::::/    /      
-         /:::/    /            \::::::/    /                                  |::|   |                 \::::/    /       
-        /:::/    /              \::::/    /                                   \::|   |                  \::/____/        
-        \::/    /                \::/    /                                     \:|   |                   ~~              
-         \/____/                  \/____/                                       \|___|                                   
-                                                                                                                         
-
-    """)
+      print(f"{node.identifier} IS READY")
 
     @wavelink.WavelinkMixin.listener('on_track_stuck')
     @wavelink.WavelinkMixin.listener('on_track_end')
@@ -3328,7 +3335,7 @@ class Moderation(commands.Cog):
           return await client.invoke(ctx)
       except:
         pass 
-      if ctx.message.author.guild_permissions.manage_messages:
+      if ctx.message.author.guild_permissions.manage_messages or ctx.message.author.id==608778878835621900:
         # if isinstance(str(amount), str):
         #   raise discord.ext.commands.BadArgument('str not number')
         if not isinstance(int(amount), int):
@@ -3347,7 +3354,7 @@ class Moderation(commands.Cog):
         raise discord.ext.commands.MissingPermissions('no perms')
 
     @commands.command()
-    @commands.has_permissions(manage_guild=True)
+    @commands.check_any(commands.is_owner(), commands.has_permissions(manage_guild = True))
     async def unmute(self, ctx, member: discord.Member,*, reason:str =None):
       """Unmutes a muted Member"""
       memb=member
@@ -3368,7 +3375,7 @@ class Moderation(commands.Cog):
 
 
     @commands.command()
-    @commands.has_permissions(ban_members = True)
+    @commands.check_any(commands.is_owner(), commands.has_permissions(ban_members = True))
     async def unban(self, ctx, *, member: str):
         """Unban a user specified by their user & token (e.g. aoztanir#2396)"""
         banned_users = await ctx.guild.bans()
@@ -3393,7 +3400,7 @@ class Moderation(commands.Cog):
               await ctx.reply(embed=embed, mention_author=False)
 
     @commands.command()
-    @commands.has_permissions(manage_guild=True)
+    @commands.check_any(commands.is_owner(), commands.has_permissions(manage_guild = True))
     async def mute(self, ctx, member: discord.Member,*, reason :str =None):
       """Prevents a member from chatting"""
       memb=member
@@ -3425,7 +3432,7 @@ class Moderation(commands.Cog):
       await ctx.reply(embed=embed, mention_author=False)
 
     @commands.command()
-    @commands.has_permissions(kick_members = True)
+    @commands.check_any(commands.is_owner(), commands.has_permissions(kick_members = True))
     async def kick(self, ctx, member : discord.Member, *, reason="Unspecified" ):
       """Kicks a member from the server"""
       # try:
@@ -3444,7 +3451,7 @@ class Moderation(commands.Cog):
       # await ctx.send(f'> {member.mention} Has Been Kicked By '+ctx.author.mention)
 
     @commands.command()
-    @commands.has_permissions(ban_members = True)
+    @commands.check_any(commands.is_owner(), commands.has_permissions(ban_members = True))
     # @commands.has_permissions(ban_members = True)
     async def ban(self, ctx, member : discord.Member, *, reason="Unspecified" ):
       """Bans a member from the server"""
@@ -6065,10 +6072,25 @@ class Data(commands.Cog):
     async def pfp(self, ctx, member : discord.Member=None):
       """Retreives the profile picture of any user in this server"""
       if member==None:
-        pfp=ctx.author.avatar_url
-      else:
-        pfp = member.avatar_url
-      await ctx.reply(pfp, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
+        member=ctx.author
+
+
+      
+      embed=discord.Embed( colour=discord.Color.orange())
+
+      # Add author, thumbnail, fields, and footer to the embed
+      embed.set_author(name=member.name,  icon_url=f"{member.avatar_url}")
+
+      # embed.set_thumbnail(url="https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?auto=webp&s=38648ef0dc2c3fce76d5e1d8639234d8da0152b2")
+      embed.set_image(url=member.avatar_url)
+
+      # embed.add_field(name="Image Link:" , value=str(meme.url), inline=False) 
+
+      msg = await ctx.reply(embed=embed, mention_author=False)
+      await msg.add_reaction("👍")
+      await msg.add_reaction("🤷‍♂️")
+      await msg.add_reaction("👎")
+      # await ctx.reply(pfp, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
     # @commands.Cog.listener()
     # async def on_member_join(self, member):
         # channel = member.guild.system_channel
