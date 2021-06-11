@@ -218,17 +218,17 @@ def is_owner(ctx):
 
 client = commands.AutoShardedBot(shard_count=4, command_prefix=(get_prefix), intents = discord.Intents.all(), case_insensitive=True, strip_after_prefix=True)
 # client = commands.AutoShardedBot(shard_count=2, command_prefix='.', intents = discord.Intents.all())
-
+client.launch_time = datetime.utcnow()
 slash = SlashCommand(client, sync_commands=True) # Declares slash commands through the client.
 
 # @slash.slash(name="play")
 # async def playSlash(ctx, song:): # Defines a new "context" (ctx) command called "ping."
 #   await play(ctx,)
-SET_UPTIME=datetime.now()
+
 
 @client.event
 async def on_ready():
-    DiscordComponents(client)
+    # DiscordComponents(client)
     # SET_UPTIME=datetime.now()
     #COG ADDING
     
@@ -2014,7 +2014,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return await ctx.send(embed=embed, delete_after=10)
 
         if self.is_privileged(ctx):
-            embed=discord.Embed(description="**🔀 Shuffled**", color = discord.Color.teal())
+            embed=discord.Embed(description=f"**🔀 Shuffled By {ctx.author.mention}**", color = discord.Color.teal())
             await ctx.send(embed=embed, delete_after=10)
             song=player.queue[player.queueNum-1]
             random.shuffle(player.queue)
@@ -3250,7 +3250,20 @@ async def update_db():
 
 # client.loop.create_task(update_db())
 
-
+@client.command(hidden=True)
+@commands.is_owner()
+async def load(ctx: commands.Context, extension: str):
+  """Command so that the owner(me) can load cogs"""
+  cog_to_load=globals()[extension]
+  client.add_cog(cog_to_load(client))
+  await ctx.message.add_reaction('✅')
+    
+@client.command(hidden=True)
+@commands.is_owner()
+async def unload(ctx: commands.Context, extension: str):
+  """Command so that the owner(me) can load cogs"""
+  client.remove_cog(extension)
+  await ctx.message.add_reaction('✅')
 
 
 
@@ -3325,6 +3338,8 @@ class Moderation(commands.Cog):
       # except:
       #   pass
       await ctx.reply(embed=embed, mention_author=False)
+
+    
 
     @commands.command(aliases = ["clear"])
     # @commands.has_permissions( manage_messages=True)
@@ -5732,13 +5747,17 @@ class Info(commands.Cog):
     @commands.command()
     async def uptime(self, ctx):
       """Sends Astro's Uptime"""
-      NOW=datetime.now()
+
       # date = datetime.date(1, 1, 1)
-      # datetime1 = datetime.datetime.combine(date, SET_UPTIME)
+
       # datetime2 = datetime.datetime.combine(date, NOW)
-      uptime = NOW - SET_UPTIME
+
       # up_str = uptime.strftime("%m/%d/%Y %H:%M:%S")
-      
+      delta_uptime = datetime.utcnow() - self.bot.launch_time
+      hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
+      minutes, seconds = divmod(remainder, 60)
+      days, hours = divmod(hours, 24)
+      uptime=f"{days}d, {hours}h, {minutes}m, {seconds}s"
       embed = discord.Embed( description = f"**⬆️ Uptime {uptime}**" ,colour=discord.Color.orange())
       await ctx.reply(embed=embed, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
 
@@ -6133,12 +6152,17 @@ async def didyouknow(ctx):
     embed=discord.Embed(title="**ℹ️ Did you know**",description="Astro has a beta bot, invite him [here](https://discord.com/api/oauth2/authorize?client_id=841760295432880168&permissions=8&scope=bot%20applications.commands)", color = discord.Color.red())
     return await ctx.send(embed=embed, delete_after=10)
 
+import sys
+import traceback
 
 @client.event
 async def on_command_error(ctx, error):
-    template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-    message = template.format(type(error).__name__, error.args)
-    print (message)
+    # template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+    # message = template.format(type(error).__name__, error.args)
+    # get data from exception
+    print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
+    traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+
     if "Bad Request" in str(error) or "invalid" in str(error).lower():
       embed=discord.Embed(description=f'**✋ Invalid URL**', color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
