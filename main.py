@@ -6160,8 +6160,7 @@ async def on_command_error(ctx, error):
     # template = "An exception of type {0} occurred. Arguments:\n{1!r}"
     # message = template.format(type(error).__name__, error.args)
     # get data from exception
-    print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
-    traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+    
 
     if "Bad Request" in str(error) or "invalid" in str(error).lower():
       embed=discord.Embed(description=f'**✋ Invalid URL**', color = discord.Color.red())
@@ -6224,7 +6223,7 @@ async def on_command_error(ctx, error):
     if "ZeroConnectedNodes" in str(error):
       # pass
       await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = '@Astro | .help'))
-      client.add_cog(Music(client))
+      return client.add_cog(Music(client))
       
     # if "Cannot send an empty message" in str(error):
     #   embed=discord.Embed(description="**Currently Nothing Is Playing**".title(), color = discord.Color.red())
@@ -6251,9 +6250,12 @@ async def on_command_error(ctx, error):
     # elif "clientexception" in str(error).lower():
     #   await ctx.send("> **Sorry "+ctx.author.mention+" This Process Is Already Running!"+"\n\nThe Error Incurred Is Below: \n\n`"+str(error)+"`**")
     elif isinstance(error, discord.ext.commands.CommandNotFound):
-      pass
+      return
       # await ctx.send("> Sorry "+ctx.author.mention+" That Command Does Not Exist.")
+    
     else:
+      print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
+      traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
       # if 'missing permissions' in str(error).lower():
       #   await ctx.send("> **Sorry "+ctx.author.mention+" Astro Does Not Have The Permissions To Complete This Action!**")
       #   return
