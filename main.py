@@ -213,6 +213,8 @@ async def get_prefix(client, message):
 #     command_prefix= (get_prefix),
 #     )
 
+def is_owner(ctx):
+  return ctx.author.id==608778878835621900
 
 client = commands.AutoShardedBot(shard_count=4, command_prefix=(get_prefix), intents = discord.Intents.all(), case_insensitive=True, strip_after_prefix=True)
 # client = commands.AutoShardedBot(shard_count=2, command_prefix='.', intents = discord.Intents.all())
@@ -3360,10 +3362,10 @@ class Moderation(commands.Cog):
       memb=member
       if reason == None:
         reason="Unspecified"
-      if memb.guild_permissions.manage_guild:
+      if memb.guild_permissions.manage_guild and not is_owner(ctx):
         raise ActionOnMod
         return
-      if (ctx.guild.owner == memb):
+      if (ctx.guild.owner == memb) and not is_owner(ctx):
         # await ctx.send("**You Cannot Mute/Unmute a Mod**")
         raise ActionOnMod
         return
@@ -3406,11 +3408,11 @@ class Moderation(commands.Cog):
       memb=member
       if reason==None:
         reason="Unspecified"
-      if (ctx.guild.owner == memb):
+      if (ctx.guild.owner == memb) and not is_owner(ctx):
          raise ActionOnMod
         # await ctx.send("**You Cannot Mute/Unmute a Mod**")
         # return
-      if memb.guild_permissions.manage_guild:
+      if memb.guild_permissions.manage_guild and not is_owner(ctx):
         raise ActionOnMod
         # await ctx.send("**You Cannot Mute/Unmute a Mod**")
         # return
@@ -3440,7 +3442,7 @@ class Moderation(commands.Cog):
       # except:
       #   pass
       memb=member
-      if memb.guild_permissions.kick_members:
+      if memb.guild_permissions.kick_members and not is_owner(ctx):
         raise ActionOnMod
         # await ctx.send("**Mods Cannot Kick Other Mods**")
         return
@@ -3461,7 +3463,7 @@ class Moderation(commands.Cog):
       #   pass
       await ctx.guild.ban(member, reason=reason)
       memb=member
-      if memb.guild_permissions.ban_members:
+      if memb.guild_permissions.ban_members and not is_owner(ctx):
         raise ActionOnMod
         # await ctx.send("**Mods Cannot Ban Other Mods**")
         return
