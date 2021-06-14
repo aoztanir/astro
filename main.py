@@ -1546,6 +1546,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @commands.command(aliases=['p'])
     # @commands.cooldown(1,2,commands.BucketType.user)
     async def play(self, ctx: commands.Context, *, query: str=None):
+
         """Play or queue a song with the given query"""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
         # print(self.bot.wavelink)
@@ -8612,7 +8613,7 @@ client.add_cog(Settings(client))
 client.add_cog(Utility(client))
 client.help_command = astroHelp()
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
