@@ -6120,8 +6120,8 @@ class Data(commands.Cog):
 
     ##FIX LYRICS
 
-    @commands.command()
-    @commands.cooldown(1, 3, commands.BucketType.user)
+    # @commands.command()
+    # @commands.cooldown(1, 3, commands.BucketType.user)
     async def youtube(self, ctx, *, query: str):
         """Retrieves Information about any song from youtube"""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
