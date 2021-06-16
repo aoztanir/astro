@@ -217,12 +217,13 @@ def is_owner(ctx):
   return ctx.author.id==608778878835621900
 
 client = commands.AutoShardedBot(shard_count=4, command_prefix=(get_prefix), intents = discord.Intents.all(), case_insensitive=True, strip_after_prefix=True)
+slash = SlashCommand(client, sync_commands=True)
 # client = commands.AutoShardedBot(shard_count=2, command_prefix='.', intents = discord.Intents.all())
 client.launch_time = datetime.utcnow()
-slash = SlashCommand(client, sync_commands=True) # Declares slash commands through the client.
+ # Declares slash commands through the client.
 
 # @slash.slash(name="play")
-# async def playSlash(ctx, song:): # Defines a new "context" (ctx) command called "ping."
+# async def playSlash(ctx, song): # Defines a new "context" (ctx) command called "ping."
 #   await play(ctx,)
 
 
@@ -234,7 +235,12 @@ async def on_ready():
     
 
     #HELP COMMAND CUSTOM
-    
+    client.add_cog(Data(client))
+    client.add_cog(Moderation(client))
+    client.add_cog(Info(client))
+    client.add_cog(Settings(client))
+    client.add_cog(Utility(client))
+    client.help_command = astroHelp()
 
 
     for element in client.shards:
@@ -1390,7 +1396,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return
 
         if not player.channel_id:
-            return
+          return
 
         channel = self.bot.get_channel(int(player.channel_id))
         if not channel:
@@ -1494,55 +1500,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
           print(e)
           pass
 
-    # @cog_ext.cog_slash(name="play",
-    #          description="Plays Music Through Any Voice Channel",
-    #          options=[
-    #            create_option(
-    #              name="song",
-    #              description="Song Name / Playlist URL",
-    #              option_type=3,
-    #              required=False
-    #            )
-    #          ])
-    # async def helpSLASH(self, ctx: SlashContext, song: str):
-    #     # ctx=commands.context(ctx)
-    #     return await help(ctx)
-
     
-        # embed=discord.Embed(description="**Couldn't Find That Song**", color = discord.Color.red())
-        # await ctx.send(embed=embed)
-      
-      # song=query
-      # player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
-      # if song==None:
-      #   if player.current==None:
-      #     embed=discord.Embed(description=f'**Currently Nothing Is Playing**', color = discord.Color.red())
-      #     return await ctx.send(embed=embed, delete_after=10)
-        
-      #   song=player.current.title
-      #   print(song)
-      # try:
 
-      #   extract_lyrics = SongLyrics("AIzaSyBRcquo71lWc8_jaTOF-bhaEeT-fgfjI6M", "72f842b0aaf3270be")
-      #   loop = asyncio.get_event_loop()
-      #   test_dict = await loop.run_in_executor(None, lambda:extract_lyrics.get_lyrics(song))
-      #   # test_dict = extract_lyrics.get_lyrics(song)
-      #   res = {key: test_dict[key] for key in test_dict.keys() 
-      #                               & {'lyrics'}}
-      #   for key, value in test_dict.items(): 
-      #     if key == "lyrics":
-      #       valSave = str(value)
-      #   embed=discord.Embed(title="Lyrics For "+song.title(), color = discord.Color.green())
-      #   # await ctx.send("Here are the lyrics! \n")
-      #   valArr = valSave.split("\n\n")
-      #   for element in valArr:
-      #     embed.add_field(name="`~"+"`", value="`"+element+"`", inline=False)
-      #   await ctx.send(embed=embed)
-      # except:
-      #   embed=discord.Embed(description="**Couldn't Find That Song**", color = discord.Color.red())
-      #   await ctx.send(embed=embed)
-      #   return
-    
     @commands.command(aliases=['p'])
     # @commands.cooldown(1,2,commands.BucketType.user)
     async def play(self, ctx: commands.Context, *, query: str=None):
@@ -2129,7 +2088,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         # await player.set_volume(vol)
 
-    @commands.command()
+    # @commands.command()
     async def test(self,ctx):
       pages = menus.MenuPages(source=MySource(range(1, 100)), clear_reactions_after=True)
       await pages.start(ctx)
@@ -3250,6 +3209,362 @@ async def update_db():
   # print(str(a[str(server)]["queue"]))
 
 # client.loop.create_task(update_db())
+guild_ids = [809318345463562240] # Put your server ID in this array.
+@slash.slash(name="queue",
+
+             description="Displays the queue",
+             guild_ids=[809318345463562240])
+async def queueSLASH(ctx: SlashContext):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('queue')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+@slash.slash(name="play",
+             description="Plays music through any voice channel",
+             options=[
+               create_option(
+                 name="song",
+                 description="Song Name / Playlist URL",
+                 option_type=3,
+                 required=True
+               )
+             ],
+             guild_ids=[809318345463562240])
+async def playSLASH(ctx: SlashContext, song: str=None):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('play')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command, query=song)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+@slash.slash(name="pause",
+             description="Pauses the playing music",
+
+             guild_ids=[809318345463562240])
+async def pauseSLASH(ctx: SlashContext):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('pause')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+@slash.slash(name="skip",
+             description="Skips the current track",
+
+             guild_ids=[809318345463562240])
+async def skipSLASH(ctx: SlashContext):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('skip')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+@slash.slash(name="previous",
+             description="Moves to the previous track",
+
+             guild_ids=[809318345463562240])
+async def previousSLASH(ctx: SlashContext):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('previous')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+
+
+@slash.slash(name="resume",
+             description="Resumes the current track",
+
+             guild_ids=[809318345463562240])
+async def resumeSLASH(ctx: SlashContext):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('resume')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+@slash.slash(name="disconnect",
+             description="Disconnects astro from the voice channel")
+async def dcSLASH(ctx: SlashContext):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('dc')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+@slash.slash(name="clearqueue",
+             description="Clears the queue",
+             guild_ids=[809318345463562240])
+async def clearqueueSLASH(ctx: SlashContext):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('clearqueue')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+# @slash.slash(name="help",
+#              description="Shows astro's help response",
+#              guild_ids=[809318345463562240])
+async def helpSLASH(ctx: SlashContext):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+
+    # context.command = command
+    
+    await context.send_help()
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+@slash.slash(name="shuffle",
+             description="Shuffles the queue",
+             guild_ids=[809318345463562240])
+async def shuffleSLASH(ctx: SlashContext):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('shuffle')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+  
+
+@slash.slash(name="loopsong",
+             description="Loops the current track",
+             guild_ids=[809318345463562240])
+async def loopSLASH(ctx: SlashContext):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('loop')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+@slash.slash(name="loopqueue",
+             description="Loops the queue",
+             guild_ids=[809318345463562240])
+async def lqSLASH(ctx: SlashContext):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('loopqueue')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+@slash.slash(name="seek",
+             description="Changes volume",
+              options=[
+               create_option(
+                 name="seconds",
+                 description="Position",
+                 option_type=4,
+                 required=False
+               )
+             ],
+             guild_ids=[809318345463562240])
+async def seekSLASH(ctx: SlashContext, seconds: str):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('seek')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command, seconds=seconds)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+@slash.slash(name="volume",
+             description="Changes volume",
+              options=[
+               create_option(
+                 name="amount",
+                 description="Volume Amount",
+                 option_type=4,
+                 required=False
+               )
+             ],
+             guild_ids=[809318345463562240])
+async def volSLASH(ctx: SlashContext, amount: str):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('vol')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command, amount=amount)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+@slash.slash(name="jump",
+             description="Jumps through the queue",
+              options=[
+               create_option(
+                 name="amount",
+                 description="Song Number / Song Name",
+                 option_type=3,
+                 required=False
+               )
+             ],
+             guild_ids=[809318345463562240])
+async def jumpSLASH(ctx: SlashContext, amount: str):
+    # ctx=commands.context(ctx)
+
+    # channel = client.get_channel(ctx.channel_id)
+    # lastMessage = await channel.fetch_message(channel.last_message_id)
+    embed=discord.Embed(description=f"**⌛ Working...**", color = discord.Color.blue())
+    await ctx.send(embed=embed)
+    context= await client.get_context(ctx.message)
+    command = client.get_command('jump')
+    context.author=ctx.author
+    # context.command = command
+    
+    await context.invoke(command, song_number=amount)
+    embed=discord.Embed(description=f"**✅**", color = discord.Color.green())
+    await ctx.message.edit(embed=embed)
+    # await client.invoke(context)
+    # return await context.invoke()
+
+# @slash.slash(name="pingy", guild_ids=guild_ids)
+# async def _ping(ctx): # Defines a new "context" (ctx) command called "ping."
+#     await ctx.send(f"Pong! ({client.latency*1000}ms)")
 
 @client.command(hidden=True)
 @commands.is_owner()
@@ -6234,6 +6549,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, NoChannelProvided):
       embed=discord.Embed(description="**✋ Oops! You must be in a voice channel to use this command**".title(), color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
+    
       # return await ctx.send('')
     if isinstance(error, discord.ext.commands.MissingRequiredArgument) or isinstance(error, discord.ext.commands.BadArgument) :
       embed=discord.Embed(description=f"**✋ Oops! thats the incorrect usage, use {ctx.command.name} this way:**".title(), color = discord.Color.red())
@@ -8606,12 +8922,7 @@ import subprocess
 
 # client.add_cog(Music(client))
 #DEV BOT
-client.add_cog(Data(client))
-client.add_cog(Moderation(client))
-client.add_cog(Info(client))
-client.add_cog(Settings(client))
-client.add_cog(Utility(client))
-client.help_command = astroHelp()
+
 
 # client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
