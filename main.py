@@ -3212,8 +3212,7 @@ async def update_db():
 guild_ids = [809318345463562240] # Put your server ID in this array.
 @slash.slash(name="queue",
 
-             description="Displays the queue",
-             guild_ids=[809318345463562240])
+             description="Displays the queue")
 async def queueSLASH(ctx: SlashContext):
     # ctx=commands.context(ctx)
 
@@ -3242,7 +3241,7 @@ async def queueSLASH(ctx: SlashContext):
                  required=True
                )
              ],
-             guild_ids=[809318345463562240])
+              )
 async def playSLASH(ctx: SlashContext, song: str=None):
     # ctx=commands.context(ctx)
 
@@ -3264,7 +3263,7 @@ async def playSLASH(ctx: SlashContext, song: str=None):
 @slash.slash(name="pause",
              description="Pauses the playing music",
 
-             guild_ids=[809318345463562240])
+              )
 async def pauseSLASH(ctx: SlashContext):
     # ctx=commands.context(ctx)
 
@@ -3286,7 +3285,7 @@ async def pauseSLASH(ctx: SlashContext):
 @slash.slash(name="skip",
              description="Skips the current track",
 
-             guild_ids=[809318345463562240])
+              )
 async def skipSLASH(ctx: SlashContext):
     # ctx=commands.context(ctx)
 
@@ -3308,7 +3307,7 @@ async def skipSLASH(ctx: SlashContext):
 @slash.slash(name="previous",
              description="Moves to the previous track",
 
-             guild_ids=[809318345463562240])
+              )
 async def previousSLASH(ctx: SlashContext):
     # ctx=commands.context(ctx)
 
@@ -3332,7 +3331,7 @@ async def previousSLASH(ctx: SlashContext):
 @slash.slash(name="resume",
              description="Resumes the current track",
 
-             guild_ids=[809318345463562240])
+              )
 async def resumeSLASH(ctx: SlashContext):
     # ctx=commands.context(ctx)
 
@@ -3373,7 +3372,7 @@ async def dcSLASH(ctx: SlashContext):
 
 @slash.slash(name="clearqueue",
              description="Clears the queue",
-             guild_ids=[809318345463562240])
+              )
 async def clearqueueSLASH(ctx: SlashContext):
     # ctx=commands.context(ctx)
 
@@ -3393,7 +3392,7 @@ async def clearqueueSLASH(ctx: SlashContext):
     # return await context.invoke()
 # @slash.slash(name="help",
 #              description="Shows astro's help response",
-#              guild_ids=[809318345463562240])
+#               )
 async def helpSLASH(ctx: SlashContext):
     # ctx=commands.context(ctx)
 
@@ -3413,7 +3412,7 @@ async def helpSLASH(ctx: SlashContext):
 
 @slash.slash(name="shuffle",
              description="Shuffles the queue",
-             guild_ids=[809318345463562240])
+              )
 async def shuffleSLASH(ctx: SlashContext):
     # ctx=commands.context(ctx)
 
@@ -3435,7 +3434,7 @@ async def shuffleSLASH(ctx: SlashContext):
 
 @slash.slash(name="loopsong",
              description="Loops the current track",
-             guild_ids=[809318345463562240])
+              )
 async def loopSLASH(ctx: SlashContext):
     # ctx=commands.context(ctx)
 
@@ -3456,7 +3455,7 @@ async def loopSLASH(ctx: SlashContext):
 
 @slash.slash(name="loopqueue",
              description="Loops the queue",
-             guild_ids=[809318345463562240])
+              )
 async def lqSLASH(ctx: SlashContext):
     # ctx=commands.context(ctx)
 
@@ -3485,7 +3484,7 @@ async def lqSLASH(ctx: SlashContext):
                  required=False
                )
              ],
-             guild_ids=[809318345463562240])
+              )
 async def seekSLASH(ctx: SlashContext, seconds: str):
     # ctx=commands.context(ctx)
 
@@ -3514,7 +3513,7 @@ async def seekSLASH(ctx: SlashContext, seconds: str):
                  required=False
                )
              ],
-             guild_ids=[809318345463562240])
+              )
 async def volSLASH(ctx: SlashContext, amount: str):
     # ctx=commands.context(ctx)
 
@@ -3543,7 +3542,7 @@ async def volSLASH(ctx: SlashContext, amount: str):
                  required=False
                )
              ],
-             guild_ids=[809318345463562240])
+              )
 async def jumpSLASH(ctx: SlashContext, amount: str):
     # ctx=commands.context(ctx)
 
