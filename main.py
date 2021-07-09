@@ -104,7 +104,10 @@ QueList = []
 TaskList = []
 website="https://teamastro.ml/"
 
+import topgg
+
 genius = lg.Genius('8-KsLC1FjqamiUh3xlSIS6SgXmqpjTCsySJPHNiupl-uJ-OPm-Z6uRW_yrZy_-Yi')
+
 # filtered_words = ["word1","word2"]
 # astroSite="https://teamastro.ml/"
 # threader = threading.Thread(target=os.system("java -jar Lavalink.jar"))
@@ -216,10 +219,12 @@ async def get_prefix(client, message):
 def is_owner(ctx):
   return ctx.author.id==608778878835621900
 
-client = commands.AutoShardedBot(shard_count=4, command_prefix=(get_prefix), intents = discord.Intents.all(), case_insensitive=True, strip_after_prefix=True)
+client = commands.AutoShardedBot(shard_count=6, command_prefix=(get_prefix), intents = discord.Intents.all(), case_insensitive=True, strip_after_prefix=True)
 slash = SlashCommand(client, sync_commands=True)
 # client = commands.AutoShardedBot(shard_count=2, command_prefix='.', intents = discord.Intents.all())
 client.launch_time = datetime.utcnow()
+dbl_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjgwOTYwOTg2MTQ1NjcyMzk4OCIsImJvdCI6dHJ1ZSwiaWF0IjoxNjI1ODU5NjE3fQ.lkk4NUH1y1aUe1s6BuApUY_3G7OMi3qFizqfP-zSI2M"  # set this to your bot's Top.gg token
+client.topggpy = topgg.DBLClient(client, dbl_token)
  # Declares slash commands through the client.
 
 # @slash.slash(name="play")
@@ -1579,6 +1584,17 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                                           'length': track.duration or 0, 'identifier': track.id or 'Unknown', 'uri': track.url or 'https://open.spotify.com/',
                                           'isStream': False, 'isSeekable': False, 'position': 0, 'thumb': url}, requester=ctx.author
                       ))
+            
+            with open("playlist.json","r") as f:
+              users = json.load(f)
+            users={}
+            users["songs"]=[]
+
+            print("appending")
+            for track in tracks:
+              users["songs"].append({'real_title': track.title, 'title': track.title+" - "+track.author+" audio", 'author': track.author, 'thumbnail': track.info["thumb"]})
+            with open("playlist.json","w") as f:
+              json.dump(users,f)   
 
             if not tracks:
                 embed=discord.Embed(description=f'**Invalid URL**', color = discord.Color.red())
@@ -3711,7 +3727,13 @@ class Moderation(commands.Cog):
     async def unban(self, ctx, *, member: str):
         """Unban a user specified by their user & token (e.g. aoztanir#2396)"""
         banned_users = await ctx.guild.bans()
-        member_name, member_discriminator = member.split('#')
+        member_save=member
+        if '#' in member:
+          member_name, member_discriminator = member.split('#')
+        else:
+          member_name=member.strip(' ')
+          member_discriminator=0000
+        
         try:
           if not isinstance(int(member_discriminator), int):
             embed=discord.Embed(description=f"**Please Specify The User's Discriminator Like So: ` aoztanir#2396 `**", color = discord.Color.red())
@@ -3722,14 +3744,19 @@ class Moderation(commands.Cog):
 
         for ban_entry in banned_users:
             user = ban_entry.user
-
-            if (user.name.lower(), int(user.discriminator)) == (member_name.lower(), int(member_discriminator)):
+            ratio= fuzz.ratio(user.name.lower(), member_name.lower())
+            discrim=user.discriminator
+            if '#' not in member_save:
+              discrim=0000
+            # print(discrim)
+            # print(member_discriminator)
+            if ratio>70 and int(discrim) ==  int(member_discriminator):
                 await ctx.guild.unban(user)
                 embed=discord.Embed(description=f"**✅ {user} Has Been Unbanned**", color = discord.Color.green())
-                await ctx.send(embed=embed)
-            else:
-              embed=discord.Embed(description=f"**Couldn't Find That User. Make Sure to Seperate Users By Their Discriminator Like So: ` aoztanir#2396 `**", color = discord.Color.red())
-              await ctx.reply(embed=embed, mention_author=False)
+                return await ctx.send(embed=embed)
+
+        embed=discord.Embed(description=f"**Couldn't Find That User. Make Sure to Seperate Users By Their Discriminator Like So: ` aoztanir#2396 `**", color = discord.Color.red())
+        await ctx.reply(embed=embed, mention_author=False)
 
     @commands.command()
     @commands.check_any(commands.is_owner(), commands.has_permissions(manage_guild = True))
@@ -3798,7 +3825,7 @@ class Moderation(commands.Cog):
         # await ctx.send("**Mods Cannot Ban Other Mods**")
         return
       embed=discord.Embed(title=f"Reason: ` {reason} `", color=discord.Color.orange())
-      embed.set_author(name=memb.name+" Has Been Banned!", icon_url=memb.avatar_url)
+      embed.set_author(name=memb+" Has Been Banned!", icon_url=memb.avatar_url)
       await ctx.reply(embed=embed, mention_author=False)
       # await ctx.send(f'> {member.mention} Has Been Banned By '+ctx.author.mention)
   # print("hi")
@@ -6057,7 +6084,7 @@ class Utility(commands.Cog):
 class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
+        self.update_status.start()
 
     @commands.command()
     async def uptime(self, ctx):
@@ -6080,6 +6107,9 @@ class Info(commands.Cog):
     @commands.command()
     async def about(self, ctx):
       """Displays info about Astro"""
+      player_amount=0
+      for player in self.bot.wavelink.players.values():
+        player_amount+=1
       prefix='.'
       members=0
       for s in client.guilds:
@@ -6091,6 +6121,7 @@ class Info(commands.Cog):
       embed.add_field(name="**Users**", value=f"` {members} `", inline=True)
       embed.add_field(name="**Shards**", value=f"` {len(client.shards)} `", inline=True)
       embed.add_field(name="**Latency**", value=f"` {round(client.latency*100)}ms `", inline=True)
+      embed.add_field(name="**Active Streams**", value=f"` {player_amount} `", inline=True)
       if ctx.author.id == 608778878835621900:
         embed.add_field(name="**CPU**", value=f"` {round(psutil.cpu_percent(1))}% `", inline=True)
         embed.add_field(name="**RAM**", value=f"` {round( psutil.virtual_memory()[2])}% `", inline=True)
@@ -6111,6 +6142,22 @@ class Info(commands.Cog):
       # await ctx.send(embed=embed)
       await ctx.reply(embed=embed, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
 
+    @tasks.loop(minutes=30)
+    async def update_status(self):
+      if client.user.id==809609861456723988:
+        try:
+          await client.topggpy.post_guild_count()
+          print(f"Posted server count ({client.topggpy.guild_count})")
+        except Exception as e:
+            print(f"Failed to post server count\n{e.__class__.__name__}: {e}")
+      
+      members=0
+      for s in client.guilds:
+        members += len(s.members)
+      for element in client.shards:
+        await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = f'@astro help | {members} Users'), shard_id=client.shards[element].id)
+        print(element)
+      
 
 
 class Data(commands.Cog):
@@ -6577,7 +6624,7 @@ async def on_command_error(ctx, error):
       #   return
       # await ctx.send("> Sorry "+ctx.author.mention+" It Looks Like This Command Is Not Working As Of Now. Go To "+astroSite+" For More Info Or To Report This Problem.\n\nThe Error Incurred Is Below: \n\n`"+str(error)+"`")
       print(str(error))
-      embed=discord.Embed(title="✋ Oops! Something Went Wrong".title(), color = discord.Color.red())
+      embed=discord.Embed(title="✋ Oops! Something Went Wrong".title(), color = discord.Color.orange())
       await ctx.send(embed=embed, delete_after=5)
       # await ctx.send("> An Error Occured")
   
@@ -7353,7 +7400,7 @@ async def previousOld(ctx):
 #   #           # take first item from a playlist
 #   #           data = data['entries'][0]
 #   try:
-#     async with ctx.typing():
+#     async with ctx.typing():ƒ
 #       from youtube_dl import YoutubeDL
 #       with YoutubeDL({'format': 'bestaudio', 'playlist-end': 20,         
 #       # 'noplaylist':'True'
@@ -8923,7 +8970,7 @@ import subprocess
 #DEV BOT
 
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
