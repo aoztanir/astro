@@ -227,27 +227,50 @@ dbl_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjgwOTYwOTg2MTQ1NjcyMz
 client.topggpy = topgg.DBLClient(client, dbl_token)
  # Declares slash commands through the client.
 
+client.topgg_webhook = topgg.WebhookManager(client).dbl_webhook("/astrodblwebhook", "astrodbl")
+
+# The port must be a number between 1024 and 49151.
+client.topgg_webhook.run(5000)  # this method can be awaited as well
+
 # @slash.slash(name="play")
 # async def playSlash(ctx, song): # Defines a new "context" (ctx) command called "ping."
 #   await play(ctx,)
 
+@client.event
+async def on_dbl_test(data):
+    """An event that is called whenever someone tests the webhook system for your bot on Top.gg."""
+    print(f"Received a test vote:\n{data}")
+
+@client.event
+async def on_dbl_vote(data):
+    """An event that is called whenever someone votes for the bot on Top.gg."""
+    if data["type"] == "test":
+        # this is roughly equivalent to
+        # `return await on_dbl_test(data)` in this case
+        return client.dispatch("dbl_test", data)
+
+    print(f"Received a vote:\n{data}")
 
 @client.event
 async def on_ready():
     # DiscordComponents(client)
     # SET_UPTIME=datetime.now()
-    #COG ADDING
+    
     
 
     #HELP COMMAND CUSTOM
+
+
+
+    #COG ADDING
     client.add_cog(Data(client))
     client.add_cog(Moderation(client))
     client.add_cog(Info(client))
     client.add_cog(Settings(client))
     client.add_cog(Utility(client))
+    
+
     client.help_command = astroHelp()
-
-
     for element in client.shards:
       await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = f'@Astro | .help | {len(client.guilds)} Servers ➡ Shard {element+1}'), shard_id=client.shards[element].id)
       print(element)
@@ -256,6 +279,7 @@ async def on_ready():
     process = subprocess.Popen("java -jar Lavalink.jar", shell=True)
     client.db = client.mongo["astro"]
     client.operations= Document(client.db, 'operation')
+    client.cmds= Document(client.db, 'cmds')
     client.music= Document(client.db, 'music')
     client.delete_after= Document(client.db, 'delete_after')
     client.prefixes= Document(client.db, 'prefixes')
@@ -512,6 +536,8 @@ class Player(wavelink.Player):
         ctx.command = command
 
         return await client.invoke(ctx)
+
+
     async def find(self,ctx, query):
       query = query.strip('<>')
       try:
@@ -537,9 +563,9 @@ class Player(wavelink.Player):
           # print(track.title)
           # print("ENTERED")
           for i in range(len(self.queue)):
-            ratio= fuzz.ratio(query, self.queue[i].title)
+            ratio= fuzz.ratio(query.lower(), self.queue[i].title.lower())
             print(ratio)
-            ratio2 = fuzz.ratio(track.title, self.queue[i].title)
+            ratio2 = fuzz.ratio(track.title.lower(), self.queue[i].title.lower())
             if ratio>50 or ratio2>50:
               if max(ratio, ratio2)> largest["ratio"]:
                 largest={"ratio": max(ratio, ratio2), "num": i}
@@ -1765,6 +1791,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
       if number<0:
         raise NotFound
+      if number<=player.queueNum:
+        player.queueNum-=1
       title= player.queue[number].title
       player.queue.pop(number)
       embed=discord.Embed(description=f'**❎ Removed ` {formatTitle(title)} ` From The Queue**', color = discord.Color.red())
@@ -2948,8 +2976,9 @@ class Settings(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_guild=True)
     async def prefix(self, ctx, *, new_prefix:str=None):
-      prefixNew=new_prefix
       """Sets Astro's prefix in this server"""
+      prefixNew=new_prefix
+      
       # with open('prefixes.json', 'r') as f: #read the prefix.json file
       #   prefixes = json.load(f) #load the json file
       # prefixes=db["prefixes"]
@@ -3996,10 +4025,23 @@ class Moderation(commands.Cog):
 # async def help_slash(ctx: SlashContext):
 #   await help(ctx)
 
+async def update_commands(mapping):
+  push_map=[]
+  for cog, commands in mapping.items():
+    cog_name = getattr(cog, "qualified_name", "No Category").title()
+    if cog_name!= "No Category":
+      command_vals=[]
+      for command in commands:
+        if  not command.hidden:
+          command_vals.append({"name": command.qualified_name, "category": cog_name, "description": command.help, "aliases": command.aliases, "signature": '%s%s %s' % ('.', command.qualified_name, command.signature)})
+      push_map.append({"cog_name": cog_name, "commands": command_vals})
+  
+  await client.cmds.upsert({"_id": 1, "commands": push_map})
 
 
 
 class astroHelp(commands.HelpCommand):
+
     async def send_bot_help(self, mapping):
         embed = discord.Embed(
           # description =f"```\nTips:\n<> means that the argument is required\n[] means that the argument is optional\n\nUse {self.clean_prefix}help (command|category) for more info```" ,
@@ -4020,6 +4062,7 @@ class astroHelp(commands.HelpCommand):
         embed.set_thumbnail(url=client.user.avatar_url)
         
         await channel.send(embed=embed)
+        await update_commands(mapping)
     def get_command_signature(self, command):
         return '%s%s %s' % (self.clean_prefix, command.qualified_name, command.signature)
     async def send_error_message(self, error):
@@ -6115,8 +6158,9 @@ class Info(commands.Cog):
       for s in client.guilds:
         members += len(s.members)
       embed = discord.Embed( colour=discord.Color.orange())
-      embed.set_author(name=f"aoztanir#2396", url="https://teamastro.ml/commands", icon_url=f"https://images-ext-2.discordapp.net/external/jnmcZizHr0cIApoGG3FssnEtM3dy8fS9_OXryxgYqWU/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/608778878835621900/76e69643d799ee584dd46afa91127105.webp?width=300&height=300")
+      embed.set_author(name=f"aoztanir#0001", url="https://teamastro.ml/commands", icon_url=f"https://cdn.discordapp.com/avatars/608778878835621900/52ef129db095bdb091e553294cf45aec.webp?size=1024")
       # embed.add_field(name="**Develeper**", value=f"{aryah.mention}", inline=True)
+      embed.add_field(name="**Creator**", value=f"` aoztanir#0001 `", inline=True)
       embed.add_field(name="**Server Count**", value=f"` {len(client.guilds)} `", inline=True)
       embed.add_field(name="**Users**", value=f"` {members} `", inline=True)
       embed.add_field(name="**Shards**", value=f"` {len(client.shards)} `", inline=True)
@@ -6132,7 +6176,7 @@ class Info(commands.Cog):
       # embed.add_field(name="**CPU**", value=f"` {psutil.cpu_percent(0)}% `", inline=True)
       # embed.add_field(name="**RAM**", value=f"` {psutil.virtual_memory()[2]}% `", inline=True)
       
-      embed.set_thumbnail(url=client.user.avatar_url)
+      embed.set_thumbnail(url="https://cdn.discordapp.com/avatars/608778878835621900/52ef129db095bdb091e553294cf45aec.webp?size=1024")
       await ctx.reply(embed=embed, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
       return
     @commands.command(aliases=["latency"])
@@ -6145,8 +6189,9 @@ class Info(commands.Cog):
     @tasks.loop(minutes=30)
     async def update_status(self):
       if client.user.id==809609861456723988:
+
         try:
-          await client.topggpy.post_guild_count()
+          await client.topggpy.post_guild_count(shard_count=len(client.shards))
           print(f"Posted server count ({client.topggpy.guild_count})")
         except Exception as e:
             print(f"Failed to post server count\n{e.__class__.__name__}: {e}")
@@ -6531,11 +6576,22 @@ async def on_command_error(ctx, error):
       embed=discord.Embed(description=f"**✋ {ctx.author.mention} Only A DJ Or Admin Can Can Change EQ**", color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, CannotLoop):
-      embed=discord.Embed(description=f"**✋ Oops! You Can't Loop Both The Queue And A Song**", color = discord.Color.orange())
+      embed=discord.Embed(description=f"**✋ You Can't Loop Both The Queue And A Song**", color = discord.Color.orange())
       return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, NotFound):
       embed=discord.Embed(description=f'**✋ Nothing Found**', color = discord.Color.orange())
       return await ctx.send(embed=embed, delete_after=10)
+
+    if isinstance(error, commands.NotOwner):
+      return
+    if isinstance(error, discord.ext.commands.CheckAnyFailure):
+      for element in error.errors:
+        print(str(element))
+        try:
+          await on_command_error(ctx,element)
+        except:
+          pass
+      return
     # if "not connected to voice" in str(error).lower():
     #   await ctx.send(f"> Sorry {ctx.author.mention} Astro Doesnt Have Permissions To Connect To The Voice Channel You Are In.")
     #   return
@@ -6572,10 +6628,10 @@ async def on_command_error(ctx, error):
     #   await play(ctx)
     
     if isinstance(error, NotNSFW):
-      embed=discord.Embed(description="**✋ Oops! You Aren't In A NSFW Channel**", color = discord.Color.red())
+      embed=discord.Embed(description="**✋ You Aren't In A NSFW Channel**", color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, ActionOnMod):
-      embed=discord.Embed(description="**✋ Oops! You Can't Do This Action On A Moderator**", color = discord.Color.red())
+      embed=discord.Embed(description="**✋ You Can't Do This Action On A Moderator**", color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, commands.CommandOnCooldown):
       embed=discord.Embed(description="**⏰ Woah! This Command Is On Cooldown! Try Again In {:.2f}s!**".format(error.retry_after), color = discord.Color.red())
@@ -6593,7 +6649,7 @@ async def on_command_error(ctx, error):
     # if isinstance(error, NoChannelProvided):
     #   return await ctx.send_help
     if isinstance(error, NoChannelProvided):
-      embed=discord.Embed(description="**✋ Oops! You must be in a voice channel to use this command**".title(), color = discord.Color.red())
+      embed=discord.Embed(description="**✋ You must be in a voice channel to use this command**".title(), color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
     
       # return await ctx.send('')
@@ -6602,11 +6658,12 @@ async def on_command_error(ctx, error):
       await ctx.send(embed=embed)
       return await ctx.send_help( ctx.command)
       # return await ctx.send("> **Please include all required parts of a command!**")
+    
     elif isinstance(error, discord.ext.commands.MissingPermissions):
-      embed=discord.Embed(description=f"**✋ Oops! {ctx.author.mention} Is Missing The Permissions To Use {ctx.command.name.title()}**", color = discord.Color.red())
+      embed=discord.Embed(description=f"**✋ {ctx.author.mention} Is Missing The Permissions To Use {ctx.command.name.title()}**", color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
     elif isinstance(error, discord.ext.commands.BotMissingPermissions):
-      embed=discord.Embed(description=f"**✋ Oops! Astro Is Missing The Required Permissions To Use {ctx.command.name.title()}**", color = discord.Color.red())
+      embed=discord.Embed(description=f"**✋ Astro Is Missing The Required Permissions To Use {ctx.command.name.title()}**", color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
     # elif "too many requests" in str(error).lower():
     #   await ctx.send("> **Hi "+ctx.author.mention+", youtube is having some momentary troubles, please rerun the command!**".title())
@@ -6617,6 +6674,7 @@ async def on_command_error(ctx, error):
       # await ctx.send("> Sorry "+ctx.author.mention+" That Command Does Not Exist.")
     
     else:
+
       print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
       traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
       # if 'missing permissions' in str(error).lower():
