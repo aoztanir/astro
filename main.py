@@ -20,6 +20,7 @@ from discord.ext import commands, tasks
 import random
 import syllables
 import motor.motor_asyncio
+from async_google_trans_new import AsyncTranslator
 import pymongo
 from pymongo import MongoClient
 # from replit import db
@@ -268,6 +269,7 @@ async def on_ready():
     client.add_cog(Info(client))
     client.add_cog(Settings(client))
     client.add_cog(Utility(client))
+    client.add_cog(Translation(client))
     
 
     client.help_command = astroHelp()
@@ -280,6 +282,8 @@ async def on_ready():
     client.db = client.mongo["astro"]
     client.operations= Document(client.db, 'operation')
     client.cmds= Document(client.db, 'cmds')
+    client.globalize= Document(client.db, 'globalize')
+    client.status_info= Document(client.db, 'status_info')
     client.music= Document(client.db, 'music')
     client.delete_after= Document(client.db, 'delete_after')
     client.prefixes= Document(client.db, 'prefixes')
@@ -2749,6 +2753,7 @@ async def on_message(msg):
   # msg.content=msg.content.lower()
   # await update_db(msg.guild.id)
   # print(msg.content)
+
   if msg.content == f"<@!{client.user.id}>":
     # with open('prefixes.json', 'r') as f: #read the prefix.json file
     #   prefixes = json.load(f) #load the json file
@@ -2940,13 +2945,23 @@ async def on_message(msg):
     #     # await msg.channel.send("> Nice Haiku "+msg.author.mention+"!")
     # except:
     #   pass
+    data = await client.globalize.find(msg.channel.id)
+    if data!=None:
+      await global_translate(msg, language=data["language"])
   except Exception as e:
     print(e)
   await client.process_commands(msg)
 
 
 
-
+async def global_translate(msg, language):
+  g = AsyncTranslator()
+  translation=await g.translate(msg.content, language)
+  embed = discord.Embed(description = f"{translation}")
+  embed.set_author(name=msg.author.name, icon_url=msg.author.avatar_url)
+  await msg.reply(embed=embed, mention_author=False)
+  
+  # await msg.delete()
 
 player1 = ""
 player2 = ""
@@ -3651,7 +3666,33 @@ async def unload(ctx: commands.Context, extension: str):
   client.remove_cog(extension)
   await ctx.message.add_reaction('✅')
 
-
+class Translation(commands.Cog):
+    def __init__(self, bot):
+      self.bot = bot
+    @commands.command(aliases=['t'])
+    async def translate(self, ctx, language, *,message: str):
+      """Translates any type of text into the specified language(use two letter abbreviation)"""
+      g = AsyncTranslator()
+      translation=await g.translate(message, language)
+      embed = discord.Embed(description = f"**📣 Translating {ctx.author.mention}'s Message:\n\n{translation}**",color = discord.Color.teal())
+      await ctx.reply(embed=embed, mention_author=False)
+    @commands.command()
+    @commands.has_permissions(manage_guild=True)
+    async def globalize(self, ctx, language: str=None):
+      """Makes the channel the command is called in become global(every new message will be translated to the specified language)"""
+      channel=ctx.channel
+      data=await client.globalize.find(channel.id)
+      if data==None:
+        if language==None:
+          raise discord.ext.commands.BadArgument('str not number')
+        await client.globalize.upsert({"_id": channel.id, "language": language})
+        embed=discord.Embed(description=f"**✅ {channel.mention} Is Now Global! Every Message Will Be Translated To `{language}`**", color = discord.Color.green())
+        return await ctx.reply(embed=embed, mention_author=False)
+      else:
+        await client.globalize.delete(ctx.channel.id)
+        embed=discord.Embed(description=f"**✅ {channel.mention} Is Now Not Global**", color = discord.Color.green())
+        return await ctx.reply(embed=embed, mention_author=False)
+ 
 
 
 class Moderation(commands.Cog):
@@ -6231,6 +6272,7 @@ class Info(commands.Cog):
 
     @tasks.loop(minutes=30)
     async def update_status(self):
+      await client.status_info.upsert({"_id": 1, "shards": len(client.shards)})
       if client.user.id==809609861456723988:
 
         try:
