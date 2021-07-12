@@ -102,14 +102,14 @@ from mongo import Document
 import threading
 QueList = []
 TaskList = []
-website="https://teamastro.ml/"
+website="https://astrodisc.ml/"
 
 import topgg
 
 genius = lg.Genius('8-KsLC1FjqamiUh3xlSIS6SgXmqpjTCsySJPHNiupl-uJ-OPm-Z6uRW_yrZy_-Yi')
 
 # filtered_words = ["word1","word2"]
-# astroSite="https://teamastro.ml/"
+# astroSite="https://astrodisc.ml/"
 # threader = threading.Thread(target=os.system("java -jar Lavalink.jar"))
 # threader.start()
 # os.system("java -jar Lavalink.jar")
@@ -299,7 +299,7 @@ async def on_ready():
     #     # Channels on the server
     #     if channel.permissions_for(server.me).send_messages:
     #       try:
-    #         await channel.send(f"> Astro Now Has A Dashboard! 🎉 Check this Servers Dashboard Out At https://teamastro.ml/guild/{server.id}")
+    #         await channel.send(f"> Astro Now Has A Dashboard! 🎉 Check this Servers Dashboard Out At https://astrodisc.ml/guild/{server.id}")
     #         # So that we don't send to every channel:
     #       except:
     #         pass
@@ -321,12 +321,12 @@ async def on_ready():
     # with open("mainbank.json","w") as f:
     #   json.dump(users,f)
     # gameover1=True
-    # await client.change_presence(activity=discord.Game(name = '🚀https://teamastro.ml/'))
+    # await client.change_presence(activity=discord.Game(name = '🚀https://astrodisc.ml/'))
     
     # await bot.change_presence(activity=discord.Game(name="a game"))
 
     # Setting `Streaming ` status
-    # await client.change_presence(activity=discord.Streaming(name="🚀Team Astro", url="https://teamastro.ml/")) 
+    # await client.change_presence(activity=discord.Streaming(name="🚀Team Astro", url="https://astrodisc.ml/")) 
     # await client.change_presence(discord.Activity(name="Test"))
     # await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Hooked On A Feeling"))
     
@@ -2811,7 +2811,7 @@ async def on_message(msg):
     #   for server in users[str(msg.author.id)]["mute"]:
     #     if server==msg.guild.id:
     #       embed = discord.Embed(title="My Apologies "+msg.author.name+" You Have Been Muted.", colour=discord.Color.gold(), timestamp=datetime.utcnow())
-    #       embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    #       embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
     #       embed.set_thumbnail(url=f"{client.user.avatar_url}")
 
@@ -2865,7 +2865,7 @@ async def on_message(msg):
     
     if len(words)>0:
       embed = discord.Embed(title=f"👋 Hi, The Message You Just Sent In {msg.guild.name} Contained A Moderated Word", description=" ` Please Do Not Do this Again, As Your Message Will Once Again Be Deleted `", colour=discord.Color.orange(), timestamp=datetime.utcnow())
-      # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+      # embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
       # embed.set_thumbnail(url=f"{client.user.avatar_url}")
 
@@ -2972,6 +2972,32 @@ winningConditions = [
 class Settings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+
+    @commands.command(aliases=["clean"])
+    @commands.has_permissions(manage_guild=True)
+    async def prune(self, ctx):
+      """Allows astro to delete his messages after a short 45 seconds to keep your discord server clean and tidy"""
+      del_val=False
+      val = await client.delete_after.find(ctx.guild.id)
+      if val==None:
+        await client.delete_after.upsert({"_id": ctx.guild.id, "delete_after": 45})
+        del_val=True
+      elif val["delete_after"]==45:
+        await client.delete_after.upsert({"_id": ctx.guild.id, "delete_after": None})
+        del_val=False
+      else:
+        await client.delete_after.upsert({"_id": ctx.guild.id, "delete_after": 45})
+        del_val=True
+      
+      if del_val:
+        embed=discord.Embed(description="**✅ Command Responses Will Now Be Pruned**".title(), color = discord.Color.orange())
+        return await ctx.reply(embed=embed, mention_author=False)
+      else:
+        embed=discord.Embed(description="**❌ Command Responses Have Been Reset To Normal**".title(), color = discord.Color.orange())
+        return await ctx.reply(embed=embed, mention_author=False)
+      
+      
 
     @commands.command()
     @commands.has_permissions(manage_guild=True)
@@ -3681,7 +3707,7 @@ class Moderation(commands.Cog):
       # with open("mutedUsers.json","r") as f:
       #   users = json.load(f)
       embed = discord.Embed(title="Muted Users In "+ctx.guild.name+":", colour=discord.Color.orange())
-      # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+      # embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
       # embed.set_thumbnail(url=f"{ctx.guild.icon_url}")
 
@@ -4046,7 +4072,7 @@ class astroHelp(commands.HelpCommand):
         embed = discord.Embed(
           # description =f"```\nTips:\n<> means that the argument is required\n[] means that the argument is optional\n\nUse {self.clean_prefix}help (command|category) for more info```" ,
           colour=discord.Color.orange())
-        embed.set_author(name="Astro's Command Categories", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
+        embed.set_author(name="Astro's Command Categories", url="https://astrodisc.ml/commands", icon_url=f"{client.user.avatar_url}")
         for cog, commands in mapping.items():
           cog_name = getattr(cog, "qualified_name", "No Category").title()
           if cog_name!= "No Category":
@@ -4062,16 +4088,25 @@ class astroHelp(commands.HelpCommand):
         embed.set_thumbnail(url=client.user.avatar_url)
         
         await channel.send(embed=embed)
-        await update_commands(mapping)
+        if self.context.author.id==608778878835621900:
+          await update_commands(mapping)
     def get_command_signature(self, command):
         return '%s%s %s' % (self.clean_prefix, command.qualified_name, command.signature)
+    
+    async def command_not_found(self, command):
+      cog=client.get_cog(command.title())
+      if cog!=None:
+        return await self.send_cog_help(cog)
+      else:
+        return super().command_not_found(command)
     async def send_error_message(self, error):
+      print(type(error))
       if "No command called" in str(error):
         raise NotFound
       embed = discord.Embed(description=f"**{error}**" ,colour=discord.Color.orange())
       channel = self.get_destination()
-      
-      await channel.send(embed=embed)
+      if error!=None:
+        await channel.send(embed=embed)
 
     def get_command_help(self, command):
       """Returns an Embed version of the command object given."""
@@ -4149,7 +4184,7 @@ class astroHelp(commands.HelpCommand):
       embed = discord.Embed(
          description =f"```\nTips:\n<> means that the argument is required\n[] means that the argument is optional\n\nUse {self.clean_prefix}help (command|category) for more info```",
          colour=discord.Color.orange())
-      embed.set_author(name=f"{command.qualified_name.title()}", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
+      embed.set_author(name=f"{command.qualified_name.title()}", url="https://astrodisc.ml/commands", icon_url=f"{client.user.avatar_url}")
       embed.add_field(name=f"➜ Usage", value=f" ` {self.get_command_signature(command)} ` ", inline=False)
       embed.add_field(name=f"➜ Description", value=f" ` {command.help} ` ", inline=False)
       # if command.clean:
@@ -4215,7 +4250,7 @@ async def help(ctx, *, commandType :str =None):
   prefix=prefixData["prefix"]
   if commandType==None:
     embed = discord.Embed( colour=discord.Color.orange())
-    embed.set_author(name="Astro's Command Categories", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
+    embed.set_author(name="Astro's Command Categories", url="https://astrodisc.ml/commands", icon_url=f"{client.user.avatar_url}")
     embed.add_field(name="**Music**", value=f"` {prefix}help music `", inline=True)
     embed.add_field(name="**Moderator**", value=f"` {prefix}help moderator `", inline=True)
     # embed.add_field(name="**Dungeon**", value=f"` {prefix}help dungeon `", inline=True)
@@ -4235,7 +4270,7 @@ async def help(ctx, *, commandType :str =None):
   if commandType =="music" or commandType =="moderator" or commandType =="dungeon" or commandType =="utility" or commandType =="data" or commandType =="fun":
     if commandType == "music":
       embed = discord.Embed(title="Music", colour=discord.Color.orange())
-      # embed.set_author(name="Music", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
+      # embed.set_author(name="Music", url="https://astrodisc.ml/commands", icon_url=f"{client.user.avatar_url}")
       embed.add_field(name="**Play**", value=f"` {prefix}play <song> | Plays A Song `", inline=False)
       embed.add_field(name="**Queue**", value=f"` {prefix}queue <song> | Queues A Song `", inline=False)
       embed.add_field(name="**Queue**", value=f"` {prefix}queue | Lists The Queue `", inline=False)
@@ -4254,7 +4289,7 @@ async def help(ctx, *, commandType :str =None):
       await ctx.send(embed=embed)
     if commandType == "moderator":
       embed = discord.Embed(title="Moderator", colour=discord.Color.orange())
-      # embed.set_author(name="Music", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
+      # embed.set_author(name="Music", url="https://astrodisc.ml/commands", icon_url=f"{client.user.avatar_url}")
       embed.add_field(name="**Kick**", value=f"` {prefix}kick <user> | Kicks A User From This Server `", inline=False)
       embed.add_field(name="**Ban**", value=f"` {prefix}ban <user> | Bans A User From This Server `", inline=False)
       embed.add_field(name="**Mute**", value=f"` {prefix}mute <user> | Mutes A User `", inline=False)
@@ -4266,7 +4301,7 @@ async def help(ctx, *, commandType :str =None):
       await ctx.send(embed=embed)
     if commandType == "dungeon":
       embed = discord.Embed(title="The Dungeon Game's Commands", colour=discord.Color.orange())
-      # embed.set_author(name="Music", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
+      # embed.set_author(name="Music", url="https://astrodisc.ml/commands", icon_url=f"{client.user.avatar_url}")
       embed.add_field(name="**Balance**", value=f"` {prefix}balance | Checks How Much Money You Have `", inline=False)
       embed.add_field(name="**Beg**", value=f"` {prefix}beg | Begs For More Money `", inline=False)
       embed.add_field(name="**Buy**", value=f"` {prefix}buy <amount> <item> | Buys An Item/Healable/Weapon `", inline=False)
@@ -4286,7 +4321,7 @@ async def help(ctx, *, commandType :str =None):
       await ctx.send(embed=embed)
     if commandType == "utility":
       embed = discord.Embed(title="Utility", colour=discord.Color.orange())
-      # embed.set_author(name="Music", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
+      # embed.set_author(name="Music", url="https://astrodisc.ml/commands", icon_url=f"{client.user.avatar_url}")
       # embed.add_field(name="**Reminder**", value=f"` {prefix}reminder <time> <reminder text> | Reminds You About Something In A Specified Amount Of Time `", inline=False)
       embed.add_field(name="**Timer**", value=f"` {prefix}Timer <time> | Sets A Timer For A Certain Amount Of Time `", inline=False)
       embed.add_field(name="**News**", value=f"` {prefix}news <amount> | Gives You A Specified Amount Of Headlines `", inline=False)
@@ -4301,7 +4336,7 @@ async def help(ctx, *, commandType :str =None):
 
     if commandType == "data":
       embed = discord.Embed(title="Live Data", colour=discord.Color.orange())
-      # embed.set_author(name="Music", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
+      # embed.set_author(name="Music", url="https://astrodisc.ml/commands", icon_url=f"{client.user.avatar_url}")
       embed.add_field(name="**Time**", value=f"` {prefix}time in <region> | Gives You The Time In Any Region `", inline=False)
       embed.add_field(name="**Timer**", value=f"` {prefix}Timer <time> | Sets A Timer For A Certain Amount Of Time `", inline=False)
       embed.add_field(name="**News**", value=f"` {prefix}news <amount> | Gives You A Specified Amount Of Headlines `", inline=False)
@@ -4313,7 +4348,7 @@ async def help(ctx, *, commandType :str =None):
       # await ctx.send(embed=embed)
     if commandType == "fun":
       embed = discord.Embed(title="Fun", colour=discord.Color.orange())
-      # embed.set_author(name="Music", url="https://teamastro.ml/commands", icon_url=f"{client.user.avatar_url}")
+      # embed.set_author(name="Music", url="https://astrodisc.ml/commands", icon_url=f"{client.user.avatar_url}")
       embed.add_field(name="**8ball**", value=f"` {prefix}8ball <question> | Answers Your Life Questions `", inline=False)
       embed.add_field(name="**Meme**", value=f"` {prefix}meme <Sub Reddit> | Gives You A Meme From Any Subreddit `", inline=False)
       embed.add_field(name="**Reddit**", value=f"` {prefix}reddit <Sub Reddit> | Gives You Posts From Any Subreddit `", inline=False)
@@ -4329,7 +4364,7 @@ async def help(ctx, *, commandType :str =None):
     await ctx.send(embed=embed)
   # embed = discord.Embed(title="Commands", colour=discord.Color.orange(), timestamp=datetime.utcnow())
 
-  # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  # embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
 
   # embed.set_footer(text="Team Astro", icon_url=f"{client.user.avatar_url}")
@@ -4361,11 +4396,19 @@ async def on_guild_remove(guild): #when the bot is removed from the guild
     # with open('prefixes.json', 'w') as f: #deletes the guild.id as well as its prefix
     #   json.dump(prefixes, f, indent=4)
 
+async def notify_about_guild(guild):
+  astro_guild =client.get_guild(809318345463562240)
+  channel = client.get_channel(864018465245495317)
+  embed=discord.Embed( description = f"**✅ Added To `{guild.name}` With `{guild.member_count}` Members!**",colour=discord.Color.teal())
+  # Add author, thumbnail, fields, and footer to the embed
+  # embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
+  # embed.set_thumbnail(url="https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?auto=webp&s=38648ef0dc2c3fce76d5e1d8639234d8da0152b2")
 
+  await channel.send(embed=embed)
 @client.event
 async def on_guild_join(guild):
-  pass
+  await notify_about_guild(guild)
   # with open('prefixes.json', 'r') as f: #read the prefix.json file
   #   prefixes = json.load(f) #load the json file
   # prefixes=db["prefixes"]
@@ -5006,8 +5049,8 @@ async def balance(ctx, member: discord.Member=None):
   healing = users[str(user.id)]["healing"]
 
   embed = discord.Embed(title=f"{member.name}'s Stats", colour = discord.Color.gold(),timestamp=datetime.utcnow())
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
-  embed.set_footer(text="Team Astro | https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_footer(text="Team Astro | https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
   embed.set_thumbnail(url=user.avatar_url)
   embed.add_field(name = "Health:", value=str(health))
   embed.add_field(name = "Armor:", value=str(armor))
@@ -5091,8 +5134,8 @@ jobsincome = [15,20,40,50,80,100,500,1000]
 # @client.command(aliases=['alljobs','listjobs','work'])
 async def jobs(ctx):
   em = discord.Embed(title = f"All Jobs" , description = "Use The Earn Command And One of These Jobs, And If You Meet The Requirements, You Will Work A Day In That Job",color = discord.Color.gold(),timestamp=datetime.utcnow()) 
-  em.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
-  em.set_footer(text="Team Astro | https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  em.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
+  em.set_footer(text="Team Astro | https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
   for i in range(len(jobsarr)):
     em.add_field(name = f"{jobsarr[i]}" , value = f"Hourly Income: {jobsincome[i]} 💰s | Required Money: {jobsmon[i]}💰s",  inline = False)
@@ -5329,9 +5372,9 @@ async def leaderboard(ctx,x = 10):
   
   em = discord.Embed(title = f"Top Members In "+ctx.guild.name , description = "Based On Exp/Level For Each Server",color = discord.Color.gold(),timestamp=datetime.utcnow())
   
-  em.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  em.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
-  em.set_footer(text="Team Astro | https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  em.set_footer(text="Team Astro | https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
   
   # for element in users[str(server)]:
   #   element["exp"]
@@ -5380,9 +5423,9 @@ async def gameleaderboard(ctx,x = 10):
 
     em = discord.Embed(title = f"Top {x} Richest Members" , description = "What's In Your Wallet?",color = discord.Color.gold(),timestamp=datetime.utcnow())
     
-    em.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    em.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
-    em.set_footer(text="Team Astro | https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    em.set_footer(text="Team Astro | https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
     index = 1
     # print(total)
@@ -5449,9 +5492,9 @@ async def bag(ctx, member: discord.Member = None):
 
     em = discord.Embed(title = user.name+"'s Items",color = discord.Color.gold(),timestamp=datetime.utcnow())
     
-    em.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    em.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
-    em.set_footer(text="Team Astro | https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    em.set_footer(text="Team Astro | https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
     for item in bag:
         name = item["item"]
         amount = item["amount"]
@@ -5524,9 +5567,9 @@ async def buy_this(user,item_name,amount):
 async def shop(ctx):
     em = discord.Embed(title = "Shop",color=discord.Color.gold(),timestamp=datetime.utcnow())
     
-    em.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    em.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
-    em.set_footer(text="Team Astro | https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    em.set_footer(text="Team Astro | https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
     for item in mainshop:
         name = item["name"]
@@ -5871,7 +5914,7 @@ async def agenda(ctx,*, question):
   await ctx.send("@everyone")
   embed=discord.Embed(title="Agenda From " +author_name.title(), description= "Items", color=0xFF5733, timestamp=datetime.utcnow())
 
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
 
   embed.set_thumbnail(url="https://cdn.iconscout.com/icon/free/png-256/meeting-1543488-1305981.png")
@@ -5910,7 +5953,7 @@ async def _meetingSummary(ctx,*, question):
   await ctx.send("@everyone")
   embed=discord.Embed(title="Meeting Summary From " +author_name.title(), description= "Topics/Summary", color=0xFF5733, timestamp=datetime.utcnow())
 
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
     # Add rs/608778878835621900/76e69643d799ee584dd46afa91127105.webp")
 
@@ -5972,7 +6015,7 @@ async def reminder(ctx, time, *, reminder):
         embeded=discord.Embed(title="Reminder ",colour=discord.Color.gold(), url="https://timer.com", description=desc, timestamp=datetime.utcnow())
 
         # Add author, thumbnail, fields, and footer to the embed
-        embeded.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+        embeded.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
         embeded.set_thumbnail(url="https://cdn4.iconfinder.com/data/icons/small-n-flat/24/calendar-512.png")
 
@@ -6023,7 +6066,7 @@ class Utility(commands.Cog):
         print(reminder)
         user = ctx.message.author
         embed = discord.Embed(color=0x55a7f7, timestamp=datetime.utcnow())
-        # embed.set_footer(text="Team Astro | https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+        # embed.set_footer(text="Team Astro | https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
         # embed.set_footer(text="Team Astro", icon_url=f"{client.user.avatar_url}")
         seconds = 0
         if reminder is None:
@@ -6057,7 +6100,7 @@ class Utility(commands.Cog):
             embeded=discord.Embed(title="Timer ",colour=discord.Color.gold(), url="https://timer.com", description=desc, timestamp=datetime.utcnow())
 
             # Add author, thumbnail, fields, and footer to the embed
-            embeded.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+            embeded.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
             embeded.set_thumbnail(url="https://cdn4.iconfinder.com/data/icons/small-n-flat/24/calendar-512.png")
 
@@ -6114,7 +6157,7 @@ class Utility(commands.Cog):
       #   # Add rs/608778878835621900/76e69643d799ee584dd46afa91127105.webp")
 
       # embed.set_thumbnail(url="https://image.flaticon.com/icons/png/512/1946/1946385.png")
-      # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+      # embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
       # embed.add_field(name="✅", value= str(check_marks) , inline=False)
       # embed.add_field(name="❌", value= str(x_marks) , inline=False)
@@ -6158,7 +6201,7 @@ class Info(commands.Cog):
       for s in client.guilds:
         members += len(s.members)
       embed = discord.Embed( colour=discord.Color.orange())
-      embed.set_author(name=f"aoztanir#0001", url="https://teamastro.ml/commands", icon_url=f"https://cdn.discordapp.com/avatars/608778878835621900/52ef129db095bdb091e553294cf45aec.webp?size=1024")
+      embed.set_author(name=f"aoztanir#0001", url="https://astrodisc.ml/commands", icon_url=f"https://cdn.discordapp.com/avatars/608778878835621900/52ef129db095bdb091e553294cf45aec.webp?size=1024")
       # embed.add_field(name="**Develeper**", value=f"{aryah.mention}", inline=True)
       embed.add_field(name="**Creator**", value=f"` aoztanir#0001 `", inline=True)
       embed.add_field(name="**Server Count**", value=f"` {len(client.guilds)} `", inline=True)
@@ -6200,7 +6243,7 @@ class Info(commands.Cog):
       for s in client.guilds:
         members += len(s.members)
       for element in client.shards:
-        await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = f'@astro help | {members} Users'), shard_id=client.shards[element].id)
+        await client.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name = f'@astro help | {members} Active Users'), shard_id=client.shards[element].id)
         print(element)
       
 
@@ -6367,7 +6410,7 @@ class Data(commands.Cog):
         embed=discord.Embed( description = f"**r/{sub}**",colour=discord.Color.orange())
 
         # Add author, thumbnail, fields, and footer to the embed
-        # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+        # embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
         # embed.set_thumbnail(url="https://external-preview.redd.it/iDdntscPf-nfWKqzHRGFmhVxZm4hZgaKe5oyFws-yzA.png?auto=webp&s=38648ef0dc2c3fce76d5e1d8639234d8da0152b2")
         embed.set_image(url=meme.url)
@@ -6392,7 +6435,7 @@ class Data(commands.Cog):
           # embed.add_field(name = "Long Description:", value= wikipedia.page(query).content.split("\n\n")[1][:500]+"...")
 
         # Add author, thumbnail, fields, and footer to the embed
-          # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+          # embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
           # embed.set_thumbnail(url="http://pngimg.com/uploads/wikipedia/wikipedia_PNG12.png")
 
@@ -6422,7 +6465,7 @@ class Data(commands.Cog):
         embed=discord.Embed(title=str(hNum)+ " Headlines Are Ready!",colour=discord.Color.green(), url="https://news.google.com", description="Here are your headlines:", timestamp=datetime.utcnow())
 
         # Add author, thumbnail, fields, and footer to the embed
-        embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+        embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
         embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/0/0b/Google_News_icon.png")
 
@@ -6453,7 +6496,7 @@ class Data(commands.Cog):
 
           embed.set_thumbnail(url=target.avatar_url)
 
-          # embed.set_footer(text="Team Astro | https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+          # embed.set_footer(text="Team Astro | https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
           # embed.add_field(name="Experience Points:", value=str(exp), inline=False)
           # embed.add_field(name="Level:", value=str(lvl), inline=False)
           
@@ -6700,7 +6743,7 @@ async def _googleLinks(ctx, *, searchstr: str):
   embed=discord.Embed(title="Your 10 Results Are Ready!",colour=discord.Color.gold(), url="https://google.com", description="Here are your results:", timestamp=datetime.utcnow())
 
     # Add author, thumbnail, fields, and footer to the embed
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
   embed.set_thumbnail(url="http://assets.stickpng.com/images/5847f9cbcef1014c0b5e48c8.png")
 
@@ -6723,7 +6766,7 @@ async def _google(ctx, *, searchstr: str):
   embed=discord.Embed(title="Your Result Is Ready!",colour=discord.Color.gold(), url="https://google.com", description="Below is a link that could help you out", timestamp=datetime.utcnow())
 
     # Add author, thumbnail, fields, and footer to the embed
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
   embed.set_thumbnail(url="http://assets.stickpng.com/images/5847f9cbcef1014c0b5e48c8.png")
   embed.add_field(name="The 1st URL Found on Google:" , value=results[0], inline=False)
@@ -6771,7 +6814,7 @@ async def _time(ctx, inside, city):
   embed=discord.Embed(title="Current Time", url="https://time.is/", description="This time is the current time in "+ str(xyz), color=discord.Color.gold(), timestamp=datetime.utcnow())
 
   # Add author, thumbnail, fields, and footer to the embed
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
   embed.set_thumbnail(url="https://www.patriotsoftware.com/wp-content/uploads/2017/06/time-and-half-1.jpg")
 
@@ -6781,7 +6824,7 @@ async def _time(ctx, inside, city):
 
 # @client.command(aliases = ['Who are you?', 'who','creator', 'purpose'])
 async def _who(ctx):
-    await ctx.send("Heya,\nI was created by Team Astro More About Them Here: https://teamastro.ml/")
+    await ctx.send("Heya,\nI was created by Team Astro More About Them Here: https://astrodisc.ml/")
 
 # @client.command(aliases = ['weather','temperature'])
 async def _weather(ctx, *, city):
@@ -6802,7 +6845,7 @@ async def _weather(ctx, *, city):
         embed=discord.Embed(title="Weather In "+city_name.title(), url="https://weather.com", description="Weather information for "+city_name.title(), color=discord.Color.gold(), timestamp=datetime.utcnow())
 
       # Add author, thumbnail, fields, and footer to the embed
-        embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+        embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
         embed.set_thumbnail(url="https://icons-for-free.com/iconfiles/png/512/fog+foggy+weather+icon-1320196634851598977.png")
 
@@ -6828,7 +6871,7 @@ async def listqueueOld(ctx):
     # nameList = await accessNames(ctx.guild.id)
     # msg=await ctx.send(queueList)
     embed = discord.Embed(title="Queue For "+ctx.guild.name.title(), colour=discord.Color.teal(), timestamp=datetime.utcnow())
-    # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    # embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
     info = await accessPlaying(ctx.guild.id)
     try:
       pass
@@ -6879,7 +6922,7 @@ async def listqueueOld(ctx):
     await ctx.send(embed=embed)
     # except:
     #   embeda = discord.Embed(title="Queue For "+ctx.guild.name.title(), colour=discord.Color.red(), timestamp=datetime.utcnow())
-    #   embeda.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    #   embeda.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
     #   try:
     #     embeda.set_thumbnail(url=f"{thumbnails[0]}")
     #   except:
@@ -6910,7 +6953,7 @@ async def _percentage(ctx, member: discord.Member,*, question):
   embed=discord.Embed(title="Percentage " + question.title()+" For "+member.name.title(), description= "Asked By: "+str(author_name).title(), color=discord.Color.gold(), timestamp=datetime.utcnow())
 
     # Add author, thumbnail, fields, and footer to the embed
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
   embed.set_thumbnail(url="https://static.wikia.nocookie.net/fortnite_esports_gamepedia_en/images/f/ff/Onepercent.png/revision/latest?cb=20201110033035")
 
@@ -6945,7 +6988,7 @@ async def polltimes(ctx, *, question):
 
   embed=discord.Embed(title="Polling Times: " + questiona.title(), description= "Asked By: "+str(author_name).title(), color=0xFF5733, timestamp=datetime.utcnow())
 
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
     # Add rs/608778878835621900/76e69643d799ee584dd46afa91127105.webp")
 
@@ -7903,7 +7946,7 @@ async def queueOld(ctx, *, mysong: str=None):
     # embed=discord.Embed(title="A New Song Has Been Queued, Use The Play Command To Play!", url=final_url, description= mysong.title() +" Has been Queued!", color=0xFF5733, timestamp=datetime.utcnow())
 
     # # Add author, thumbnail, fields, and footer to the embed
-    # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    # embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
     # embed.set_thumbnail(url="https://cdn.iconscout.com/icon/free/png-512/spotify-11-432546.png")
 
@@ -8199,7 +8242,7 @@ async def playOld(ctx, *, mysong: str="queue"):
         # embed=discord.Embed(title="A New Song Is Playing!", url=final_url, description= mysong.title() +" Is Playing!", color=0xFF5733, timestamp=datetime.utcnow())
 
         # # Add author, thumbnail, fields, and footer to the embed
-        # embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+        # embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
         # embed.set_thumbnail(url="https://cdn.iconscout.com/icon/free/png-512/spotify-11-432546.png")
 
@@ -8263,7 +8306,7 @@ async def playOld(ctx, *, mysong: str="queue"):
         embed=discord.Embed(title="Queue!", url= (await accessQueue(ctx.guild.id))[0], description= "Astro is playing songs from the queue, use the skip command to skip songs, and the stop command to stop playing from the queue.", color=0xFF5733, timestamp=datetime.utcnow())
 
         # Add author, thumbnail, fields, and footer to the embed
-        embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+        embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
         embed.set_thumbnail(url="https://cdn.iconscout.com/icon/free/png-512/spotify-11-432546.png")
 
@@ -8755,7 +8798,7 @@ async def covidTrackertotal(ctx):
   embed=discord.Embed(title="Covid Stats", description= "Covid Statistics Scraped from Johns Hokins Research Center", color=0xFF5733, timestamp=datetime.utcnow())
 
   # Add author, thumbnail, fields, and footer to the embed
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
   embed.set_thumbnail(url="https://www.psycharchives.org/retrieve/096175aa-f7f2-4970-989d-d934c30b5551")
 
@@ -8800,7 +8843,7 @@ async def taskFor(ctx, memb: discord.Member, *, task:str):
   taskName="Task: "+task.title()+" | Due: "+dueDate.title()
 
   embed = discord.Embed(title=memb.name+" Has Been Assigned A New Task!", description = taskName, colour=discord.Color.gold(), timestamp=datetime.utcnow())
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
 
   await create_task_user(memb)
@@ -8849,7 +8892,7 @@ async def deletetask(ctx, memb: discord.Member, taskNum=None):
 async def listTasks(ctx, memb: discord.Member):
 
   embed = discord.Embed(title="Tasks For "+memb.name, description = "Task List Below", colour=discord.Color.gold(), timestamp=datetime.utcnow())
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
   
   embed.set_thumbnail(url=f"{memb.avatar_url}")
@@ -8912,7 +8955,7 @@ async def teamtask(ctx,*, question):
   await ctx.send("@everyone")
   embed=discord.Embed(title="Task List Created/Altered By " +author_name.title(), description= "Items", color=0xFF5733, timestamp=datetime.utcnow())
 
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
 
   embed.set_thumbnail(url="https://cdn.iconscout.com/icon/free/png-256/meeting-1543488-1305981.png")
@@ -8933,7 +8976,7 @@ async def listteamtasks(ctx):
   await ctx.send("@everyone")
   embed=discord.Embed(title="Task List Created/Altered By " +author_name.title(), description= "Items", color=0xFF5733, timestamp=datetime.utcnow())
 
-  embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+  embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
 
   embed.set_thumbnail(url="https://cdn.iconscout.com/icon/free/png-256/meeting-1543488-1305981.png")
@@ -8969,7 +9012,7 @@ async def covid(ctx, stateName):
   if abrev == True:
     embed=discord.Embed(title="Covid Stats For "+stateName.upper(), description= "Covid Statistics Scraped from Johns Hokins Research Center", color=0xFF5733, timestamp=datetime.utcnow())
     # Add author, thumbnail, fields, and footer to the embed
-    embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
     embed.set_thumbnail(url="https://www.psycharchives.org/retrieve/096175aa-f7f2-4970-989d-d934c30b5551")
 
@@ -8982,7 +9025,7 @@ async def covid(ctx, stateName):
   if abrev == False:
     embed=discord.Embed(title="Covid Stats For "+stateName.title(), description= "Covid Statistics Scraped from Johns Hokins Research Center", color=0xFF5733, timestamp=datetime.utcnow())
     # Add author, thumbnail, fields, and footer to the embed
-    embed.set_author(name="Astro", url="https://teamastro.ml/", icon_url=f"{client.user.avatar_url}")
+    embed.set_author(name="Astro", url="https://astrodisc.ml/", icon_url=f"{client.user.avatar_url}")
 
     embed.set_thumbnail(url="https://www.psycharchives.org/retrieve/096175aa-f7f2-4970-989d-d934c30b5551")
 
@@ -9028,7 +9071,7 @@ import subprocess
 #DEV BOT
 
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
