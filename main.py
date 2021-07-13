@@ -2947,19 +2947,23 @@ async def on_message(msg):
     #   pass
     data = await client.globalize.find(msg.channel.id)
     if data!=None:
-      await global_translate(msg, language=data["language"])
+      await global_translate(msg, language=data["language"], webhook_id=data["webhook"])
   except Exception as e:
     print(e)
   await client.process_commands(msg)
 
 
 
-async def global_translate(msg, language):
+async def global_translate(msg, language, webhook_id):
   g = AsyncTranslator()
   translation=await g.translate(msg.content, language)
   embed = discord.Embed(description = f"{translation}")
   embed.set_author(name=msg.author.name, icon_url=msg.author.avatar_url)
-  await msg.reply(embed=embed, mention_author=False)
+  webhook = await client.fetch_webhook(webhook_id)
+  await webhook.send(content="> **"+translation+"**", avatar_url = msg.author.avatar_url, username=msg.author.nick)
+  # await msg.delete()
+  
+  # await webhook.send(translation)
   
   # await msg.delete()
 
@@ -3685,13 +3689,22 @@ class Translation(commands.Cog):
       if data==None:
         if language==None:
           raise discord.ext.commands.BadArgument('str not number')
-        await client.globalize.upsert({"_id": channel.id, "language": language})
+        webhook = await channel.create_webhook( name=f"{channel.name}'s Globalization Webhook")
+        await client.globalize.upsert({"_id": channel.id, "language": language, 'webhook': webhook.id})
+        
         embed=discord.Embed(description=f"**✅ {channel.mention} Is Now Global! Every Message Will Be Translated To `{language}`**", color = discord.Color.green())
         return await ctx.reply(embed=embed, mention_author=False)
       else:
+        try:
+          glob = await client.globalize.find(ctx.channel.id)
+          web= await client.fetch_webhook(glob["webhook"])
+          await web.delete()
+        except:
+          pass
         await client.globalize.delete(ctx.channel.id)
         embed=discord.Embed(description=f"**✅ {channel.mention} Is Now Not Global**", color = discord.Color.green())
         return await ctx.reply(embed=embed, mention_author=False)
+        
  
 
 
@@ -6349,7 +6362,7 @@ class Data(commands.Cog):
               embed.set_thumbnail(url=f"{client.user.avatar_url}")
             await ctx.send(embed=embed)
             print(track.info)
-    @commands.command()
+    @commands.command(aliases=['triv'])
     @commands.cooldown(1,15,commands.BucketType.user)
     async def trivia(self, ctx):
       """Retrieves the lyrics for what is playing or by query"""
