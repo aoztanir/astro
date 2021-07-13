@@ -8,7 +8,7 @@
 ###########INFO/NOTES
 #ONLY INSTALL DNSPYTHON==2.1.0
 
-
+from trivia import trivia
 import discord
 # import datetime 
 from discord_components import DiscordComponents, Button, ButtonStyle, InteractionType
@@ -4117,7 +4117,7 @@ class astroHelp(commands.HelpCommand):
         for cog, commands in mapping.items():
           cog_name = getattr(cog, "qualified_name", "No Category").title()
           if cog_name!= "No Category":
-            embed.add_field(name=cog_name, value=f"` {self.clean_prefix}help {cog_name} `", inline=True)
+            embed.add_field(name=cog_name, value=f"`{self.clean_prefix}help {cog_name}`", inline=True)
           #  command_signatures = ['`'+c.qualified_name+'` ' for c in commands]
           #  if command_signatures:
           #       cog_name = getattr(cog, "qualified_name", "Other")
@@ -6349,6 +6349,50 @@ class Data(commands.Cog):
               embed.set_thumbnail(url=f"{client.user.avatar_url}")
             await ctx.send(embed=embed)
             print(track.info)
+    @commands.command()
+    @commands.cooldown(1,15,commands.BucketType.user)
+    async def trivia(self, ctx):
+      """Retrieves the lyrics for what is playing or by query"""
+
+      result = await trivia.question(amount=1, category=None, difficulty=None, quizType='multiple')
+      choices=[]
+      for element in result[0]["incorrect_answers"]:
+        choices.append(element)
+      choices.append(result[0]["correct_answer"])
+      random.shuffle(choices)
+      i=0
+      for element in choices:
+        
+        if element ==result[0]["correct_answer"]:
+          if i==0:
+            correct="a"
+          if i==1:
+            correct="b"
+          if i==2:
+            correct="c"
+          if i==3:
+            correct="d"
+        i=i+1
+      embed=discord.Embed(description=f"**{ctx.author.mention}'s Trivia Question `15s`:\n\n{result[0]['question']}\n\nChoices:\n**", color = discord.Color.teal())
+      embed.add_field(name="A.", value=f"`{choices[0]}`", inline=False)
+      embed.add_field(name="B.", value=f"`{choices[1]}`", inline=False)
+      embed.add_field(name="C.", value=f"`{choices[2]}`", inline=False)
+      embed.add_field(name="D.", value=f"`{choices[3]}`", inline=False)
+      embed.set_author(name="Difficulty "+result[0]["difficulty"]+" | Category "+result[0]["category"], icon_url=ctx.author.avatar_url)
+      await ctx.reply(embed=embed, mention_author=False)
+      try:
+        msg = await client.wait_for('message', check=lambda message: message.author == ctx.author, timeout=15)
+        if msg.content.lower()==correct:
+          embed=discord.Embed(description=f"**✅ Nice Job, `{correct.upper()}.` Is Correct!**", color = discord.Color.green())
+          return await ctx.send(embed=embed)
+        else:
+          embed=discord.Embed(description=f"**❌ Sorry, That Was The Wrong Answer `{correct.upper()}.` Is Correct!**", color = discord.Color.green())
+          return await ctx.send(embed=embed)
+      except asyncio.TimeoutError:
+        embed=discord.Embed(description=f"**✋ You Didn't Respond In Time. The Correct Answer Was `{correct.upper()}.`**", color = discord.Color.red())
+        return await ctx.send(embed=embed)
+      
+      
 
     @commands.command()
     @commands.cooldown(1,3,commands.BucketType.user)
