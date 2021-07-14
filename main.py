@@ -448,6 +448,10 @@ class CannotLoop(commands.CommandError):
 class OnlyDJ(commands.CommandError):
     """Error raised when no suitable voice channel was supplied."""
     pass
+
+class TooManyWebhooks(commands.CommandError):
+    """Error raised when no suitable voice channel was supplied."""
+    pass
 class NotFound(commands.CommandError):
     """Error raised when no suitable voice channel was supplied."""
     pass
@@ -1460,7 +1464,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         """Check whether the user is an Admin or DJ."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
-        return player.dj == ctx.author or ctx.author.guild_permissions.manage_channels
+        return player.dj == ctx.author or ctx.author.guild_permissions.manage_guild
 
     @commands.command(aliases=['join'])
     async def connect(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
@@ -1475,7 +1479,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             raise NoChannelProvided
 
         await player.connect(channel.id)
-        await ctx.guild.change_voice_state(channel=ctx.author.voice.channel, self_deaf=True)
+        
+        await ctx.guild.change_voice_state(channel=channel, self_deaf=True)
+        if await checkVcChannel(channel)==0 and channel==None:
+          await player.teardown()
 
 
     # @commands.command(aliases=['seek','moveto'])
@@ -1534,8 +1541,58 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         except Exception as e:
           print(e)
           pass
+    @commands.command(aliases=['switch-channel'])
+    # @commands.cooldown(1,2,commands.BucketType.user)
+    async def switch_channel(self, ctx: commands.Context, channel: discord.TextChannel):
+      """Switches the text channel music commands can be used in for the cufrent playing session"""
+      player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+      if not player.is_connected:
+        return await ctx.invoke(self.connect)
+      if not self.is_privileged(ctx):
+        raise OnlyDJ
+      player.context.channel=channel
+      player.channel_id=channel.id
+      embed=discord.Embed(description=f"**{channel.mention} Will Now Be Used For This Session's Music Commands**", color = discord.Color.green())
+      await ctx.send(embed=embed, delete_after=10)
+      await player.invoke_controller()
 
-    
+    @commands.command(aliases=['s', 'sc'])
+    # @commands.cooldown(1,2,commands.BucketType.user)
+    async def soundcloud(self, ctx: commands.Context, *, query: str=None):
+      """Searches for songs to queue through soundcloud"""
+      player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+      if not player.is_connected:
+        await ctx.invoke(self.connect)
+      query = query.strip('<>')
+      if not URL_REG.match(query):
+        query = f'scsearch:{query}'
+    # if "open.spotify.com" not in query:
+      tracks = await self.bot.wavelink.get_tracks(query, retry_on_failure=True)
+      if not tracks:
+        raise NotFound
+      track = Track(tracks[0].id, tracks[0].info, requester=ctx.author)
+      print(track.info)
+      print(track.thumb)
+      try:
+        length = str(timedelta(seconds=int(track.length/1000)))
+      except:
+        length="🔴 LIVE"
+      embed=discord.Embed(description=f'**Queued [{formatTitle(track.title)}]({track.uri}) ` {length} ` | {track.requester.mention}**', color = discord.Color.green())
+      # try:
+      #   embed.set_thumbnail(url=track.thumb)
+      #   if track.thumb==None:
+      #     embed.set_thumbnail(url=f"{client.user.avatar_url}")
+      # except:
+      #   embed.set_thumbnail(url=f"{client.user.avatar_url}")
+      await ctx.send(embed=embed, delete_after=10)
+      # await ctx.send(f'```ini\nAdded {track.title} to the Queue\n```', delete_after=15)
+      try:
+        player.queue.append(track)
+      except:
+        pass
+
+      if not player.is_playing:
+        await player.do_next()
 
     @commands.command(aliases=['p'])
     # @commands.cooldown(1,2,commands.BucketType.user)
@@ -1786,7 +1843,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       """Removes a song or number from the queue"""
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       if not player.is_connected:
-            return
+        return await ctx.invoke(self.connect)
 
       if not self.is_privileged(ctx):
           raise OnlyDJ
@@ -1837,8 +1894,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     async def pause(self, ctx: commands.Context):
         """Pauses the currently playing song"""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
-
-        if player.is_paused or not player.is_connected:
+        if not player.is_connected:
+          return await ctx.invoke(self.connect)
+        if player.is_paused:
             return
 
         if self.is_privileged(ctx):
@@ -1866,8 +1924,10 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         """Resumes the currently paused song"""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
-        if not player.is_paused or not player.is_connected:
-            return
+        if not player.is_connected:
+          return await ctx.invoke(self.connect)
+        if not player.is_paused:
+          return
 
         if self.is_privileged(ctx):
             embed=discord.Embed(description=f"**▶️ Resumed By {ctx.author.mention}**", color = discord.Color.blue())
@@ -1896,7 +1956,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
       if not player.is_connected:
-          return
+        return await ctx.invoke(self.connect)
       if player.queueNum<=1:
           embed=discord.Embed(description=f"**✋ Can't Go Back Any Further**", color = discord.Color.red())
           return await ctx.send(embed=embed, delete_after=10)
@@ -1935,7 +1995,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
         if not player.is_connected:
-            return
+          return await ctx.invoke(self.connect)
 
         if self.is_privileged(ctx):
             embed=discord.Embed(description=f"**⏭ Skipped By {ctx.author.mention}**", color = discord.Color.blue())
@@ -1969,7 +2029,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
         if not player.is_connected:
-            return
+          await ctx.invoke(self.connect)
 
         if self.is_privileged(ctx):
             embed=discord.Embed(description="**👋 Disconnected**", color = discord.Color.orange())
@@ -1995,7 +2055,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
         if not player.is_connected:
-            return
+          return await ctx.invoke(self.connect)
 
         if not self.is_privileged(ctx):
             embed=discord.Embed(description="**Only DJ's Or Admins Can Control Volume**", color = discord.Color.teal())
@@ -2015,7 +2075,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
         if not player.is_connected:
-            return
+          return await ctx.invoke(self.connect)
 
         if len(player.queue) < 3:
             embed=discord.Embed(description="**Add More Songs Before Shuffling**", color = discord.Color.teal())
@@ -2048,8 +2108,11 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     async def vol_up(self, ctx: commands.Context):
         """Command used for volume up button."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+        
+        if not player.is_connected:
+          return await ctx.invoke(self.connect)
 
-        if not player.is_connected or not self.is_privileged(ctx):
+        if not self.is_privileged(ctx):
             return
 
         vol = int(math.ceil((player.volume + 10) / 10)) * 10
@@ -2065,8 +2128,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     async def vol_down(self, ctx: commands.Context):
         """Command used for volume down button."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
-
-        if not player.is_connected or not self.is_privileged(ctx):
+        if not player.is_connected:
+          return await ctx.invoke(self.connect)
+        if not self.is_privileged(ctx):
             return
 
         vol = int(math.ceil((player.volume - 10) / 10)) * 10
@@ -2081,8 +2145,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     async def f_down(self, ctx: commands.Context):
         """Command used for volume down button."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
-
-        if not player.is_connected or not self.is_privileged(ctx):
+        if not player.is_connected:
+          return await ctx.invoke(self.connect)
+        if  not self.is_privileged(ctx):
             return
 
         position = player.position
@@ -2094,7 +2159,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
       if not player.is_connected:
-          return
+        return await ctx.invoke(self.connect)
       if not self.is_privileged(ctx):
           raise OnlyDJ
       # if amount==None:
@@ -2123,8 +2188,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     async def f_up(self, ctx: commands.Context):
         """Command used for volume down button."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
-
-        if not player.is_connected or not self.is_privileged(ctx):
+        if not player.is_connected:
+          return await ctx.invoke(self.connect)
+        if not self.is_privileged(ctx):
             return
 
         position = player.position
@@ -2146,7 +2212,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
         if not player.is_connected:
-            return
+          return await ctx.invoke(self.connect)
 
         if not self.is_privileged(ctx):
             raise OnlyDJ
@@ -2174,7 +2240,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
         if not player.is_connected:
-            return
+          return await ctx.invoke(self.connect)
 
         if not self.is_privileged(ctx):
             raise OnlyDJ
@@ -2184,7 +2250,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         #     embed=discord.Embed(description=f"**Please Provide A Number Value**", color = discord.Color.teal())
         #     return await ctx.send(embed=embed, delete_after=10)
         #     # return await ctx.send(f'Invalid EQ provided. Valid EQs:\n\n{joined}')
-        await player.set_eq(list(tuple([amount, 1.0])))
+        await player.set_eq(wavelink.Equalizer.build(levels=[{'band': 1, 'gain': 0.2}], name="booster"))
         embed=discord.Embed(description=f"**Boost Set To {amount}**", color = discord.Color.teal())
         await ctx.send(embed=embed, delete_after=10)
         
@@ -2198,7 +2264,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if song!=None:
           return await self.play(ctx, query=song)
         if not player.is_connected:
-            return
+          return await ctx.invoke(self.connect)
 
         if len(player.queue) == 0:
             embed=discord.Embed(description=f"**✋ Add More Songs Before Using The Queue Command**", color = discord.Color.orange())
@@ -2281,7 +2347,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if not player.is_playing:
             return
         if not player.is_connected:
-            return
+          return await ctx.invoke(self.connect)
 
         await player.invoke_controller()
     @commands.command()
@@ -2290,7 +2356,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
       if not player.is_connected:
-          return
+        return await ctx.invoke(self.connect)
       if not self.is_privileged(ctx):
           raise OnlyDJ
       player.queue.clear()
@@ -2307,7 +2373,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
       if not player.is_connected:
-          return
+        return await ctx.invoke(self.connect)
       if not self.is_privileged(ctx):
           raise OnlyDJ
       # if index==None:
@@ -2364,7 +2430,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
       if not player.is_connected:
-          return
+          return await ctx.invoke(self.connect)
       if not self.is_privileged(ctx):
           raise OnlyDJ
       if not player.loopQueue and player.loopSong:
@@ -2387,13 +2453,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     
 
-    @commands.command(aliases=['loopsong','ls'])
-    async def loop(self, ctx: commands.Context):
+    @commands.command(aliases=['loop','ls'])
+    async def loopsong(self, ctx: commands.Context):
       """Loops the current song"""
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
       if not player.is_connected:
-          return
+        return await ctx.invoke(self.connect)
       if not self.is_privileged(ctx):
           raise OnlyDJ
 
@@ -2431,7 +2497,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
       if not player.is_connected:
-          return
+          return await ctx.invoke(self.connect)
       if not self.is_privileged(ctx):
           raise OnlyDJ
       if timestamp==None:
@@ -2461,7 +2527,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
         if not player.is_connected:
-            return
+          return await ctx.invoke(self.connect)
 
         if not self.is_privileged(ctx):
             raise OnlyDJ
@@ -2957,9 +3023,14 @@ async def on_message(msg):
 async def global_translate(msg, language, webhook_id):
   g = AsyncTranslator()
   translation=await g.translate(msg.content, language)
-  embed = discord.Embed(description = f"{translation}")
-  embed.set_author(name=msg.author.name, icon_url=msg.author.avatar_url)
-  webhook = await client.fetch_webhook(webhook_id)
+  # embed = discord.Embed(description = f"{translation}")
+  # embed.set_author(name=msg.author.name, icon_url=msg.author.avatar_url)
+  # webhook = await client.fetch_webhook(webhook_id)
+  webhooks= await msg.channel.webhooks()
+  for element in webhooks:
+    if element.id==webhook_id:
+      webhook=element
+      break
   await webhook.send(content="> **"+translation+"**", avatar_url = msg.author.avatar_url, username=msg.author.nick)
   # await msg.delete()
   
@@ -3682,6 +3753,7 @@ class Translation(commands.Cog):
       await ctx.reply(embed=embed, mention_author=False)
     @commands.command()
     @commands.has_permissions(manage_guild=True)
+    @commands.bot_has_permissions(manage_guild = True)
     async def globalize(self, ctx, language: str=None):
       """Makes the channel the command is called in become global(every new message will be translated to the specified language)"""
       channel=ctx.channel
@@ -3689,7 +3761,10 @@ class Translation(commands.Cog):
       if data==None:
         if language==None:
           raise discord.ext.commands.BadArgument('str not number')
-        webhook = await channel.create_webhook( name=f"{channel.name}'s Globalization Webhook")
+        try:
+          webhook = await channel.create_webhook( name=f"{channel.name}'s Globalization Webhook")
+        except:
+          raise TooManyWebhooks
         await client.globalize.upsert({"_id": channel.id, "language": language, 'webhook': webhook.id})
         
         embed=discord.Embed(description=f"**✅ {channel.mention} Is Now Global! Every Message Will Be Translated To `{language}`**", color = discord.Color.green())
@@ -3742,6 +3817,7 @@ class Moderation(commands.Cog):
         pass
 
     @commands.command()
+    @commands.bot_has_permissions(manage_guild = True)
     async def muted(self, ctx):
       """Displays all muted members in this server"""
       role = discord.utils.get(ctx.guild.roles, name="astroMuted")
@@ -3783,6 +3859,7 @@ class Moderation(commands.Cog):
 
     @commands.command(aliases = ["clear"])
     # @commands.has_permissions( manage_messages=True)
+    @commands.bot_has_permissions(manage_messages = True)
     async def purge(self, ctx, amount):
       """Purges the given amount of messages up to 100"""
       try:
@@ -3812,6 +3889,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.check_any(commands.is_owner(), commands.has_permissions(manage_guild = True))
+    @commands.bot_has_permissions(manage_guild = True)
     async def unmute(self, ctx, member: discord.Member,*, reason:str =None):
       """Unmutes a muted Member"""
       memb=member
@@ -3833,6 +3911,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.check_any(commands.is_owner(), commands.has_permissions(ban_members = True))
+    @commands.bot_has_permissions(ban_members = True)
     async def unban(self, ctx, *, member: str):
         """Unban a user specified by their user & token (e.g. aoztanir#2396)"""
         banned_users = await ctx.guild.bans()
@@ -3869,38 +3948,41 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.check_any(commands.is_owner(), commands.has_permissions(manage_guild = True))
+    @commands.bot_has_permissions(manage_guild = True)
     async def mute(self, ctx, member: discord.Member,*, reason :str =None):
       """Prevents a member from chatting"""
-      memb=member
-      if reason==None:
-        reason="Unspecified"
-      if (ctx.guild.owner == memb) and not is_owner(ctx):
-         raise ActionOnMod
-        # await ctx.send("**You Cannot Mute/Unmute a Mod**")
-        # return
-      if memb.guild_permissions.manage_guild and not is_owner(ctx):
-        raise ActionOnMod
-        # await ctx.send("**You Cannot Mute/Unmute a Mod**")
-        # return
-      role = discord.utils.get(ctx.guild.roles, name='astroMuted')
-      # try:
-      if not role:
-        role = await ctx.guild.create_role(name="astroMuted")
+      async with ctx.typing():
+        memb=member
+        if reason==None:
+          reason="Unspecified"
+        if (ctx.guild.owner == memb) and not is_owner(ctx):
+          raise ActionOnMod
+          # await ctx.send("**You Cannot Mute/Unmute a Mod**")
+          # return
+        if memb.guild_permissions.manage_guild and not is_owner(ctx):
+          raise ActionOnMod
+          # await ctx.send("**You Cannot Mute/Unmute a Mod**")
+          # return
+        role = discord.utils.get(ctx.guild.roles, name='astroMuted')
+        # try:
+        if not role:
+          role = await ctx.guild.create_role(name="astroMuted")
 
-      for channel in ctx.guild.channels:
-        await channel.set_permissions(role, speak=False, send_messages=False)
-      await memb.add_roles(role)
-      # except:
-      #   pass
-        # role = discord.utils.get(ctx.guild.roles, name='MutedAstro')
-        # await memb.add_roles(role)
-      
-      embed=discord.Embed(title=f"Reason: ` {reason} `", color=discord.Color.orange())
-      embed.set_author(name=memb.name+" Has Been Muted!", icon_url=memb.avatar_url)
-      await ctx.reply(embed=embed, mention_author=False)
+        for channel in ctx.guild.channels:
+          await channel.set_permissions(role, speak=False, send_messages=False)
+        await memb.add_roles(role)
+        # except:
+        #   pass
+          # role = discord.utils.get(ctx.guild.roles, name='MutedAstro')
+          # await memb.add_roles(role)
+        
+        embed=discord.Embed(title=f"Reason: ` {reason} `", color=discord.Color.orange())
+        embed.set_author(name=memb.name+" Has Been Muted!", icon_url=memb.avatar_url)
+        await ctx.reply(embed=embed, mention_author=False)
 
     @commands.command()
     @commands.check_any(commands.is_owner(), commands.has_permissions(kick_members = True))
+    @commands.bot_has_permissions(kick_members = True)
     async def kick(self, ctx, member : discord.Member, *, reason="Unspecified" ):
       """Kicks a member from the server"""
       # try:
@@ -3920,7 +4002,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.check_any(commands.is_owner(), commands.has_permissions(ban_members = True))
-    # @commands.has_permissions(ban_members = True)
+    @commands.bot_has_permissions(ban_members = True)
     async def ban(self, ctx, member : discord.Member, *, reason="Unspecified" ):
       """Bans a member from the server"""
       # try:
@@ -6109,7 +6191,14 @@ class Utility(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
+    @commands.command()
+    # @commands.bot_has_permissions(attach_files = True, embed_links = True)
+    async def announcement(self, ctx):
+        """Control announcements through astro via the dashboard"""
+        embed=discord.Embed(description=f"**Try Creating An Announcement For This Server Via The [Dashboard]( {website}/guild/{ctx.guild.id} )**", color = discord.Color.orange())
+        await ctx.reply(embed=embed, mention_author=False, delete_after=await get_delete_after(ctx.guild.id))
 
+        
     
     @commands.command()
     # @commands.bot_has_permissions(attach_files = True, embed_links = True)
@@ -6709,7 +6798,9 @@ async def on_command_error(ctx, error):
     # template = "An exception of type {0} occurred. Arguments:\n{1!r}"
     # message = template.format(type(error).__name__, error.args)
     # get data from exception
-    
+    if isinstance(error, TooManyWebhooks ):
+      embed=discord.Embed(description=f'**✋ {ctx.author.mention} This Channel Has More Than Ten Webhooks Already, Try Deleting Them, Or Using A New Channel**', color = discord.Color.red())
+      return await ctx.send(embed=embed, delete_after=10)
 
     if "Bad Request" in str(error) or "invalid" in str(error).lower():
       embed=discord.Embed(description=f'**✋ Invalid URL**', color = discord.Color.red())
@@ -6718,7 +6809,7 @@ async def on_command_error(ctx, error):
       embed=discord.Embed(description=f"**✋ {ctx.author.mention} Only A DJ Or Admin Can Can Change EQ**", color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, CannotLoop):
-      embed=discord.Embed(description=f"**✋ You Can't Loop Both The Queue And A Song**", color = discord.Color.orange())
+      embed=discord.Embed(description=f"**✋ {ctx.author.mention} You Can't Loop Both The Queue And A Song**", color = discord.Color.orange())
       return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, NotFound):
       embed=discord.Embed(description=f'**✋ Nothing Found**', color = discord.Color.orange())
@@ -6770,13 +6861,13 @@ async def on_command_error(ctx, error):
     #   await play(ctx)
     
     if isinstance(error, NotNSFW):
-      embed=discord.Embed(description="**✋ You Aren't In A NSFW Channel**", color = discord.Color.red())
+      embed=discord.Embed(description=f"**✋ {ctx.author.mention} You Aren't In A NSFW Channel**", color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, ActionOnMod):
-      embed=discord.Embed(description="**✋ You Can't Do This Action On A Moderator**", color = discord.Color.red())
+      embed=discord.Embed(description=f"**✋ {ctx.author.mention} You Can't Use This Command On A Moderator**", color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, commands.CommandOnCooldown):
-      embed=discord.Embed(description="**⏰ Woah! This Command Is On Cooldown! Try Again In {:.2f}s!**".format(error.retry_after), color = discord.Color.red())
+      embed=discord.Embed(description=f"**✋ "+{ctx.author.mention}+" This Command Is On Cooldown! Try Again In {:.2f}s!**".format(error.retry_after), color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=5)
     if isinstance(error, IncorrectChannelError):
       return
@@ -6791,16 +6882,23 @@ async def on_command_error(ctx, error):
     # if isinstance(error, NoChannelProvided):
     #   return await ctx.send_help
     if isinstance(error, NoChannelProvided):
-      embed=discord.Embed(description="**✋ You must be in a voice channel to use this command**".title(), color = discord.Color.red())
+      embed=discord.Embed(description=f"**✋ {ctx.author.mention} You must be in a voice channel to use this command**".title(), color = discord.Color.red())
+      try:
+        player: Player = client.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+        await player.teardown()
+      except:
+        pass
       return await ctx.send(embed=embed, delete_after=10)
     
       # return await ctx.send('')
     if isinstance(error, discord.ext.commands.MissingRequiredArgument) or isinstance(error, discord.ext.commands.BadArgument) :
-      embed=discord.Embed(description=f"**✋ Oops! thats the incorrect usage, use {ctx.command.name} this way:**".title(), color = discord.Color.red())
+      embed=discord.Embed(description=f"**✋ {ctx.author.mention} That's The Incorrect Usage, Use {ctx.command.name} This Way:**", color = discord.Color.red())
       await ctx.send(embed=embed)
       return await ctx.send_help( ctx.command)
       # return await ctx.send("> **Please include all required parts of a command!**")
-    
+    # elif isinstance(error, discord.ext.commands.Forbidden):
+    #   embed=discord.Embed(description=f"**✋ {ctx.author.mention} Astro Cannot Use {ctx.command.name.title()} On A Member With The Same Permissions As Him**", color = discord.Color.red())
+    #   return await ctx.send(embed=embed, delete_after=10)
     elif isinstance(error, discord.ext.commands.MissingPermissions):
       embed=discord.Embed(description=f"**✋ {ctx.author.mention} Is Missing The Permissions To Use {ctx.command.name.title()}**", color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
@@ -6816,7 +6914,7 @@ async def on_command_error(ctx, error):
       # await ctx.send("> Sorry "+ctx.author.mention+" That Command Does Not Exist.")
     
     else:
-
+      print("TYPE:       "+str(type(error)))
       print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
       traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
       # if 'missing permissions' in str(error).lower():
@@ -6824,7 +6922,7 @@ async def on_command_error(ctx, error):
       #   return
       # await ctx.send("> Sorry "+ctx.author.mention+" It Looks Like This Command Is Not Working As Of Now. Go To "+astroSite+" For More Info Or To Report This Problem.\n\nThe Error Incurred Is Below: \n\n`"+str(error)+"`")
       print(str(error))
-      embed=discord.Embed(title="✋ Oops! Something Went Wrong".title(), color = discord.Color.orange())
+      embed=discord.Embed(description=f"**✋ {ctx.author.mention}, Something Went Wrong! Please Report The Issue [Here]( {website}/discord )**", color = discord.Color.orange())
       await ctx.send(embed=embed, delete_after=5)
       # await ctx.send("> An Error Occured")
   
