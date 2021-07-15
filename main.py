@@ -285,6 +285,8 @@ async def on_ready():
     client.globalize= Document(client.db, 'globalize')
     client.status_info= Document(client.db, 'status_info')
     client.music= Document(client.db, 'music')
+    client.codes= Document(client.db, 'codes')
+    client.premium= Document(client.db, 'premium')
     client.delete_after= Document(client.db, 'delete_after')
     client.prefixes= Document(client.db, 'prefixes')
     client.announcement= Document(client.db, 'announcement')
@@ -456,6 +458,9 @@ class NotFound(commands.CommandError):
     """Error raised when no suitable voice channel was supplied."""
     pass
 
+class NotPremium(commands.CommandError):
+    """Error raised when no suitable voice channel was supplied."""
+    pass
 class NotNSFW(commands.CommandError):
     """Error raised when no suitable voice channel was supplied."""
     pass
@@ -494,14 +499,22 @@ class spotTrack(wavelink.Track):
         self.is_stream=False
         self.length=kwargs.get('length')
         self.requester = kwargs.get('requester')
+async def vote_checker(user):
+  data =  await client.topggpy.get_user_vote(user.id)
+  print(data)
 
-
+async def check_premium(guild):
+  premium=await client.premium.find(guild.id)
+  if premium==None:
+    return False
+  else:
+    return True
 class Player(wavelink.Player):
     """Custom wavelink Player class."""
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
+        self.dont_leave=False
         self.context: commands.Context = kwargs.get('context', None)
         if self.context:
             self.dj: discord.Member = self.context.author
@@ -1593,6 +1606,27 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
       if not player.is_playing:
         await player.do_next()
+    @commands.command(aliases=[ '247'], name="💎 24/7")
+    # @commands.cooldown(1,2,commands.BucketType.user)
+    async def stay(self, ctx: commands.Context, *, query: str=None):
+      """💎 Toggles the 24/7 mode for astro"""
+      premium=await check_premium(ctx.guild)
+      if premium==False:
+        raise NotPremium
+      player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+        # print(self.bot.wavelink)
+      # await vote_checker(ctx.author)
+      if not player.is_connected:
+        await ctx.invoke(self.connect)
+      
+      player.dont_leave=not player.dont_leave
+
+      if player.dont_leave:
+        embed=discord.Embed(description=f'**✅ Astro Will Now Remain In Your Voice Channel, Until You Ask Him To Leave**', color = discord.Color.green())
+      else:
+        embed=discord.Embed(description=f'**✅ Astro Will Now Leave The Voice Channel If He Detects Inactivity**', color = discord.Color.green())
+      await ctx.send(embed=embed)
+
 
     @commands.command(aliases=['p'])
     # @commands.cooldown(1,2,commands.BucketType.user)
@@ -2048,9 +2082,12 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await ctx.send(embed=embed, delete_after=10)
             # await ctx.send(f'{ctx.author.mention} has voted to stop the player.', delete_after=15)
 
-    @commands.command(aliases=['v', 'vol'])
+    @commands.command(aliases=['v', 'vol', 'volume'], name="💎 volume")
     async def volume(self, ctx: commands.Context, *, amount: int):
-        """Change the players volume, between 1 and 100"""
+        """💎 Change the players volume, between 1 and 100"""
+        premium=await check_premium(ctx.guild)
+        if premium==False:
+          raise NotPremium
         vol=amount
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
@@ -2230,13 +2267,16 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return await ctx.send(embed=embed, delete_after=10)
             # return await ctx.send(f'Invalid EQ provided. Valid EQs:\n\n{joined}')
         await player.set_eq(eq)
-        embed=discord.Embed(description=f"**EQ Set To {equalizer}**", color = discord.Color.teal())
+        embed=discord.Embed(description=f"**🎛 EQ Set To {equalizer}**", color = discord.Color.teal())
         await ctx.send(embed=embed, delete_after=10)
         
 
-    @commands.command(aliases=['bass', 'bassboost'])
+    @commands.command(aliases=['bass', 'boost','bassboost'], name="💎 boost")
     async def boost(self, ctx: commands.Context, amount: int):
-        """Boost the bass for the player"""
+        """💎 Boost the bass for the player"""
+        premium=await check_premium(ctx.guild)
+        if premium==False:
+          raise NotPremium
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
         if not player.is_connected:
@@ -2244,14 +2284,15 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         if not self.is_privileged(ctx):
             raise OnlyDJ
-
+        if amount>5:
+          amount=5
 
         # if not amount:
         #     embed=discord.Embed(description=f"**Please Provide A Number Value**", color = discord.Color.teal())
         #     return await ctx.send(embed=embed, delete_after=10)
         #     # return await ctx.send(f'Invalid EQ provided. Valid EQs:\n\n{joined}')
-        await player.set_eq(wavelink.Equalizer.build(levels=[{'band': 1, 'gain': 0.2}], name="booster"))
-        embed=discord.Embed(description=f"**Boost Set To {amount}**", color = discord.Color.teal())
+        await player.set_eq(wavelink.Equalizer.build(levels=[(0, (float(amount)/2.4)), (1, (float(amount)/2.4))], name="booster"))
+        embed=discord.Embed(description=f"**🎛 Boost Set To {amount}**", color = discord.Color.teal())
         await ctx.send(embed=embed, delete_after=10)
         
 
@@ -3031,7 +3072,11 @@ async def global_translate(msg, language, webhook_id):
     if element.id==webhook_id:
       webhook=element
       break
-  await webhook.send(content="> **"+translation+"**", avatar_url = msg.author.avatar_url, username=msg.author.nick)
+  name=msg.author.nick
+  print(msg.author.nick)
+  if msg.author.nick==None:
+    name=msg.author.name
+  await webhook.send(content="> **"+translation+"**", avatar_url = msg.author.avatar_url, username=name)
   # await msg.delete()
   
   # await webhook.send(translation)
@@ -3056,12 +3101,55 @@ winningConditions = [
     [2, 4, 6]
 ]
 
+async def check_code(code):
+  codes = await client.codes.get_all()
+  for element in codes:
+    if element["_id"]==code:
+      return False
+  return True
 
 
 
 class Settings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command(aliases=["generate-code", "gen-code", 'code-gen'], hidden=True)
+    @commands.is_owner()
+    async def codeGen(self, ctx):
+
+      code = int(random.randint(1, 10000000000000))
+      while (await check_code(code)==False):
+        code = int(random.randint(1, 10000000000000))
+      await client.codes.upsert({"_id": code, "random": True})
+      embed=discord.Embed(description=f"**✅ Code `{code}` Has been Generated!**", color = discord.Color.orange())
+      return await ctx.reply(embed=embed, mention_author=False)
+
+    @commands.command( hidden=True)
+    @commands.is_owner()
+    async def deactivate(self, ctx):
+      await client.premium.delete(ctx.guild.id)
+      
+      embed=discord.Embed(description=f"**✅ This Server's Premium Has Been Removed.**", color = discord.Color.orange())
+      return await ctx.reply(embed=embed, mention_author=False)
+
+
+    @commands.command(aliases=["activate", "activate-premium"])
+    @commands.has_permissions(manage_guild=True)
+    async def premium(self, ctx, code: int):
+      """Activates premium in this server using a redemption code"""
+      data = await client.codes.find(code)
+      if data:
+        if await client.premium.find(ctx.guild.id):
+          embed=discord.Embed(description=f"**❌ This Server Already Has Premium!**", color = discord.Color.orange())
+          return await ctx.reply(embed=embed, mention_author=False)
+        await client.premium.upsert({"_id": ctx.guild.id, "premium": True})
+        await client.codes.delete(code)
+        embed=discord.Embed(description=f"**💎 Congratulations! {ctx.author.mention} Has Just Activated Premium For This Server!**", color = discord.Color.orange())
+        return await ctx.reply(embed=embed, mention_author=False)
+      else:
+        embed=discord.Embed(description=f"**❌ Code `{code}` Is Either Invalid Or Has Already Been Redeemed.**", color = discord.Color.orange())
+        return await ctx.reply(embed=embed, mention_author=False)
 
 
     @commands.command(aliases=["clean"])
@@ -3751,11 +3839,14 @@ class Translation(commands.Cog):
       translation=await g.translate(message, language)
       embed = discord.Embed(description = f"**📣 Translating {ctx.author.mention}'s Message:\n\n{translation}**",color = discord.Color.teal())
       await ctx.reply(embed=embed, mention_author=False)
-    @commands.command()
+    @commands.command(aliases=["globalize",'global'], name="💎 globalize")
     @commands.has_permissions(manage_guild=True)
     @commands.bot_has_permissions(manage_guild = True)
     async def globalize(self, ctx, language: str=None):
       """Makes the channel the command is called in become global(every new message will be translated to the specified language)"""
+      premium=await check_premium(ctx.guild)
+      if premium==False:
+        raise NotPremium
       channel=ctx.channel
       data=await client.globalize.find(channel.id)
       if data==None:
@@ -3795,24 +3886,25 @@ class Moderation(commands.Cog):
           # embed = # add your embed code here
           # if player.loopQueue:
           #   player.queue_for_loop=player.queue
-          if not player.dcWaiting:
-            # member_count=0
-            
-            channel = self.bot.get_channel(int(player.channel_id))
-            
-            if await checkVcChannel(channel)==0:
-              player.dcWaiting=True
-              print("SLEEPING FOR LEAVING VC")
+          if not player.dont_leave:
+            if not player.dcWaiting:
+              # member_count=0
               
-              await asyncio.sleep(300)
-              print("SLEEPING FOR LEAVING VC 2")
+              channel = self.bot.get_channel(int(player.channel_id))
+              
               if await checkVcChannel(channel)==0:
-              
-                await player.teardown()
-                embed=discord.Embed(description="**👋 I Left The Voice Channel Because I was Inactive For Too Long**", color = discord.Color.green())
-                return await player.context.send(embed=embed)
-              else:
-                player.dcWaiting=False
+                player.dcWaiting=True
+                print("SLEEPING FOR LEAVING VC")
+                
+                await asyncio.sleep(300)
+                print("SLEEPING FOR LEAVING VC 2")
+                if await checkVcChannel(channel)==0:
+                
+                  await player.teardown()
+                  embed=discord.Embed(description="**👋 I Left The Voice Channel Because I was Inactive For Too Long**", color = discord.Color.green())
+                  return await player.context.send(embed=embed)
+                else:
+                  player.dcWaiting=False
       except:
         pass
 
@@ -6800,6 +6892,10 @@ async def on_command_error(ctx, error):
     # get data from exception
     if isinstance(error, TooManyWebhooks ):
       embed=discord.Embed(description=f'**✋ {ctx.author.mention} This Channel Has More Than Ten Webhooks Already, Try Deleting Them, Or Using A New Channel**', color = discord.Color.red())
+      return await ctx.send(embed=embed, delete_after=10)
+    
+    if isinstance(error, NotPremium ):
+      embed=discord.Embed(description=f'**✋ {ctx.author.mention} This Server Does Not Have Premium Activated. Activate It [Here]( {website}/premium )**', color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
 
     if "Bad Request" in str(error) or "invalid" in str(error).lower():
