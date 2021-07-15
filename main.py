@@ -1569,10 +1569,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       await ctx.send(embed=embed, delete_after=10)
       await player.invoke_controller()
 
-    @commands.command(aliases=['s', 'sc'])
+    @commands.command(aliases=['s', 'sc', 'soundcloud'], name="💎 soundcloud")
     # @commands.cooldown(1,2,commands.BucketType.user)
     async def soundcloud(self, ctx: commands.Context, *, query: str=None):
-      """Searches for songs to queue through soundcloud"""
+      """💎 Searches for songs to queue through soundcloud"""
+      premium=await check_premium(ctx.guild)
+      if premium==False:
+        raise NotPremium
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       if not player.is_connected:
         await ctx.invoke(self.connect)
