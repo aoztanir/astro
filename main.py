@@ -3116,19 +3116,27 @@ class Settings(commands.Cog):
 
     @commands.command(aliases=["generate-code", "gen-code", 'code-gen'], hidden=True)
     @commands.is_owner()
-    async def codeGen(self, ctx):
-
+    async def codeGen(self, ctx, member=None):
+      
       code = int(random.randint(1, 10000000000000))
       while (await check_code(code)==False):
         code = int(random.randint(1, 10000000000000))
       await client.codes.upsert({"_id": code, "random": True})
-      embed=discord.Embed(description=f"**✅ Code `{code}` Has been Generated!**", color = discord.Color.orange())
-      return await ctx.reply(embed=embed, mention_author=False)
+      embed1=discord.Embed(description=f"**✅ Code `{code}` Has been Generated!**", color = discord.Color.orange())
+      if member==None:
+        return await ctx.reply(embed=embed1, mention_author=False)
+      embed=discord.Embed(description=f"**💎 Thanks For Buying Premium!\nTo redeem this subscription in any server, all you have to do is copy this command -> `.activate {code}` and paste it in any server that you would like to activate premium in! Quick tip: if you have altered your prefix, be sure to switch the `.` in the command to your prefix!\nThanks for supporting Astro!\n\n**", color = discord.Color.orange())
+      try:
+        await member.send(embed=embed)
+      except:
+        await ctx.author.send(embed=embed1)
 
     @commands.command( hidden=True)
     @commands.is_owner()
-    async def deactivate(self, ctx):
-      await client.premium.delete(ctx.guild.id)
+    async def deactivate(self, ctx, guild_id=None):
+      if guild_id==None:
+        guild_id=ctx.guild.id
+      await client.premium.delete(guild_id)
       
       embed=discord.Embed(description=f"**✅ This Server's Premium Has Been Removed.**", color = discord.Color.orange())
       return await ctx.reply(embed=embed, mention_author=False)
@@ -3143,7 +3151,7 @@ class Settings(commands.Cog):
         if await client.premium.find(ctx.guild.id):
           embed=discord.Embed(description=f"**❌ This Server Already Has Premium!**", color = discord.Color.orange())
           return await ctx.reply(embed=embed, mention_author=False)
-        await client.premium.upsert({"_id": ctx.guild.id, "premium": True})
+        await client.premium.upsert({"_id": ctx.guild.id, "code": code})
         await client.codes.delete(code)
         embed=discord.Embed(description=f"**💎 Congratulations! {ctx.author.mention} Has Just Activated Premium For This Server!**", color = discord.Color.orange())
         return await ctx.reply(embed=embed, mention_author=False)
