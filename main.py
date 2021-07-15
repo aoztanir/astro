@@ -3119,7 +3119,7 @@ class Settings(commands.Cog):
 
     @commands.command(aliases=["generate-code", "gen-code", 'code-gen'], hidden=True)
     @commands.is_owner()
-    async def codeGen(self, ctx, member=None):
+    async def codeGen(self, ctx, member: discord.Member=None):
       
       code = int(random.randint(1, 10000000000000))
       while (await check_code(code)==False):
@@ -3131,7 +3131,9 @@ class Settings(commands.Cog):
       embed=discord.Embed(description=f"**💎 Thanks For Buying Premium!\nTo redeem this subscription in any server, all you have to do is copy this command -> `.activate {code}` and paste it in any server that you would like to activate premium in! Quick tip: if you have altered your prefix, be sure to switch the `.` in the command to your prefix!\nThanks for supporting Astro!\n\n**", color = discord.Color.orange())
       try:
         await member.send(embed=embed)
-      except:
+        await ctx.message.add_reaction("✅")
+      except Exception as e:
+        print(str(e))
         await ctx.author.send(embed=embed1)
 
     @commands.command( hidden=True)
@@ -9375,7 +9377,7 @@ import subprocess
 #DEV BOT
 
 
-# client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
+client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
 
 
 
