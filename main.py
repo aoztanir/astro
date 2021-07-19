@@ -1719,16 +1719,16 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                                           'isStream': False, 'isSeekable': False, 'position': 0, 'thumb': url}, requester=ctx.author
                       ))
             
-            with open("playlist.json","r") as f:
-              users = json.load(f)
-            users={}
-            users["songs"]=[]
+            # with open("playlist.json","r") as f:
+            #   users = json.load(f)
+            # users={}
+            # users["songs"]=[]
 
-            print("appending")
-            for track in tracks:
-              users["songs"].append({'real_title': track.title, 'title': track.title+" - "+track.author+" audio", 'author': track.author, 'thumbnail': track.info["thumb"]})
-            with open("playlist.json","w") as f:
-              json.dump(users,f)   
+            # print("appending")
+            # for track in tracks:
+            #   users["songs"].append({'real_title': track.title, 'title': track.title+" - "+track.author+" audio", 'author': track.author, 'thumbnail': track.info["thumb"]})
+            # with open("playlist.json","w") as f:
+            #   json.dump(users,f)   
 
             if not tracks:
                 embed=discord.Embed(description=f'**Invalid URL**', color = discord.Color.red())
