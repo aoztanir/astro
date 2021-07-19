@@ -438,7 +438,7 @@ async def checkAmounts():
 
 # URL matching REGEX...
 URL_REG = re.compile(r'https?://(?:www\.)?.+')
-SPOTIFY_URL_REG = re.compile(r'https?://open.spotify.com/((?P<type>album|playlist|track|artist)/(?P<id>[a-zA-Z0-9]+)')
+SPOTIFY_URL_REG = re.compile(r'https?://open.spotify.com/(?P<type>album|playlist|track|artist)/(?P<id>[a-zA-Z0-9]+)')
 
 class ActionOnMod(commands.CommandError):
     """Error raised when someone tries to kick/mute a mod"""
