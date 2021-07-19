@@ -286,6 +286,7 @@ async def on_ready():
     client.status_info= Document(client.db, 'status_info')
     client.music= Document(client.db, 'music')
     client.codes= Document(client.db, 'codes')
+    client.disabled= Document(client.db, 'disabled')
     client.premium= Document(client.db, 'premium')
     client.delete_after= Document(client.db, 'delete_after')
     client.prefixes= Document(client.db, 'prefixes')
@@ -437,7 +438,7 @@ async def checkAmounts():
 
 # URL matching REGEX...
 URL_REG = re.compile(r'https?://(?:www\.)?.+')
-SPOTIFY_URL_REG = re.compile(r'https?://open.spotify.com/(?P<type>album|playlist|track|artist)/(?P<id>[a-zA-Z0-9]+)')
+SPOTIFY_URL_REG = re.compile(r'https?://open.spotify.com/((?P<type>album|playlist|track|artist)/(?P<id>[a-zA-Z0-9]+)')
 
 class ActionOnMod(commands.CommandError):
     """Error raised when someone tries to kick/mute a mod"""
@@ -502,7 +503,8 @@ class spotTrack(wavelink.Track):
 async def vote_checker(user):
   data =  await client.topggpy.get_user_vote(user.id)
   print(data)
-
+async def premium_react(msg):
+  return await msg.add_reaction("💎")
 async def check_premium(guild):
   premium=await client.premium.find(guild.id)
   if premium==None:
@@ -584,9 +586,12 @@ class Player(wavelink.Player):
           # print(track.title)
           # print("ENTERED")
           for i in range(len(self.queue)):
-            ratio= fuzz.ratio(query.lower(), self.queue[i].title.lower())
+            loop = asyncio.get_event_loop()
+            ratio = await loop.run_in_executor(None, lambda:fuzz.ratio(query.lower(), self.queue[i].title.lower()))
             print(ratio)
-            ratio2 = fuzz.ratio(track.title.lower(), self.queue[i].title.lower())
+            loop = asyncio.get_event_loop()
+            ratio2 = await loop.run_in_executor(None, lambda:fuzz.ratio(track.title.lower(), self.queue[i].title.lower()))
+
             if ratio>50 or ratio2>50:
               if max(ratio, ratio2)> largest["ratio"]:
                 largest={"ratio": max(ratio, ratio2), "num": i}
@@ -1573,12 +1578,15 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     # @commands.cooldown(1,2,commands.BucketType.user)
     async def soundcloud(self, ctx: commands.Context, *, query: str=None):
       """💎 Searches for songs to queue through soundcloud"""
-      premium=await check_premium(ctx.guild)
-      if premium==False:
-        raise NotPremium
+
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       if not player.is_connected:
         await ctx.invoke(self.connect)
+
+      premium=await check_premium(ctx.guild)
+      if premium==False:
+        raise NotPremium
+
       query = query.strip('<>')
       if not URL_REG.match(query):
         query = f'scsearch:{query}'
@@ -1600,7 +1608,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       #     embed.set_thumbnail(url=f"{client.user.avatar_url}")
       # except:
       #   embed.set_thumbnail(url=f"{client.user.avatar_url}")
-      await ctx.send(embed=embed, delete_after=10)
+      await premium_react(await ctx.send(embed=embed, delete_after=10))
       # await ctx.send(f'```ini\nAdded {track.title} to the Queue\n```', delete_after=15)
       try:
         player.queue.append(track)
@@ -1613,14 +1621,16 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     # @commands.cooldown(1,2,commands.BucketType.user)
     async def stay(self, ctx: commands.Context, *, query: str=None):
       """💎 Toggles the 24/7 mode for astro"""
-      premium=await check_premium(ctx.guild)
-      if premium==False:
-        raise NotPremium
+
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
         # print(self.bot.wavelink)
       # await vote_checker(ctx.author)
       if not player.is_connected:
         await ctx.invoke(self.connect)
+      
+      premium=await check_premium(ctx.guild)
+      if premium==False:
+        raise NotPremium
       
       player.dont_leave=not player.dont_leave
 
@@ -1628,7 +1638,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         embed=discord.Embed(description=f'**✅ Astro Will Now Remain In Your Voice Channel, Until You Ask Him To Leave**', color = discord.Color.green())
       else:
         embed=discord.Embed(description=f'**✅ Astro Will Now Leave The Voice Channel If He Detects Inactivity**', color = discord.Color.green())
-      await ctx.send(embed=embed)
+      await premium_react(await ctx.send(embed=embed))
 
 
     @commands.command(aliases=['p'])
@@ -1885,6 +1895,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       if not self.is_privileged(ctx):
           raise OnlyDJ
       # query=item
+      
       number = await player.find(ctx, item)
 
       if number<0:
@@ -2088,14 +2099,16 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @commands.command(aliases=['v', 'vol', 'volume'], name="💎 volume")
     async def volume(self, ctx: commands.Context, *, amount: int):
         """💎 Change the players volume, between 1 and 100"""
-        premium=await check_premium(ctx.guild)
-        if premium==False:
-          raise NotPremium
+        
         vol=amount
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
         if not player.is_connected:
-          return await ctx.invoke(self.connect)
+          await ctx.invoke(self.connect)
+        
+        premium=await check_premium(ctx.guild)
+        if premium==False:
+          raise NotPremium
 
         if not self.is_privileged(ctx):
             embed=discord.Embed(description="**Only DJ's Or Admins Can Control Volume**", color = discord.Color.teal())
@@ -2150,7 +2163,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
         
         if not player.is_connected:
-          return await ctx.invoke(self.connect)
+          await ctx.invoke(self.connect)
 
         if not self.is_privileged(ctx):
             return
@@ -2169,7 +2182,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         """Command used for volume down button."""
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
         if not player.is_connected:
-          return await ctx.invoke(self.connect)
+          await ctx.invoke(self.connect)
         if not self.is_privileged(ctx):
             return
 
@@ -2252,7 +2265,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
         if not player.is_connected:
-          return await ctx.invoke(self.connect)
+          await ctx.invoke(self.connect)
 
         if not self.is_privileged(ctx):
             raise OnlyDJ
@@ -2275,15 +2288,19 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         
 
     @commands.command(aliases=['bass', 'boost','bassboost'], name="💎 boost")
-    async def boost(self, ctx: commands.Context, amount: int):
-        """💎 Boost the bass for the player"""
+    async def boost(self, ctx: commands.Context, amount: int=1):
+        """💎 Boost the bass for the player with a number between 1-5"""
+        
+        player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
+
+        
+
+        if not player.is_connected:
+          await ctx.invoke(self.connect)
+
         premium=await check_premium(ctx.guild)
         if premium==False:
           raise NotPremium
-        player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
-
-        if not player.is_connected:
-          return await ctx.invoke(self.connect)
 
         if not self.is_privileged(ctx):
             raise OnlyDJ
@@ -2295,8 +2312,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         #     return await ctx.send(embed=embed, delete_after=10)
         #     # return await ctx.send(f'Invalid EQ provided. Valid EQs:\n\n{joined}')
         await player.set_eq(wavelink.Equalizer.build(levels=[(0, (float(amount)/2.4)), (1, (float(amount)/2.4))], name="booster"))
-        embed=discord.Embed(description=f"**🎛 Boost Set To {amount}**", color = discord.Color.teal())
-        await ctx.send(embed=embed, delete_after=10)
+        embed=discord.Embed(description=f"**🎛 Boost Set To `{amount}`**", color = discord.Color.teal())
+        await premium_react(await ctx.send(embed=embed, delete_after=10))
         
 
     @commands.command(aliases=['q', 'que'])
@@ -2308,7 +2325,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if song!=None:
           return await self.play(ctx, query=song)
         if not player.is_connected:
-          return await ctx.invoke(self.connect)
+          await ctx.invoke(self.connect)
 
         if len(player.queue) == 0:
             embed=discord.Embed(description=f"**✋ Add More Songs Before Using The Queue Command**", color = discord.Color.orange())
@@ -2400,7 +2417,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
       if not player.is_connected:
-        return await ctx.invoke(self.connect)
+        await ctx.invoke(self.connect)
       if not self.is_privileged(ctx):
           raise OnlyDJ
       player.queue.clear()
@@ -2474,7 +2491,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
       if not player.is_connected:
-          return await ctx.invoke(self.connect)
+          await ctx.invoke(self.connect)
       if not self.is_privileged(ctx):
           raise OnlyDJ
       if not player.loopQueue and player.loopSong:
@@ -2503,7 +2520,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
       
       if not player.is_connected:
-        return await ctx.invoke(self.connect)
+        await ctx.invoke(self.connect)
       if not self.is_privileged(ctx):
           raise OnlyDJ
 
@@ -2531,10 +2548,13 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
       embed=discord.Embed(description=f"**🔂 Looping Song Set To **"+str(player.loopSong).title(), color = discord.Color.teal())
       return await ctx.send(embed=embed, delete_after=10)
 
+    @commands.command(aliases=['r'])
+    async def rewind(self, ctx: commands.Context):
+      """Rewinds the currently playing song to position 0"""
+      return await self.seek(ctx)
 
 
-
-    @commands.command(aliases=['move','moveto', 'rewind'])
+    @commands.command(aliases=['move','moveto'])
     async def seek(self, ctx: commands.Context, seconds: int =None):
       """Moves to a given point in the song"""
       timestamp=seconds
@@ -2571,7 +2591,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         player: Player = self.bot.wavelink.get_player(guild_id=ctx.guild.id, cls=Player, context=ctx)
 
         if not player.is_connected:
-          return await ctx.invoke(self.connect)
+          await ctx.invoke(self.connect)
 
         if not self.is_privileged(ctx):
             raise OnlyDJ
@@ -3136,6 +3156,7 @@ class Settings(commands.Cog):
         print(str(e))
         await ctx.author.send(embed=embed1)
 
+
     @commands.command( hidden=True)
     @commands.is_owner()
     async def deactivate(self, ctx, guild_id=None):
@@ -3147,7 +3168,41 @@ class Settings(commands.Cog):
       return await ctx.reply(embed=embed, mention_author=False)
 
 
-    @commands.command(aliases=["activate", "activate-premium"])
+    @commands.command( )
+    @commands.has_permissions(manage_guild=True)
+    async def disable(self, ctx, command_name):
+      command=client.get_command(command_name)
+      if command==None:
+        raise NotFound
+      data = await client.disabled.find(ctx.guild.id)
+      commands=[]
+      if data!=None:
+        commands=data["commands"]
+      commands.append(command.qualified_name)
+      await client.disabled.upsert({"_id": ctx.guild.id, "commands": commands})
+      embed=discord.Embed(description=f"**The Command `{command.qualified_name.title()}` Has Been Disabled!**", color = discord.Color.orange())
+      return await ctx.reply(embed=embed, mention_author=False)
+
+    @commands.command( )
+    @commands.has_permissions(manage_guild=True)
+    async def enable(self, ctx, command_name):
+      command=client.get_command(command_name)
+      if command==None:
+        raise NotFound
+      data = await client.disabled.find(ctx.guild.id)
+      commands=[]
+      if data==None:
+        embed=discord.Embed(description=f"**{command.qualified_name.title()} Has Been Enabled!**", color = discord.Color.orange())
+        return await ctx.reply(embed=embed, mention_author=False)
+      commands= data["commands"]
+      commands.remove(command.qualified_name)
+      await client.disabled.upsert({"_id": ctx.guild.id, "commands": commands})
+      embed=discord.Embed(description=f"**The Command `{command.qualified_name.title()}` Has Been Enabled!**", color = discord.Color.orange())
+      return await ctx.reply(embed=embed, mention_author=False)
+      
+
+
+    @commands.command(aliases=["premium", "activate-premium"], name="activate")
     @commands.has_permissions(manage_guild=True)
     async def premium(self, ctx, code: int):
       """Activates premium in this server using a redemption code"""
@@ -3856,7 +3911,7 @@ class Translation(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     @commands.bot_has_permissions(manage_guild = True)
     async def globalize(self, ctx, language: str=None):
-      """Makes the channel the command is called in become global(every new message will be translated to the specified language)"""
+      """💎 Makes the channel the command is called in become global(every new message will be translated to the specified language)"""
       premium=await check_premium(ctx.guild)
       if premium==False:
         raise NotPremium
@@ -3872,7 +3927,7 @@ class Translation(commands.Cog):
         await client.globalize.upsert({"_id": channel.id, "language": language, 'webhook': webhook.id})
         
         embed=discord.Embed(description=f"**✅ {channel.mention} Is Now Global! Every Message Will Be Translated To `{language}`**", color = discord.Color.green())
-        return await ctx.reply(embed=embed, mention_author=False)
+        return await premium_react(await ctx.reply(embed=embed, mention_author=False))
       else:
         try:
           glob = await client.globalize.find(ctx.channel.id)
@@ -3882,7 +3937,7 @@ class Translation(commands.Cog):
           pass
         await client.globalize.delete(ctx.channel.id)
         embed=discord.Embed(description=f"**✅ {channel.mention} Is Now Not Global**", color = discord.Color.green())
-        return await ctx.reply(embed=embed, mention_author=False)
+        return await premium_react(await ctx.reply(embed=embed, mention_author=False))
         
  
 
@@ -3899,7 +3954,7 @@ class Moderation(commands.Cog):
           # embed = # add your embed code here
           # if player.loopQueue:
           #   player.queue_for_loop=player.queue
-          if not player.dont_leave:
+          if player.dont_leave==False:
             if not player.dcWaiting:
               # member_count=0
               
@@ -3912,10 +3967,10 @@ class Moderation(commands.Cog):
                 await asyncio.sleep(300)
                 print("SLEEPING FOR LEAVING VC 2")
                 if await checkVcChannel(channel)==0:
-                
-                  await player.teardown()
-                  embed=discord.Embed(description="**👋 I Left The Voice Channel Because I was Inactive For Too Long**", color = discord.Color.green())
-                  return await player.context.send(embed=embed)
+                  if player.dont_leave==False:
+                    await player.teardown()
+                    embed=discord.Embed(description="**👋 I Left The Voice Channel Because I was Inactive For Too Long**", color = discord.Color.green())
+                    return await player.context.send(embed=embed)
                 else:
                   player.dcWaiting=False
       except:
@@ -4457,7 +4512,7 @@ class LyricsPaginator(menus.ListPageSource):
     async def format_page(self, menu: menus.Menu, page):
       embed = discord.Embed( 
       title =self.title,
-      colour=discord.Color.orange())
+      colour=discord.Color.teal())
       # print(page)
       embed.description='```\n'+str(page)+'```'
       return embed
@@ -6610,15 +6665,24 @@ class Data(commands.Cog):
         if query==None:
           if player.current==None:
             embed=discord.Embed(description=f'**Currently Nothing Is Playing**', color = discord.Color.red())
+            if not player.is_connected:
+              await player.teardown()
             return await ctx.send(embed=embed, delete_after=10)
           else:
             query=formatTitle(player.current.title)
         try:
-          song = genius.search_song(query)
+          loop = asyncio.get_event_loop()
 
-          # embed=discord.Embed(title="Lyrics For "+song.title, color = discord.Color.green())
+          song= await loop.run_in_executor(None, lambda:genius.search_song(query)) 
+          # song = genius.search_song(query)
+          try:
+            embed=discord.Embed(title=f"Lyrics For `{song.title}`", description="```\n"+song.lyrics+"```", color = discord.Color.green())
+            return await ctx.send(embed=embed)
+          except:
+            pass
           # # print(song.lyrics)
           # # print("TITLE "+ song.title)
+          
           valArr = song.lyrics.split("\n\n")
           # print(valArr)
           # for i in range(len(valArr)):
@@ -6626,12 +6690,15 @@ class Data(commands.Cog):
           #     embed.add_field(name="`-`", value="`"+valArr[i]+"`", inline=False)
           #   except:
           #     pass
-        except:
+        except Exception as e:
+          print(e)
           raise NotFound
+   
       valArr[len(valArr)-1]+="\n\n\n (This is the end of the song)"
       pages = LyricsPaginator(entries=valArr, title="Lyrics For "+song.title)
       paginator = menus.MenuPages(source=pages, timeout=500, delete_message_after=True)
       try:
+        pass
         await paginator.start(ctx)
       except:
         raise NotFound
@@ -6714,7 +6781,7 @@ class Data(commands.Cog):
         await ctx.reply(embed=embed, delete_after=await get_delete_after(ctx.guild.id), mention_author=False)
       # except:
       #   pass
-    @commands.command(aliases=["wiki"])
+    # @commands.command(aliases=["wiki"])
     async def google(self, ctx, *, query):
       """Retrives wikipedia information for any query"""
       async with ctx.typing():
@@ -6908,24 +6975,27 @@ async def on_command_error(ctx, error):
       return await ctx.send(embed=embed, delete_after=10)
     
     if isinstance(error, NotPremium ):
-      embed=discord.Embed(description=f'**✋ {ctx.author.mention} This Server Does Not Have Premium Activated. Activate It [Here]( {website}/premium )**', color = discord.Color.red())
+      embed=discord.Embed(description=f'**✋ {ctx.author.mention} This Server Does Not Have Premium Activated. Activate It [Here]( {website}/premium )**', color = discord.Color.blue())
       return await ctx.send(embed=embed, delete_after=10)
 
-    if "Bad Request" in str(error) or "invalid" in str(error).lower():
-      embed=discord.Embed(description=f'**✋ Invalid URL**', color = discord.Color.red())
-      return await ctx.send(embed=embed, delete_after=10)
+    # if "Bad Request" in str(error) or "invalid" in str(error).lower():
+    #   embed=discord.Embed(description=f'**✋ Invalid URL**', color = discord.Color.red())
+    #   return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, OnlyDJ):
       embed=discord.Embed(description=f"**✋ {ctx.author.mention} Only A DJ Or Admin Can Can Change EQ**", color = discord.Color.red())
       return await ctx.send(embed=embed, delete_after=10)
     if isinstance(error, CannotLoop):
       embed=discord.Embed(description=f"**✋ {ctx.author.mention} You Can't Loop Both The Queue And A Song**", color = discord.Color.orange())
       return await ctx.send(embed=embed, delete_after=10)
-    if isinstance(error, NotFound):
+    if isinstance(error, NotFound) or isinstance(error.original, spotify.errors.NotFound):
       embed=discord.Embed(description=f'**✋ Nothing Found**', color = discord.Color.orange())
       return await ctx.send(embed=embed, delete_after=10)
 
     if isinstance(error, commands.NotOwner):
       return
+    if isinstance(error, discord.ext.commands.CheckFailure):
+      return
+
     if isinstance(error, discord.ext.commands.CheckAnyFailure):
       for element in error.errors:
         print(str(element))
@@ -7024,6 +7094,10 @@ async def on_command_error(ctx, error):
     
     else:
       print("TYPE:       "+str(type(error)))
+      try:
+        print("Original:       "+str(type(error.original)))
+      except:
+        pass
       print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
       traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
       # if 'missing permissions' in str(error).lower():
@@ -9375,6 +9449,24 @@ import subprocess
 
 # client.add_cog(Music(client))
 #DEV BOT
+
+async def command_disabled(ctx):
+  try:
+    data = await client.disabled.find(ctx.guild.id)
+    if data==None:
+      return True
+    commands= data["commands"]
+    for element in commands:
+      if element.lower()==ctx.command.qualified_name.lower():
+        return False
+      for alias in ctx.command.aliases:
+        if alias.lower()==element.lower():
+          return False
+    return True
+  except:
+    return True
+
+client.add_check(command_disabled)
 
 
 # client.run('ODQxNzYwMjk1NDMyODgwMTY4.YJrcXQ.5KWzQuqS7EBdjvN2vK-uwcqKPfc')
